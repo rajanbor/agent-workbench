@@ -23,7 +23,7 @@ for executable in AgentWorkbench agentctl; do
     lipo -create "$staging/arm64/AgentWorkbench/dist/Agent Workbench.app/Contents/MacOS/$executable" \
         "$staging/x86_64/AgentWorkbench/dist/Agent Workbench.app/Contents/MacOS/$executable" \
         -output "$bundle/Contents/MacOS/$executable"
-    lipo -verify_arch arm64 x86_64 "$bundle/Contents/MacOS/$executable"
+    lipo "$bundle/Contents/MacOS/$executable" -verify_arch arm64 x86_64
 done
 codesign --force --sign - "$bundle/Contents/MacOS/agentctl"
 codesign --force --sign - "$bundle"

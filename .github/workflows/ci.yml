@@ -75,10 +75,17 @@ jobs:
       - name: Build and verify the universal installer
         run: |
           bash scripts/package-installer.sh release-assets
+          # A previous user-local copy must not redirect the package installation.
+          ditto -x -k release-assets/AgentWorkbench-macos-arm64.zip legacy
+          mkdir -p "$HOME/Applications"
+          ditto 'legacy/AgentWorkbench/dist/Agent Workbench.app' "$HOME/Applications/Agent Workbench.app"
+          legacy_hash="$(shasum -a 256 "$HOME/Applications/Agent Workbench.app/Contents/MacOS/AgentWorkbench")"
           sudo installer -pkg release-assets/AgentWorkbench-macos-universal.pkg -target /
+          sudo installer -pkg release-assets/AgentWorkbench-macos-universal.pkg -target /
+          test "$legacy_hash" = "$(shasum -a 256 "$HOME/Applications/Agent Workbench.app/Contents/MacOS/AgentWorkbench")"
           codesign --verify --deep --strict '/Applications/Agent Workbench.app'
           for executable in AgentWorkbench agentctl; do
-            lipo -verify_arch arm64 x86_64 "/Applications/Agent Workbench.app/Contents/MacOS/$executable"
+            lipo "/Applications/Agent Workbench.app/Contents/MacOS/$executable" -verify_arch arm64 x86_64
           done
           bash '/Applications/Agent Workbench.app/Contents/Resources/Setup/prepare-runtime.sh' '/Applications/Agent Workbench.app'
           bash '/Applications/Agent Workbench.app/Contents/Resources/Setup/configure-macos.sh' --dry-run
