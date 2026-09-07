@@ -119,25 +119,35 @@ final class SecurityTests: XCTestCase {
         let path = configuration.workspaceRoot + "/test-" + UUID().uuidString
         try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: false)
         defer { try? FileManager.default.removeItem(atPath: path) }
-        let project = Project(name: "CI terminal", path: path)
-        let session = try Sessions.prepare(project, action: .terminal)
+        // Exercise a real child under the agent UID without requiring a provider
+        // login or launching an interactive shell with /dev/null as its terminal.
+        let bin = path + "/bin"
+        try FileManager.default.createDirectory(atPath: bin, withIntermediateDirectories: false)
+        let executable = bin + "/codex"
+        try "#!/bin/sh\nset -eu\nprintf 'CHILD_UID='\n/usr/bin/id -u\nprintf 'CHILD_CWD='\n/bin/pwd -P\nprintf 'CHILD_HOME=%s\\n' \"$HOME\"\n".write(toFile: executable, atomically: true, encoding: .utf8)
+        try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: executable)
+        let project = Project(name: "CI agent process", path: path)
+        let session = try Sessions.prepare(project, action: .codex)
         let id = URL(fileURLWithPath: session).lastPathComponent
         let requestFile = Sessions.runtime + "/requests/" + id + ".json"
         defer {
             try? FileManager.default.removeItem(atPath: session)
             try? FileManager.default.removeItem(atPath: requestFile)
         }
-        _ = try Launcher.command(project: project, configuration: configuration, action: .terminal, session: session)
+        _ = try Launcher.command(project: project, configuration: configuration, action: .codex, session: session)
         let result = try ProcessRunner.run("/usr/bin/sudo", [
             "-n", "-iu", "agent", "/usr/bin/env", "-i",
             "HOME=/Users/agent", "USER=agent", "LOGNAME=agent",
-            "PATH=/usr/bin:/bin:/usr/sbin:/sbin", "TERM=xterm-256color",
+            "PATH=\(bin):/usr/bin:/bin:/usr/sbin:/sbin", "TERM=xterm-256color",
             Sessions.runtime + "/agentctl", "__run", requestFile
         ])
         XCTAssertEqual(result.status, 0, result.output)
         let identity = try AgentIdentity.inspect("agent")
         XCTAssertTrue(result.output.contains("Account verified: agent · UID \(identity.uid)"), result.output)
         XCTAssertTrue(result.output.contains("Workspace: " + path), result.output)
-        XCTAssertEqual(try String(contentsOfFile: session + "/state", encoding: .utf8), "Finished")
+        XCTAssertTrue(result.output.contains("CHILD_UID=\(identity.uid)"), result.output)
+        XCTAssertTrue(result.output.contains("CHILD_CWD=" + path), result.output)
+        XCTAssertTrue(result.output.contains("CHILD_HOME=/Users/agent"), result.output)
+        XCTAssertEqual(try String(contentsOfFile: session + "/state", encoding: .utf8), "Finished", result.output)
     }
 }
