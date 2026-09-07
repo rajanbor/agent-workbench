@@ -41,6 +41,8 @@ jobs:
           fi
           sudo /usr/sbin/sysadminctl -addUser agent -password "$(uuidgen)" -shell /bin/zsh
           bash scripts/install.sh
+          bash 'dist/Agent Workbench.app/Contents/Resources/Setup/prepare-runtime.sh' "$PWD/dist/Agent Workbench.app"
+          bash 'dist/Agent Workbench.app/Contents/Resources/Setup/configure-macos.sh' --dry-run
           printf 'YES\nYES\n' | bash scripts/setup-macos.sh --apply
           printf 'YES\nYES\n' | bash scripts/setup-macos.sh --apply
           swift test
@@ -54,11 +56,11 @@ jobs:
             dist/AgentWorkbench-macos-*.zip
             dist/AgentWorkbench-macos-*.zip.sha256
           retention-days: 14
-  release:
-    name: Publish prerelease
-    if: startsWith(github.ref, 'refs/tags/v')
+  installer:
+    name: Universal macOS installer
     needs: test
-    runs-on: ubuntu-latest
+    runs-on: macos-15
+    timeout-minutes: 15
     permissions:
       contents: write
     steps:
@@ -70,12 +72,31 @@ jobs:
           pattern: macos-*
           merge-multiple: true
           path: release-assets
-      - name: Verify checksums and publish
+      - name: Build and verify the universal installer
+        run: |
+          bash scripts/package-installer.sh release-assets
+          sudo installer -pkg release-assets/AgentWorkbench-macos-universal.pkg -target /
+          codesign --verify --deep --strict '/Applications/Agent Workbench.app'
+          for executable in AgentWorkbench agentctl; do
+            lipo -verify_arch arm64 x86_64 "/Applications/Agent Workbench.app/Contents/MacOS/$executable"
+          done
+          bash '/Applications/Agent Workbench.app/Contents/Resources/Setup/prepare-runtime.sh' '/Applications/Agent Workbench.app'
+          bash '/Applications/Agent Workbench.app/Contents/Resources/Setup/configure-macos.sh' --dry-run
+          "$HOME/.local/bin/agentctl" list
+          (cd release-assets && shasum -a 256 -c *.sha256)
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: universal-installer
+          path: |
+            release-assets/*.pkg
+            release-assets/*.pkg.sha256
+          retention-days: 14
+      - name: Publish prerelease
+        if: startsWith(github.ref, 'refs/tags/v')
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
-          (cd release-assets && sha256sum -c *.sha256)
-          gh release create "$RELEASE_TAG" release-assets/*.zip release-assets/*.sha256 \
+          gh release create "$RELEASE_TAG" release-assets/*.pkg release-assets/*.zip release-assets/*.sha256 \
             --verify-tag --prerelease --title "Agent Workbench $RELEASE_TAG" \
             --notes-file docs/RELEASE_NOTES.md

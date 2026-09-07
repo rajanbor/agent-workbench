@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-alpha.2
+
+- GitHub Pages download page with one universal macOS `.pkg` for Apple Silicon and Intel.
+- Native macOS Installer installs the app into /Applications without privileged scripts.
+- In-app first-run guide opens account/tool setup and provider login without typed commands.
+- User-scoped launcher is prepared and updated when the installed app starts.
+- CI installs the universal package on a disposable Mac and verifies its bundled setup.
+
 ## 0.1.0-alpha.1
 
 - Native macOS project browser and shared Swift CLI.

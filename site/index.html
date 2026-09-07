@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Agent Workbench dla macOS. Codex i Claude na oddzielnym koncie, w lokalnych projektach. Pobierz jeden instalator dla Apple Silicon i Intela.">
+  <meta name="theme-color" content="#101820">
+  <title>Agent Workbench — pobierz na macOS</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip" href="#main">Przejdź do treści</a>
+  <div class="page">
+    <header>
+      <a class="brand" href="./" aria-label="Agent Workbench — strona główna"><img src="icon.svg" width="34" height="34" alt=""><span>Agent Workbench</span></a>
+      <nav aria-label="Nawigacja"><a href="#instalacja">Instalacja</a><a href="https://github.com/rajanbor/agent-workbench">GitHub <span aria-hidden="true">↗</span></a></nav>
+    </header>
+    <main id="main">
+      <section class="hero" aria-labelledby="title">
+        <div class="intro">
+          <p class="eyebrow"><span class="dot" aria-hidden="true"></span> NATYWNA APLIKACJA macOS</p>
+          <h1 id="title">Twoi agenci.<br><span>Własne miejsce<br>na Macu.</span></h1>
+          <p class="lede">Codex i Claude w Twoich lokalnych projektach.<br class="desktop"> Na oddzielnym koncie, z dostępem, który kontrolujesz.</p>
+          <a class="download" href="https://github.com/rajanbor/agent-workbench/releases/download/v0.1.0-alpha.2/AgentWorkbench-macos-universal.pkg"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg>Pobierz na macOS</a>
+          <p class="download-meta">macOS 14+ <span>·</span> Apple Silicon i Intel <span>·</span> Instalator .pkg</p>
+          <p class="alpha">Alpha 0.1.0 · Bez notaryzacji Apple.<br>Przy otwieraniu macOS może poprosić o dodatkową zgodę. <a href="#pomoc">Jak to działa?</a></p>
+        </div>
+        <aside class="workspace" aria-label="Model pracy: oddzielne konto agent, Codex i Claude, lokalne projekty">
+          <div class="workspace-top"><span class="mono">TWÓJ MAC</span><span class="local"><span class="dot" aria-hidden="true"></span> Lokalnie</span></div>
+          <div class="account"><span class="account-icon" aria-hidden="true">a</span><div><span class="caption">ODDZIELNE KONTO</span><h2>agent<span class="cursor" aria-hidden="true">_</span></h2><p>Użytkownik standardowy</p></div></div>
+          <div class="tools"><div><span class="tool-icon" aria-hidden="true">&gt;_</span><strong>Codex</strong></div><div><span class="tool-icon star" aria-hidden="true">✳</span><strong>Claude</strong></div></div>
+          <div class="connector" aria-hidden="true"></div>
+          <div class="project"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 7V5h6l2 2h10v13H3z"/></svg><div><strong>Twoje projekty</strong><span>Workspace na Twoim dysku</span></div><span class="project-arrow" aria-hidden="true">↗</span></div>
+          <p class="workspace-note">Bez maszyny wirtualnej.<br>Bez praw administratora dla agenta.</p>
+        </aside>
+      </section>
+      <section id="instalacja" class="installation" aria-labelledby="install-title">
+        <div class="section-title"><p class="eyebrow">OD POBRANIA DO PIERWSZEGO PROJEKTU</p><h2 id="install-title">Trzy kroki. Bez wpisywania komend.</h2></div>
+        <ol class="steps">
+          <li><span class="number" aria-hidden="true">01</span><h3>Zainstaluj aplikację</h3><p>Pobierz plik .pkg i otwórz go. Przejdź przez instalator macOS. Agent Workbench pojawi się w folderze Aplikacje.</p></li>
+          <li><span class="number" aria-hidden="true">02</span><h3>Przygotuj Maca</h3><p>Otwórz aplikację i wybierz „Skonfiguruj Maca”. Konfigurator w Terminalu poprowadzi Cię przez konto agent, uprawnienia i narzędzia.</p></li>
+          <li><span class="number" aria-hidden="true">03</span><h3>Zaloguj się i zacznij</h3><p>Użyj przycisku „Zaloguj Codex” lub „Zaloguj Claude”. Dodaj projekt i uruchom wybranego agenta.</p></li>
+        </ol>
+      </section>
+      <section id="pomoc" class="help" aria-labelledby="help-title">
+        <h2 id="help-title">Przed pierwszym uruchomieniem</h2>
+        <div class="questions">
+          <details><summary>macOS blokuje instalator lub aplikację</summary><p>To wczesna wersja bez certyfikatu wydawcy i notaryzacji Apple. Po próbie otwarcia pobranego pliku sprawdź Ustawienia systemowe → Prywatność i ochrona. Jeśli ufasz temu projektowi, wybierz „Otwórz mimo to”. Nie wyłączaj zabezpieczeń systemu. <a href="https://support.apple.com/pl-pl/102445">Instrukcja Apple</a>.</p></details>
+          <details><summary>Dlaczego konfigurator pyta o hasło?</summary><p>Instalator macOS może wymagać autoryzacji zapisu do folderu Aplikacje. Później sudo prosi o hasło głównego konta przy tworzeniu lub przełączaniu użytkownika. Nowe konto agent jest standardowe. Hasła obsługuje macOS; aplikacja ich nie zapisuje. Konfigurator pyta przed zmianami uprawnień.</p></details>
+          <details><summary>Czy to pełna izolacja?</summary><p>Oddzielne konto ogranicza dostęp zgodnie z uprawnieniami macOS. To nie jest maszyna wirtualna ani pełny sandbox. Profile nie blokują sieci; projekt nie przeszedł niezależnego audytu bezpieczeństwa. <a href="https://github.com/rajanbor/agent-workbench/blob/main/docs/SECURITY.md">Przeczytaj model bezpieczeństwa</a>.</p></details>
+          <details><summary>Mam już starszą wersję lub konto agent</summary><p>Instalator aktualizuje aplikację w /Applications. Istniejące konto, hasło i projekty pozostają zachowane. Jeśli wcześniej instalowałeś do ~/Applications, otwórz nową kopię z systemowego folderu Aplikacje. Logowanie i subskrypcje Codex/Claude są obsługiwane osobno przez dostawców.</p></details>
+        </div>
+      </section>
+    </main>
+    <footer><div class="footer-brand">Agent Workbench <span>© 2026 Rajan Bor</span></div><div><a href="https://github.com/rajanbor/agent-workbench/blob/main/LICENSE">Apache-2.0</a><a href="https://github.com/rajanbor/agent-workbench/releases/tag/v0.1.0-alpha.2">Wydanie i sumy kontrolne</a><a href="https://github.com/rajanbor/agent-workbench/blob/main/docs/QUICKSTART.pl.md">Pełna instrukcja</a></div><p>Niezależny projekt open source. Bez powiązania z Apple, OpenAI ani Anthropic.</p></footer>
+  </div>
+</body>
+</html>

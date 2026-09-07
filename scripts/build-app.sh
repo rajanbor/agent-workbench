@@ -10,6 +10,8 @@ cp "$binary_dir/AgentWorkbench" "$bundle/Contents/MacOS/AgentWorkbench"
 cp "$binary_dir/agentctl" "$bundle/Contents/MacOS/agentctl"
 cp resources/Info.plist "$bundle/Contents/Info.plist"
 cp LICENSE NOTICE "$bundle/Contents/Resources/"
+mkdir -p "$bundle/Contents/Resources/Setup"
+cp scripts/{prepare-runtime,configure-macos,setup-macos,install-agent-tools}.sh "$bundle/Contents/Resources/Setup/"
 # Intel linkers do not add the implicit ad-hoc signature used on Apple Silicon.
 # Sign the standalone helper first, then seal the containing application.
 codesign --force --sign - "$bundle/Contents/MacOS/agentctl"

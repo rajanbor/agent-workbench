@@ -34,11 +34,43 @@ import WorkbenchCore
         if panel.runModal() == .OK, let url = panel.url { do { try workbench.register(path: url.path); reload() } catch { message = error.localizedDescription } }
     }
     func save() { do { try workbench.store.save(config) } catch { message = error.localizedDescription } }
+    func prepareRuntime() async {
+        guard let resources = Bundle.main.resourceURL else { return }
+        let script = resources.appendingPathComponent("Setup/prepare-runtime.sh").path
+        let bundle = Bundle.main.bundleURL.path
+        guard FileManager.default.fileExists(atPath: script) else { return } // swift run / development builds
+        do { _ = try await Task.detached { try ProcessRunner.checked("/bin/bash", [script, bundle]) }.value }
+        catch { message = error.localizedDescription }
+    }
+    func configureMac() {
+        guard let resources = Bundle.main.resourceURL else { message = "Brak konfiguratora w aplikacji."; return }
+        let script = resources.appendingPathComponent("Setup/configure-macos.sh").path
+        openSetupTerminal("/bin/bash " + Shell.quote(script))
+    }
+    func login(_ action: LaunchAction) {
+        do {
+            let identity = try AgentIdentity.inspect(config.agentUser)
+            let command = action == .codex ? "codex login" : "claude"
+            let args = ["/usr/bin/sudo", "-iu", "agent", "/usr/bin/env", "-i", "HOME=\(identity.home)", "USER=agent", "LOGNAME=agent", "TERM=xterm-256color", "PATH=\(identity.home)/.local/node/bin:\(identity.home)/.local/npm/bin:\(identity.home)/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin", "/bin/zsh", "-lc", command]
+            openSetupTerminal(args.map(Shell.quote).joined(separator: " "))
+        } catch { message = error.localizedDescription }
+    }
+    private func openSetupTerminal(_ command: String) {
+        let terminal = config.terminal
+        Task {
+            do { try await Task.detached { try Launcher.open(command: command, terminal: terminal) }.value }
+            catch { message = error.localizedDescription }
+        }
+    }
 }
 @main struct AgentWorkbenchApp: App {
     @State private var model = AppModel()
     var body: some Scene {
-        WindowGroup("Agent Workbench") { MainView(model: model).frame(minWidth: 940, minHeight: 660).task { await model.refresh(); model.setup = model.config.projects.isEmpty } }
+        WindowGroup("Agent Workbench") { MainView(model: model).frame(minWidth: 940, minHeight: 660).task {
+            await model.prepareRuntime()
+            await model.refresh()
+            model.setup = !UserDefaults.standard.bool(forKey: "welcomeDismissed") || !FileManager.default.fileExists(atPath: Sessions.runtime + "/agentctl")
+        } }
         Settings { SettingsView(model: model).frame(width: 650, height: 530).padding() }
     }
 }
@@ -78,18 +110,7 @@ struct MainView: View {
         .sheet(item: $model.editing) { project in EnvironmentView(model: model, project: project) }
         .alert("Agent Workbench", isPresented: Binding(get: { model.message != nil }, set: { if !$0 { model.message = nil } })) { Button("OK") { model.message = nil } } message: { Text(model.message ?? "") }
         .sheet(isPresented: $model.setup) {
-            VStack(alignment: .leading, spacing: 20) {
-                Image(systemName: "terminal").font(.largeTitle).foregroundStyle(.tint)
-                Text("Twoje lokalne środowisko agentów").font(.title2.bold())
-                Text("Dodaj projekt, a następnie uruchom Codex lub Claude na oddzielnym koncie macOS.").foregroundStyle(.secondary)
-                Label("Hasło podajesz wyłącznie w Terminalu, bezpośrednio do sudo.", systemImage: "lock")
-                Text("Nie nadajemy agentowi uprawnień administratora. Przed startem sprawdzamy dostęp do prywatnych katalogów.").font(.callout).foregroundStyle(.secondary)
-                DisclosureGroup("Diagnostyka środowiska") { ScrollView { Text(model.diagnostic).font(.caption.monospaced()).textSelection(.enabled) }.frame(maxHeight: 140) }
-                HStack {
-                    Button("Utwórz katalog workspace") { do { try model.workbench.createWorkspaceRoot(); Task { await model.refresh() } } catch { model.message = error.localizedDescription } }
-                    Spacer(); Button("Zaczynamy") { model.setup = false }.buttonStyle(.borderedProminent)
-                }
-            }.padding(28).frame(width: 590)
+            WelcomeView(model: model)
         }
     }
 }
@@ -232,6 +253,11 @@ struct AgentsView: View {
                 LabeledContent("Codex", value: "Konto agent")
                 LabeledContent("Claude Code", value: "Konto agent")
                 Text("Instalacja i logowanie do narzędzi odbywają się osobno na koncie agent.").font(.caption).foregroundStyle(.secondary)
+                HStack {
+                    Button("Skonfiguruj Maca") { model.configureMac() }
+                    Button("Zaloguj Codex") { model.login(.codex) }
+                    Button("Zaloguj Claude") { model.login(.claude) }
+                }
             }
             Section("Diagnostyka") {
                 Text(model.diagnostic.contains("authentication required") ? "Wymagane uwierzytelnienie w Terminalu. Status narzędzi nie został jeszcze potwierdzony." : "Wyniki sprawdzenia środowiska są dostępne poniżej.")
@@ -248,6 +274,7 @@ struct SettingsView: View {
         Form {
             Section { Text("Ustawienia").font(.largeTitle.weight(.semibold)); Text("Lokalna konfiguracja Agent Workbench.").foregroundStyle(.secondary) }
             Section("Środowisko") {
+                Button("Otwórz pierwszą konfigurację") { model.setup = true }
                 LabeledContent("Workspace", value: model.config.workspaceRoot)
                 LabeledContent("Użytkownik macOS", value: model.config.agentUser)
                 Picker("Aplikacja terminalowa", selection: $model.config.terminal) { ForEach(TerminalChoice.allCases, id: \.self) { Text($0.rawValue).tag($0) } }.onChange(of: model.config.terminal) { model.save() }

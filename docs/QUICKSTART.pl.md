@@ -3,32 +3,34 @@
 Wersja alpha. Wymagany macOS 14+ i główne konto uprawnione do użycia sudo.
 Konto agenta jest standardowe; nie otrzymuje uprawnień administratora.
 
-## Najprościej: paczka z GitHuba
+## Najprościej: instalator macOS
 
-1. Otwórz [wydanie](https://github.com/rajanbor/agent-workbench/releases/tag/v0.1.0-alpha.1).
-2. Pobierz ZIP `arm64` dla Apple Silicon albo `x86_64` dla Intela oraz
-   odpowiadający plik `.sha256`.
-3. W katalogu pobranych plików sprawdź sumę (dla Intela zamień nazwę):
+1. Wejdź na [stronę aplikacji](https://rajanbor.github.io/agent-workbench/).
+2. Kliknij **Pobierz na macOS**. Jeden plik `.pkg` działa na Apple Silicon i Intelu.
+3. Otwórz pobrany plik i przejdź przez instalator macOS.
+4. Otwórz Finder → **Aplikacje → Agent Workbench**.
+5. Kliknij **Skonfiguruj Maca**. W Terminalu odpowiadaj na pytania — nie wpisujesz komend.
+6. Wróć do aplikacji i użyj **Zaloguj Codex** / **Zaloguj Claude**.
+7. Przejdź do projektów i dodaj pierwszy workspace.
 
-```sh
-shasum -a 256 -c AgentWorkbench-macos-arm64.zip.sha256
-```
+Nie potrzebujesz Xcode ani ZIP-a. Instalator dodaje aplikację do `/Applications`;
+nie tworzy kont ani nie uruchamia skryptów administratora. Aplikacja przy starcie
+przygotowuje launcher dla Twojego głównego konta. Konfigurator osobno pyta o konto,
+dostęp do workspace, ochronę HOME i instalację narzędzi. Pytania wymagają YES albo
+INSTALL; odmowa nie jest zgodą na zmianę.
 
-4. Rozpakuj ZIP. Otwórz Terminal w folderze `AgentWorkbench` i uruchom:
+Jeśli masz poprzednią kopię w `~/Applications`, otwórz nową z `/Applications`.
+Projekty i ustawienia są wspólne i zachowane. Pierwszą konfigurację możesz ponownie
+otworzyć w Ustawieniach aplikacji.
 
-```sh
-bash scripts/quickstart.sh
-```
-
-Konfigurator prowadzi przez instalację aplikacji, tworzenie konta, nadanie
-dostępu do workspace i instalację Codex/Claude. Wpisz START, aby rozpocząć.
-Kolejne pytania wymagają YES albo INSTALL; odmowa nie jest zgodą na zmianę.
+[Wydanie, kod źródłowy i sumy SHA-256](https://github.com/rajanbor/agent-workbench/releases/tag/v0.1.0-alpha.2).
 
 Hasło głównego konta podajesz do sudo. Przy tworzeniu konta macOS poprosi
 osobno o nowe hasło dla użytkownika agent. Skrypty nie przechowują haseł.
 Istniejący użytkownik agent zostanie zachowany bez zmiany hasła.
 
-Paczki są podpisane ad hoc, bez notaryzacji Apple. macOS może wymagać
+Aplikacja jest podpisana ad hoc, a instalator nie ma certyfikatu wydawcy ani
+notaryzacji Apple. macOS może wymagać
 świadomego wybrania „Otwórz mimo to” w Ustawieniach systemowych →
 Prywatność i ochrona. Nie wyłączaj Gatekeepera. Przy pierwszym uruchomieniu
 Terminala aplikacja może poprosić o zgodę na automatyzację.
@@ -44,7 +46,7 @@ xcode-select --install
 Zakończ instalację w oknie macOS. Następnie:
 
 ```sh
-git clone --branch v0.1.0-alpha.1 https://github.com/rajanbor/agent-workbench.git
+git clone --branch v0.1.0-alpha.2 https://github.com/rajanbor/agent-workbench.git
 cd agent-workbench
 bash scripts/quickstart.sh
 ```
@@ -130,8 +132,9 @@ Następnie wybierz Codex lub Claude.
 
 ## Wycofanie zmian
 
-Instalator zachowuje poprzednią wersję aplikacji w wypisanym katalogu staging.
-Możesz przenieść aplikację z ~/Applications do Kosza. Konfiguracja, projekty,
+Instalacja ze źródeł zachowuje poprzednią wersję aplikacji w wypisanym katalogu staging.
+Instalator `.pkg` aktualizuje aplikację w `/Applications`; wcześniejsze wydania
+pozostają do pobrania na GitHubie. Możesz przenieść aplikację do Kosza. Konfiguracja, projekty,
 konto agent i narzędzia są zachowywane; nic nie kasuje ich automatycznie.
 Konto usuń dopiero po zabezpieczeniu projektów, przez Ustawienia systemowe.
 

@@ -20,7 +20,12 @@ AGENT_WORKBENCH_INTEGRATION=1 swift test
 
 The full UID-switch test runs only on CI after the setup script protects the
 runner HOME. No real provider credentials are used. Tagged commits passing both
-macOS jobs are automatically published as prereleases with checksum files.
+macOS jobs and the universal installer job are automatically published as
+prereleases with checksum files. `package-installer.sh` merges the two CI builds
+with lipo and creates a script-free `.pkg`; CI installs it on a disposable Mac.
+Never test `sudo installer` or account creation on a developer's real machine.
+Update the versioned download link in `site/index.html` with each release.
+The static download site is deployed by `.github/workflows/pages.yml` to GitHub Pages.
 
 Keep OS process execution in ProcessRunner. Do not add environment inheritance,
 arbitrary sudo rules, shell eval, credential forwarding or filesystem sandbox

@@ -65,3 +65,18 @@ chmod -a "user:agent deny list,search" "$HOME"
 ```
 
 Restart an agent session to repeat the real access checks. This app never applies this change automatically.
+
+## Installer and first launch
+
+The universal `.pkg` installs only the application into `/Applications`, with no
+preinstall/postinstall scripts or privileged service. The app is ad hoc signed;
+the package is unsigned and not notarized. A checksum detects transfer corruption,
+not publisher identity. Do not disable Gatekeeper to install it.
+
+On launch, the GUI runs its bundled `prepare-runtime.sh` as the main user. It
+verifies the app signature and prepares the main-owned shared launcher using
+directory owner/mode/ACL checks and an atomic executable replacement. It never
+creates accounts or alters HOME permissions. The separate setup button opens
+the bundled, previewable account/tool scripts in Terminal. Those scripts retain
+their explicit prompts. Provider-login buttons switch to the standard agent
+account with a clean environment; they do not copy main-account credentials.

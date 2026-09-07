@@ -9,7 +9,7 @@ standard macOS user**. Local projects, explicit permissions, native Metal access
 No VM, Electron, cloud backend, telemetry, or bundled agent credentials.
 
 [Polski: instalacja krok po kroku](docs/QUICKSTART.pl.md) ·
-[Download alpha](https://github.com/rajanbor/agent-workbench/releases/tag/v0.1.0-alpha.1) ·
+[Download for macOS](https://rajanbor.github.io/agent-workbench/) ·
 [Security model](docs/SECURITY.md)
 
 > Experimental alpha, not independently security-audited. A separate account is
@@ -19,30 +19,29 @@ No VM, Electron, cloud backend, telemetry, or bundled agent credentials.
 ## Quick start
 
 Requires macOS 14+ and a main account authorized to use sudo. Apple Silicon and
-Intel builds are provided. Agent tools require their own provider login.
+Intel are supported by one universal installer. Agent tools require their own provider login.
 
-1. Download the matching ZIP and its `.sha256` file from
-   [Releases](https://github.com/rajanbor/agent-workbench/releases/tag/v0.1.0-alpha.1).
-   Verify with `shasum -a 256 -c AgentWorkbench-macos-arm64.zip.sha256`
-   (use `x86_64` for Intel), then unzip.
-2. Open Terminal in the extracted `AgentWorkbench` folder.
-3. Run the guided setup:
+1. Open the [download page](https://rajanbor.github.io/agent-workbench/) and click **Pobierz na macOS**.
+2. Open the `.pkg` and follow macOS Installer. The app is installed into `/Applications`.
+3. Open **Agent Workbench → Skonfiguruj Maca**. The guide opens Terminal; answer
+   its prompts without typing shell commands.
+4. Use **Zaloguj Codex** / **Zaloguj Claude**, then add your first project.
 
-```sh
-bash scripts/quickstart.sh
-```
-
-The guide installs the app into `~/Applications`, installs `agentctl` into
-`~/.local/bin`, then asks before creating an account, granting workspace access,
+The app prepares the user-scoped launcher and `~/.local/bin/agentctl` on launch.
+The guide asks before creating an account, granting workspace access,
 restricting the main HOME or installing agent tools. Existing account passwords
 and existing projects are preserved. Passwords are handled by sudo/sysadminctl.
+The `.pkg` has no privileged install scripts: account creation and permission
+changes happen only through the separate guide. It requires no Xcode or ZIP extraction.
+Open the new copy from `/Applications` after upgrading from a manual installation
+in `~/Applications`; projects and settings are shared and preserved.
 
-Builds are ad hoc signed, **not notarized**. macOS may require you to review the
+The app is ad hoc signed; the installer is unsigned and **not notarized**. macOS may require you to review the
 download in System Settings → Privacy & Security → Open Anyway. We do not
 disable Gatekeeper or remove quarantine attributes. Apple Events consent for
 Terminal/iTerm is also handled by macOS.
 
-For a read-only preview:
+The source guide can also be previewed from a checkout:
 
 ```sh
 bash scripts/quickstart.sh --dry-run
@@ -55,7 +54,7 @@ also works). Install Apple's tools with `xcode-select --install` if missing and
 finish the system installer before continuing.
 
 ```sh
-git clone --branch v0.1.0-alpha.1 https://github.com/rajanbor/agent-workbench.git
+git clone --branch v0.1.0-alpha.2 https://github.com/rajanbor/agent-workbench.git
 cd agent-workbench
 bash scripts/quickstart.sh
 ```

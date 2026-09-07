@@ -1,26 +1,31 @@
-Native macOS GUI and CLI for Codex/Claude running as a separate standard account.
+## Install without ZIPs or shell commands
 
-## Install
+Open **[the download page](https://rajanbor.github.io/agent-workbench/)**, download
+**AgentWorkbench-macos-universal.pkg**, and follow macOS Installer.
+One installer supports Apple Silicon and Intel on macOS 14+.
 
-Download the ZIP for your Mac (arm64 = Apple Silicon, x86_64 = Intel) and
-the corresponding .sha256 file. Verify the checksum, extract the ZIP,
-open Terminal in the AgentWorkbench folder, and run:
+Open **Applications → Agent Workbench → Skonfiguruj Maca**. The app opens the
+guided account/tool setup in Terminal. Answer the prompts; no commands to type.
+Use **Zaloguj Codex** / **Zaloguj Claude** to log in, then add a project.
 
-```sh
-bash scripts/quickstart.sh
-```
+The installer only adds the app to /Applications and runs no privileged scripts.
+The app prepares its user-scoped launcher automatically. Account creation and
+permission changes remain explicit choices in the first-run guide.
+Existing agent accounts, passwords, projects and settings are preserved.
 
-The guide installs the app and CLI, offers standard-account creation and HOME
-protection, and installs tools in agent HOME. Passwords stay with macOS.
-Setup changes require explicit responses. Use --dry-run to preview the guide.
+If upgrading from a manual install in ~/Applications, open the new copy from
+/Applications. The older ZIP/source workflow remains available for developers.
 
 [Polska instrukcja](https://github.com/rajanbor/agent-workbench/blob/main/docs/QUICKSTART.pl.md)
 
-## Alpha limitations
+## Validation and alpha limitations
 
-Ad hoc signed, not notarized by Apple. Review macOS Privacy & Security prompts
-yourself. No independent security audit, enforced network sandbox, or automatic
-Lando query. Profiles are informational. CI verifies UID switching and workspace
-access on disposable macOS accounts; real provider login is not automated.
+CI tests the app on Apple Silicon and Intel, builds the universal installer,
+installs it on a disposable Mac, verifies both executable architectures and
+signatures, and checks the launcher and bundled setup entry points.
+
+The app is ad hoc signed; the installer is unsigned and not notarized by Apple.
+Review macOS Privacy & Security prompts yourself. No independent security audit,
+enforced network sandbox, or automated provider login test.
 
 Report vulnerabilities using GitHub private vulnerability reporting.
