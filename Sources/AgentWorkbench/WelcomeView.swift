@@ -12,7 +12,8 @@ struct WelcomeView: View {
                     Text("Przygotuj Maca do pracy z agentami.").foregroundStyle(.secondary)
                 }
             }
-            VStack(alignment: .leading, spacing: 20) {
+            ScrollView {
+              VStack(alignment: .leading, spacing: 20) {
                 step("1", title: "Skonfiguruj Maca", detail: "Konfigurator otworzy Terminal i poprowadzi przez konto agent, dostęp do projektów oraz instalację narzędzi. Nie musisz wpisywać komend.")
                 Button("Skonfiguruj Maca…") { model.configureMac() }.buttonStyle(.borderedProminent).controlSize(.large)
                 Divider()
@@ -23,6 +24,7 @@ struct WelcomeView: View {
                 }.controlSize(.large)
                 Divider()
                 step("3", title: "Dodaj pierwszy projekt", detail: "Wybierz istniejący workspace albo utwórz izolowaną kopię zaufanego repozytorium.")
+              }.frame(maxWidth: .infinity, alignment: .leading).padding(.trailing, 8)
             }
             Label("Hasła podajesz do macOS. Agent nie otrzymuje praw administratora.", systemImage: "lock")
                 .font(.callout).foregroundStyle(.secondary)
@@ -35,7 +37,7 @@ struct WelcomeView: View {
                     Task { await model.refresh() }
                 }.keyboardShortcut(.defaultAction)
             }
-        }.padding(30).frame(width: 640)
+        }.padding(30).frame(width: 640, height: 620)
     }
     private func step(_ number: String, title: String, detail: String) -> some View {
         HStack(alignment: .top, spacing: 12) {
