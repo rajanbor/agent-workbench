@@ -13,6 +13,15 @@ The app prepares its user-scoped launcher automatically. Account creation and
 permission changes remain explicit choices in the first-run guide.
 Existing agent accounts, passwords, projects and settings are preserved.
 
+## GitHub import
+
+Choose **Dodaj projekt → GitHub** inside the app, connect through the official
+GitHub CLI browser login, select an accessible repository, then click **Dodaj
+repozytorium**. The import supports private repositories and creates a new
+isolated local workspace. GitHub credentials, `origin` and credential helpers
+do not reach the `agent` account. GitHub CLI is required and the UI links to its
+official download if it is missing.
+
 If upgrading from a manual install in ~/Applications, open the new copy from
 /Applications. The older ZIP/source workflow remains available for developers.
 

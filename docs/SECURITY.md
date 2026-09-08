@@ -34,6 +34,17 @@ Docker daemon control often permits mounting and editing host data, defeating th
 
 Main-account SSH keys, AWS config, GitHub CLI auth, provider keys and Keychain entries are never copied. Authenticate Codex/Claude separately as agent if needed. The app does not log secret values or offer its own password manager. Git push and remote credential forwarding are intentionally absent.
 
+## GitHub import
+
+The GitHub button uses the user-installed official GitHub CLI. Its browser login
+stores credentials in the main account's macOS Keychain; Agent Workbench neither
+reads nor stores the token. Repository listing uses that CLI only as the main
+user. Import first clones the selected repository into a main-owned private
+staging directory, creates the existing isolated Git copy, removes the staging
+checkout, then grants the standard agent account access only to the isolated
+workspace. The isolated metadata has no `origin`, credential helper, hooks or
+source checkout dependency. Import a repository only when you trust its source.
+
 ## Setup review
 
 Use `agentctl status`; if sudo requires authentication, run `sudo -v` and retry in the same terminal. Review access warnings before launch. Creating/changing account privileges, restricting private directory permissions and approving macOS consent remain explicit user actions. This project does not execute administrator-password operations during development.

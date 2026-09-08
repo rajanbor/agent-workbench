@@ -9,9 +9,9 @@ public enum ProcessRunner {
     public static var cleanEnvironment: [String: String] {
         ["PATH": "/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin", "HOME": FileManager.default.homeDirectoryForCurrentUser.path, "LANG": "en_US.UTF-8", "GIT_CONFIG_GLOBAL": "/dev/null", "GIT_CONFIG_SYSTEM": "/dev/null", "GIT_CONFIG_NOSYSTEM": "1", "GIT_TERMINAL_PROMPT": "0"]
     }
-    public static func run(_ executable: String, _ arguments: [String], directory: String? = nil) throws -> ProcessResult {
+    public static func run(_ executable: String, _ arguments: [String], directory: String? = nil, environment overrides: [String: String] = [:]) throws -> ProcessResult {
         let process = Process(); process.executableURL = URL(fileURLWithPath: executable)
-        process.arguments = arguments; process.environment = cleanEnvironment
+        process.arguments = arguments; process.environment = cleanEnvironment.merging(overrides, uniquingKeysWith: { _, replacement in replacement })
         if let directory { process.currentDirectoryURL = URL(fileURLWithPath: directory) }
         // Regular temporary file avoids pipe buffer deadlocks for large Git output.
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
@@ -37,8 +37,8 @@ public enum ProcessRunner {
         while waitpid(child, &status, 0) == -1 { if errno != EINTR { throw WorkbenchError.invalid("Cannot wait for account switch") } }
         return status & 0x7f == 0 ? (status >> 8) & 0xff : 128 + (status & 0x7f)
     }
-    @discardableResult public static func checked(_ executable: String, _ arguments: [String], directory: String? = nil) throws -> String {
-        let result = try run(executable, arguments, directory: directory)
+    @discardableResult public static func checked(_ executable: String, _ arguments: [String], directory: String? = nil, environment: [String: String] = [:]) throws -> String {
+        let result = try run(executable, arguments, directory: directory, environment: environment)
         guard result.status == 0 else { throw WorkbenchError.invalid(result.output.isEmpty ? "Command failed (\(result.status))" : result.output) }
         return result.output.trimmingCharacters(in: .whitespacesAndNewlines)
     }

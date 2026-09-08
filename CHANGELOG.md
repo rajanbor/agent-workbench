@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.0-alpha.3
+
+- Connect GitHub through the official GitHub CLI and choose an accessible personal, organisation or collaborator repository from the app.
+- Import private repositories through the main account's macOS Keychain without exposing credentials, `origin` or Git credential configuration to the agent account.
+
 ## 0.1.0-alpha.2
 
 - GitHub Pages download page with one universal macOS `.pkg` for Apple Silicon and Intel.

@@ -56,6 +56,15 @@ final class SecurityTests: XCTestCase {
         for key in ["AWS_ACCESS_KEY_ID", "GITHUB_TOKEN", "GH_TOKEN", "VERCEL_TOKEN", "CLOUDFLARE_TOKEN", "OPENAI_API_KEY", "ANTHROPIC_API_KEY", "SSH_AUTH_SOCK", "PATH", "ZDOTDIR", "DYLD_INSERT_LIBRARIES", "BASH_ENV"] { XCTAssertThrowsError(try WorkspaceValidation.environment([key: "value"])) }
         XCTAssertNoThrow(try WorkspaceValidation.environment(["PORT": "3000", "NODE_ENV": "development"]))
     }
+    func testGitHubRepositoryNameValidation() throws {
+        for valid in ["owner/repository", "my-org/my_repo", "one.two/three-four"] { XCTAssertTrue(GitHubAccess.validRepositoryName(valid)) }
+        for invalid in ["owner", "/repo", "owner/", "owner/repo/extra", "owner repo/name", "owner/$(bad)", "owner/../repo"] { XCTAssertFalse(GitHubAccess.validRepositoryName(invalid)) }
+    }
+    func testGitHubRepositoryDecodingExcludesCredentials() throws {
+        let data = #"[{"name":"repo","nameWithOwner":"owner/repo","description":null,"isPrivate":true,"url":"https://github.com/owner/repo","visibility":"PRIVATE"}]"#.data(using: .utf8)!
+        let repository = try JSONDecoder().decode([GitHubRepository].self, from: data).first!
+        XCTAssertEqual(repository.id, "owner/repo"); XCTAssertTrue(repository.isPrivate)
+    }
     func testSupervisorStopsItsOwnChild() throws { try fixture { root, _ in
         // Pre-existing request also covers a stop sent before process startup.
         try Data().write(to: URL(fileURLWithPath: root + "/stop"))

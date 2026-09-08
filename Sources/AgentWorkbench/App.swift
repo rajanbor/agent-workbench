@@ -12,6 +12,7 @@ import WorkbenchCore
     var busy = false
     var setup = false
     var creating = false
+    var githubImporting = false
     var editing: Project?
     var privacyHelp = false
     var sessions: [UUID: [SessionRecord]] = [:]
@@ -55,6 +56,11 @@ import WorkbenchCore
             openSetupTerminal(args.map(Shell.quote).joined(separator: " "))
         } catch { message = error.localizedDescription }
     }
+    func connectGitHub() {
+        do { openSetupTerminal(try GitHubAccess.loginCommand()) }
+        catch { message = error.localizedDescription }
+    }
+    func openGitHubCLI() { NSWorkspace.shared.open(URL(string: "https://cli.github.com/")!) }
     private func openSetupTerminal(_ command: String) {
         let terminal = config.terminal
         Task {
@@ -107,6 +113,7 @@ struct MainView: View {
         .task { while !Task.isCancelled { model.refreshSessions(); try? await Task.sleep(for: .seconds(2)) } }
         .sheet(isPresented: $model.privacyHelp) { PrivacyHelpView() }
         .sheet(isPresented: $model.creating) { RepositoryView(model: model) }
+        .sheet(isPresented: $model.githubImporting) { GitHubImportView(model: model) }
         .sheet(item: $model.editing) { project in EnvironmentView(model: model, project: project) }
         .alert("Agent Workbench", isPresented: Binding(get: { model.message != nil }, set: { if !$0 { model.message = nil } })) { Button("OK") { model.message = nil } } message: { Text(model.message ?? "") }
         .sheet(isPresented: $model.setup) {
@@ -126,6 +133,7 @@ struct ProjectsView: View {
                 Spacer()
                 Button { Task { await model.refresh() } } label: { Image(systemName: "arrow.clockwise") }.help("Odśwież status")
                 Menu {
+                    Button("GitHub…") { model.githubImporting = true }
                     Button("Istniejący workspace…") { model.add() }
                     Button("Izolowana kopia repozytorium…") { model.creating = true }
                 } label: { Label("Dodaj projekt", systemImage: "plus") }.menuStyle(.borderlessButton).fixedSize().padding(.leading, 10)

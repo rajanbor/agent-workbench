@@ -54,7 +54,7 @@ also works). Install Apple's tools with `xcode-select --install` if missing and
 finish the system installer before continuing.
 
 ```sh
-git clone --branch v0.1.0-alpha.2 https://github.com/rajanbor/agent-workbench.git
+git clone --branch v0.1.0-alpha.3 https://github.com/rajanbor/agent-workbench.git
 cd agent-workbench
 bash scripts/quickstart.sh
 ```
@@ -108,6 +108,16 @@ Add an existing directory inside AgentWork, or choose a trusted source repositor
 and preview an isolated copy. Select the project and click Codex, Claude or
 Terminal. The terminal explains its sudo password prompt; startup errors also
 appear in the project panel.
+
+To import one of your GitHub repositories, choose **Dodaj projekt → GitHub**.
+Install [GitHub CLI](https://cli.github.com/) first if it is not already on your
+Mac. The app opens its official login in your browser, lists personal,
+organisation and collaborator repositories available to the connected account,
+available to that account, and creates an isolated workspace after you choose
+one. Private repositories work when the connected account can read them. GitHub
+credentials stay in the main account's Keychain; the agent gets no token, remote
+origin, or credential configuration. Review the selected repository as trusted
+before importing it.
 
 ```sh
 ~/.local/bin/agentctl list

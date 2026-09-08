@@ -23,7 +23,7 @@ Jeśli masz poprzednią kopię w `~/Applications`, otwórz nową z `/Application
 Projekty i ustawienia są wspólne i zachowane. Pierwszą konfigurację możesz ponownie
 otworzyć w Ustawieniach aplikacji.
 
-[Wydanie, kod źródłowy i sumy SHA-256](https://github.com/rajanbor/agent-workbench/releases/tag/v0.1.0-alpha.2).
+[Wydanie, kod źródłowy i sumy SHA-256](https://github.com/rajanbor/agent-workbench/releases/tag/v0.1.0-alpha.3).
 
 Hasło głównego konta podajesz do sudo. Przy tworzeniu konta macOS poprosi
 osobno o nowe hasło dla użytkownika agent. Skrypty nie przechowują haseł.
@@ -46,7 +46,7 @@ xcode-select --install
 Zakończ instalację w oknie macOS. Następnie:
 
 ```sh
-git clone --branch v0.1.0-alpha.2 https://github.com/rajanbor/agent-workbench.git
+git clone --branch v0.1.0-alpha.3 https://github.com/rajanbor/agent-workbench.git
 cd agent-workbench
 bash scripts/quickstart.sh
 ```
@@ -108,9 +108,18 @@ exit
 Zaloguj narzędzia osobno. Nie kopiuj konfiguracji, kluczy SSH ani sesji logowania
 z głównego konta. Subskrypcje/API podlegają zasadom dostawców.
 
-W aplikacji: Dodaj projekt → Izolowana kopia repozytorium → wybierz zaufane
-źródło → sprawdź docelową ścieżkę i branch → utwórz.
-Następnie wybierz Codex lub Claude.
+W aplikacji wybierz **Dodaj projekt → GitHub**. Jeśli GitHub CLI nie jest na
+Macu, przycisk prowadzi do jego oficjalnej instalacji. Potem wybierz
+**Połącz GitHub**, zaloguj się w przeglądarce, wróć do aplikacji i kliknij
+**Odśwież**. Zobaczysz swoje prywatne, publiczne, organizacyjne i współdzielone
+repozytoria. Wybierz zaufane repozytorium, nazwę folderu i branch, a następnie
+**Dodaj repozytorium**. Aplikacja pobierze je do tymczasowej, prywatnej lokalizacji
+i utworzy izolowaną kopię w AgentWork. Dane logowania GitHub nie trafiają do
+konta agent ani do skopiowanego projektu.
+
+Alternatywnie: Dodaj projekt → Izolowana kopia repozytorium → wybierz lokalne,
+zaufane źródło → sprawdź docelową ścieżkę i branch → utwórz. Następnie wybierz
+Codex lub Claude.
 
 ```sh
 ~/.local/bin/agentctl list
