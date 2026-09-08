@@ -1,55 +1,58 @@
 <!doctype html>
-<html lang="pl">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Agent Workbench. Codex i Claude w lokalnych projektach na oddzielnym koncie macOS.">
+  <meta name="description" content="Agent Workbench. Codex and Claude in local projects under a separate macOS account.">
   <meta name="theme-color" content="#fafafa">
-  <title>Agent Workbench dla macOS</title>
+  <title>Agent Workbench for macOS</title>
   <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
+  <link rel="alternate" hreflang="en" href="https://rajanbor.github.io/agent-workbench/">
+  <link rel="alternate" hreflang="pl" href="https://rajanbor.github.io/agent-workbench/pl/">
+  <link rel="alternate" hreflang="x-default" href="https://rajanbor.github.io/agent-workbench/">
 </head>
 <body>
-  <a class="skip" href="#main">Przejdź do treści</a>
+  <a class="skip" href="#main">Skip to content</a>
   <header class="nav-shell">
-    <nav class="nav" aria-label="Nawigacja główna">
+    <nav class="nav" aria-label="Main navigation">
       <a class="brand" href="./">Agent Workbench</a>
-      <div class="nav-links"><a href="#wydania">Wydania</a><a href="docs/">Dokumentacja</a><a href="https://github.com/rajanbor/agent-workbench">GitHub <span aria-hidden="true">↗</span></a></div>
+      <div class="nav-links"><a href="#wydania">Releases</a><a href="docs/">Documentation</a><a href="https://github.com/rajanbor/agent-workbench">GitHub <span aria-hidden="true">↗</span></a><span class="language-switch" role="group" aria-label="Language"><a href="./" lang="en" hreflang="en" aria-current="true">English</a><span aria-hidden="true">/</span><a href="pl/" lang="pl" hreflang="pl">Polski</a></span></div>
     </nav>
   </header>
   <main id="main">
     <section class="hero" aria-labelledby="title">
-      <p class="eyebrow">Dla macOS</p>
+      <p class="eyebrow">For macOS</p>
       <h1 id="title">Agent Workbench.</h1>
-      <p class="intro">Codex i Claude.<br>W Twoich projektach. Na osobnym koncie.</p>
-      <a class="button" href="https://github.com/rajanbor/agent-workbench/releases/download/v0.1.0-alpha.2/AgentWorkbench-macos-universal.pkg">Pobierz na macOS <span aria-hidden="true">↓</span></a>
-      <p class="meta">macOS 14+ · Apple Silicon i Intel</p>
-      <p class="note">Wersja alpha. <a href="docs/#bezpieczenstwo">Bez notaryzacji Apple.</a></p>
+      <p class="intro">Codex and Claude.<br>Your projects. A separate account.</p>
+      <a class="button" href="https://github.com/rajanbor/agent-workbench/releases/download/v0.1.0-alpha.2/AgentWorkbench-macos-universal.pkg">Download for macOS <span aria-hidden="true">↓</span></a>
+      <p class="meta">macOS 14+ · Apple Silicon and Intel</p>
+      <p class="note">Alpha release. <a href="docs/#bezpieczenstwo">Not notarized by Apple.</a></p>
     </section>
     <div class="content">
       <section class="section" id="wydania" aria-labelledby="releases-title">
-        <h2 id="releases-title">Wydania</h2>
+        <h2 id="releases-title">Releases</h2>
         <ul class="releases">
           <li>
-            <div class="release-heading"><h3>0.1.0-alpha.2 <span class="badge">Aktualna</span></h3><a href="https://github.com/rajanbor/agent-workbench/releases/tag/v0.1.0-alpha.2" aria-label="Szczegóły wydania 0.1.0-alpha.2">Szczegóły <span aria-hidden="true">↗</span></a></div>
-            <p>Uniwersalny instalator macOS. Konfiguracja i logowanie do narzędzi z poziomu aplikacji.</p>
+            <div class="release-heading"><h3>0.1.0-alpha.2 <span class="badge">Latest</span></h3><a href="https://github.com/rajanbor/agent-workbench/releases/tag/v0.1.0-alpha.2" aria-label="Release details for 0.1.0-alpha.2">Details <span aria-hidden="true">↗</span></a></div>
+            <p>Universal macOS installer. Start setup and sign in to your tools from the app.</p>
           </li>
           <li>
-            <div class="release-heading"><h3>0.1.0-alpha.1</h3><a href="https://github.com/rajanbor/agent-workbench/releases/tag/v0.1.0-alpha.1" aria-label="Szczegóły wydania 0.1.0-alpha.1">Szczegóły <span aria-hidden="true">↗</span></a></div>
-            <p>Pierwsze wydanie. Lokalne projekty, oddzielne konto agent i obsługa sesji.</p>
+            <div class="release-heading"><h3>0.1.0-alpha.1</h3><a href="https://github.com/rajanbor/agent-workbench/releases/tag/v0.1.0-alpha.1" aria-label="Release details for 0.1.0-alpha.1">Details <span aria-hidden="true">↗</span></a></div>
+            <p>Initial release. Local projects, a separate agent account and session management.</p>
           </li>
         </ul>
       </section>
       <section class="section faq" id="pomoc" aria-labelledby="faq-title">
-        <h2 id="faq-title">Pytania i odpowiedzi.</h2>
-        <details id="instalacja"><summary>Jak zacząć?</summary><div class="answer"><p>Pobierz instalator, otwórz go i przejdź przez instalację macOS. Następnie otwórz Agent Workbench w folderze Aplikacje i wybierz „Skonfiguruj Maca”. Konfigurator poprowadzi Cię przez kolejne kroki.</p><a href="docs/#instalacja">Instrukcja instalacji <span aria-hidden="true">→</span></a></div></details>
-        <details><summary>Czy aplikacja działa na moim Macu?</summary><div class="answer"><p>Wymaga macOS 14 lub nowszego. Jeden instalator obsługuje Apple Silicon oraz Intela. Nie potrzebujesz Xcode.</p></div></details>
-        <details><summary>Dlaczego macOS prosi o zgodę lub hasło?</summary><div class="answer"><p>Wersja alpha nie ma notaryzacji Apple, więc system może ją zablokować do czasu Twojej zgody. Instalacja i przełączanie kont mogą wymagać hasła. Hasła obsługuje macOS; aplikacja ich nie zapisuje.</p><a href="docs/#bezpieczenstwo">Uprawnienia i bezpieczeństwo <span aria-hidden="true">→</span></a></div></details>
-        <details><summary>Czy muszę mieć konto Codex lub Claude?</summary><div class="answer"><p>Tak. Logujesz narzędzia osobno, używając przycisków w aplikacji. Dostęp do nich i rozliczenia podlegają zasadom dostawców.</p></div></details>
-        <details><summary>Co daje oddzielne konto agent?</summary><div class="answer"><p>Agent działa jako standardowy użytkownik z dostępem określonym przez uprawnienia macOS. To nie jest pełny sandbox. Aplikacja nie wymusza blokady sieci i nie przeszła niezależnego audytu bezpieczeństwa.</p></div></details>
+        <h2 id="faq-title">Questions and answers.</h2>
+        <details id="instalacja"><summary>How do I get started?</summary><div class="answer"><p>Download and open the installer, then follow the macOS installation steps. Open Agent Workbench in Applications and choose “Skonfiguruj Maca” (Set up your Mac). The guide will walk you through the next steps.</p><a href="docs/#instalacja">Installation guide <span aria-hidden="true">→</span></a></div></details>
+        <details><summary>Will it work on my Mac?</summary><div class="answer"><p>You need macOS 14 or later. One installer supports Apple Silicon and Intel. No Xcode required.</p></div></details>
+        <details><summary>Why does macOS ask for permission or a password?</summary><div class="answer"><p>This alpha is not notarized by Apple, so macOS may block it until you approve it. Installation and switching accounts may require a password. macOS handles passwords; the app does not store them.</p><a href="docs/#bezpieczenstwo">Permissions and security <span aria-hidden="true">→</span></a></div></details>
+        <details><summary>Do I need a Codex or Claude account?</summary><div class="answer"><p>Yes. Sign in to each tool separately using the buttons in the app. Access and billing are subject to each provider’s terms.</p></div></details>
+        <details><summary>What does a separate agent account do?</summary><div class="answer"><p>The agent runs as a standard user with access defined by macOS permissions. This is not a full sandbox. The app does not enforce network restrictions and has not undergone an independent security audit.</p></div></details>
       </section>
     </div>
   </main>
-  <footer class="footer"><span>© 2026 Rajan Bor</span><div><a href="https://github.com/rajanbor/agent-workbench/blob/main/LICENSE">Apache-2.0</a><a href="docs/">Dokumentacja</a><a href="https://github.com/rajanbor/agent-workbench">GitHub</a></div><p>Niezależny projekt. Bez powiązania z Apple, OpenAI ani Anthropic.</p></footer>
+  <footer class="footer"><span>© 2026 Rajan Bor</span><div><a href="https://github.com/rajanbor/agent-workbench/blob/main/LICENSE">Apache-2.0</a><a href="docs/">Documentation</a><a href="https://github.com/rajanbor/agent-workbench">GitHub</a></div><p>An independent project. Not affiliated with Apple, OpenAI or Anthropic.</p></footer>
 </body>
 </html>

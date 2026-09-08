@@ -23,6 +23,9 @@ a:focus-visible, summary:focus-visible { outline: 3px solid var(--blue); outline
 .nav-links { display: flex; align-items: center; gap: 28px; font-size: .875rem; }
 .nav-links a { color: #515154; }
 .nav-links [aria-current="page"] { color: #1d1d1f; }
+.language-switch { display: inline-flex; align-items: center; gap: 8px; padding-left: 20px; border-left: 1px solid var(--line); color: var(--muted); }
+.language-switch a[aria-current="true"] { color: #1d1d1f; font-weight: 600; }
+.nav-links { flex-wrap: wrap; }
 .hero { padding: 100px 24px 94px; text-align: center; }
 .eyebrow { font-size: 1rem; color: var(--muted); margin: 0 0 16px; }
 h1 { font-size: clamp(2.7rem, 6.5vw, 4.75rem); line-height: 1.08; letter-spacing: -.065em; font-weight: 600; margin: 0; }
@@ -79,6 +82,7 @@ h2 { font-size: 1.65rem; line-height: 1.25; font-weight: 600; letter-spacing: -.
 @media (max-width: 640px) {
   .nav { padding: 16px 22px; flex-wrap: wrap; gap: 12px; }
   .nav-links { gap: 20px; }
+  .language-switch { padding-left: 0; border-left: 0; }
   .hero { padding: 68px 22px 64px; }
   .content { padding: 0 22px; }
   .section { padding-top: 34px; padding-bottom: 34px; }
