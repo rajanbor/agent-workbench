@@ -10,6 +10,14 @@ The documents in `product/`, `architecture/`, `architecture/ADR/` and `specs/` a
 - [#7 Inspector and status bar](https://github.com/rajanbor/open-cube/issues/7)
 - [#8 Activity views and workspace explorer](https://github.com/rajanbor/open-cube/issues/8)
 
+Shipped in the desktop client and specified in `specs/`: the workbench shell
+(`WORKBENCH_SHELL.md`), the in-app inspector (`INSPECTOR_MODEL.md`), the
+terminal panel (`TERMINAL_PANEL.md`), the canvas workflow editor
+(`CANVAS_WORKFLOW.md`), the model catalogue and model version control
+(`MODEL_CATALOG.md`) and usage accounting (`USAGE_ACCOUNTING.md`). Their
+execution halves — live ptys, running workflows, provider launches — belong to
+Phase 2.
+
 ## Phase 2 — Runtime, sandbox and terminals
 
 - [#9 workbenchd](https://github.com/rajanbor/open-cube/issues/9)

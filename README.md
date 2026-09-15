@@ -18,15 +18,20 @@ runtime remains the supported execution path.
 
 The next desktop client lives in [`desktop/`](desktop/). It uses a shared Rust
 engine with a Tauri + React desktop shell, so the same application architecture
-can target macOS, Windows and Linux. The preview currently has a working native
-shell, read-only computer profile and provider/model/session dashboard. It does
-not yet launch agents, providers or Docker; use the Swift macOS app above for
-that while the runtime adapters are migrated.
+can target macOS, Windows and Linux. The preview opens on a chat with an
+in-app inspector that answers from the engine snapshot — what each agent is
+doing, what runs in each sandbox, which model version was used and what it cost
+— under a read-only policy that refuses file contents and credentials and never
+reaches the network. Around it sit collapsible agent, sandbox, terminal,
+workflow and model rails, a workbench-API rail, a terminal dock, a canvas
+workflow editor, a sandbox boundary view and usage accounting, in light and
+dark themes. It does not yet launch agents, providers, ptys or Docker; use the
+Swift macOS app above for that while the runtime adapters are migrated.
 
 ```sh
 cd desktop
 pnpm install
-pnpm tauri dev
+pnpm tauri dev      # native window; pnpm tauri build produces the .app
 ```
 
 See [the cross-platform migration design](.ai/architecture/CROSS_PLATFORM_MIGRATION.md) for the
