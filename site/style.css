@@ -36,6 +36,12 @@ h1 { font-size: clamp(2.7rem, 6.5vw, 4.75rem); line-height: 1.08; letter-spacing
 .note { font-size: .8125rem; color: var(--muted); margin: 0; }
 .note a { color: inherit; text-decoration: underline; }
 .content { max-width: 808px; margin: auto; padding: 0 32px; }
+.product-shot { padding: 18px 0 70px; text-align: center; }
+.product-copy { max-width: 610px; margin: 0 auto 30px; }
+.product-copy .eyebrow { margin-bottom: 10px; font-size: .875rem; }
+.product-copy h2 { margin-bottom: 12px; }
+.product-copy p:last-child { color: var(--muted); margin: 0; }
+.product-shot img { display: block; width: 100%; height: auto; border: 1px solid #dfe5ed; border-radius: 20px; box-shadow: 0 22px 48px rgba(29, 58, 93, .13); }
 .section { padding: 48px 0; border-top: 1px solid var(--line); }
 h2 { font-size: 1.65rem; line-height: 1.25; font-weight: 600; letter-spacing: -.035em; margin: 0 0 28px; }
 .releases { list-style: none; padding: 0; margin: 0; }
@@ -85,6 +91,8 @@ h2 { font-size: 1.65rem; line-height: 1.25; font-weight: 600; letter-spacing: -.
   .language-switch { padding-left: 0; border-left: 0; }
   .hero { padding: 68px 22px 64px; }
   .content { padding: 0 22px; }
+  .product-shot { padding: 10px 0 48px; }
+  .product-shot img { border-radius: 13px; }
   .section { padding-top: 34px; padding-bottom: 34px; }
   h2 { font-size: 1.5rem; }
   .release-heading { gap: 12px; flex-wrap: wrap; }

@@ -1,0 +1,55 @@
+<svg width="1440" height="960" viewBox="0 0 1440 960" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="canvas" x1="81" y1="48" x2="1375" y2="935" gradientUnits="userSpaceOnUse"><stop stop-color="#F8FAFC"/><stop offset="1" stop-color="#EEF3FA"/></linearGradient>
+    <linearGradient id="blue" x1="175" y1="382" x2="430" y2="509" gradientUnits="userSpaceOnUse"><stop stop-color="#1677F2"/><stop offset="1" stop-color="#075DCB"/></linearGradient>
+    <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="28" stdDeviation="36" flood-color="#193456" flood-opacity=".18"/></filter>
+  </defs>
+  <rect width="1440" height="960" rx="28" fill="url(#canvas)"/>
+  <g filter="url(#shadow)">
+    <rect x="68" y="55" width="1304" height="850" rx="22" fill="#FCFCFD"/>
+    <path d="M90 55h280c12.15 0 22 9.85 22 22v806c0 12.15-9.85 22-22 22H90c-12.15 0-22-9.85-22-22V77c0-12.15 9.85-22 22-22Z" fill="#F5F7FB"/>
+    <circle cx="101" cy="89" r="8" fill="#FF5E57"/><circle cx="126" cy="89" r="8" fill="#FEBC2E"/><circle cx="151" cy="89" r="8" fill="#28C840"/>
+    <rect x="94" y="143" width="34" height="34" rx="10" fill="#0877F9"/><path d="M104 154h7l-4 6 4 6h-7" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="139" y="159" fill="#171B24" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="18" font-weight="700">Agent Workbench</text>
+    <text x="139" y="181" fill="#818897" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="12">Lokalne środowisko pracy</text>
+    <text x="94" y="247" fill="#98A0AF" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="11" font-weight="700">WORKSPACE</text>
+    <rect x="84" y="262" width="292" height="48" rx="12" fill="#E6EEF9"/>
+    <path d="M108 278h8l3 3h13v12h-24v-15Z" stroke="#1677F2" stroke-width="1.8" stroke-linejoin="round"/>
+    <text x="144" y="292" fill="#176CD5" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="16" font-weight="600">Projekty</text>
+    <rect x="108" y="329" width="25" height="19" rx="3" stroke="#646E7F" stroke-width="1.8"/><path d="M113 338h5m4 0h5" stroke="#646E7F" stroke-width="1.8" stroke-linecap="round"/>
+    <text x="144" y="345" fill="#303846" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="16">Agenci</text>
+    <path d="M108 377h25m-25 7h25m-25 7h25M115 370v7m11-7v7m-11 14v7m11-7v7" stroke="#646E7F" stroke-width="1.7" stroke-linecap="round"/>
+    <text x="144" y="391" fill="#303846" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="16">Ustawienia</text>
+    <rect x="84" y="828" width="292" height="53" rx="11" fill="#EAEEF5"/>
+    <circle cx="108" cy="854" r="9" fill="#55C473"/><path d="M104 854l3 3 6-7" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="124" y="850" fill="#374151" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="13" font-weight="600">Konto: agent</text>
+    <text x="124" y="868" fill="#818897" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="11">Działa lokalnie na tym Macu</text>
+    <text x="438" y="142" fill="#181C25" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="38" font-weight="700" letter-spacing="-1.5">Workspace</text>
+    <text x="438" y="172" fill="#737B89" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="17">Twoje projekty uruchamiane na oddzielnym koncie macOS.</text>
+    <rect x="1217" y="114" width="112" height="38" rx="19" fill="#0877F9"/><path d="M1239 133h13m-6.5-6.5v13" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+    <text x="1260" y="138" fill="white" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="13" font-weight="600">Dodaj</text>
+    <g><rect x="438" y="211" width="270" height="92" rx="15" fill="white" stroke="#E2E7EF"/>
+      <rect x="456" y="229" width="32" height="32" rx="9" fill="#EAF3FF"/><path d="M464 240h7l3 3h6v8h-16v-11Z" stroke="#0877F9" stroke-width="1.7" stroke-linejoin="round"/>
+      <text x="501" y="241" fill="#7A8493" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="12">Projekty</text><text x="501" y="269" fill="#1C2430" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="23" font-weight="700">3</text><text x="524" y="269" fill="#7A8493" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="12">w workspace</text></g>
+    <g><rect x="722" y="211" width="270" height="92" rx="15" fill="white" stroke="#E2E7EF"/>
+      <rect x="740" y="229" width="32" height="32" rx="9" fill="#ECFAF0"/><path d="m756 234 3 7 6 2-6 2-3 7-3-7-6-2 6-2 3-7Z" fill="#26A65B"/>
+      <text x="785" y="241" fill="#7A8493" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="12">Aktywne sesje</text><text x="785" y="269" fill="#1C2430" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="23" font-weight="700">1</text><text x="808" y="269" fill="#7A8493" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="12">uruchomiona teraz</text></g>
+    <g><rect x="1006" y="211" width="323" height="92" rx="15" fill="white" stroke="#E2E7EF"/>
+      <rect x="1024" y="229" width="32" height="32" rx="9" fill="#EDF3FF"/><path d="M1040 235l8 3v6c0 5-3.4 8-8 10-4.6-2-8-5-8-10v-6l8-3Z" stroke="#3B82F6" stroke-width="1.7"/>
+      <text x="1069" y="241" fill="#7A8493" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="12">Izolacja</text><text x="1069" y="269" fill="#1C2430" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="23" font-weight="700">agent</text><text x="1132" y="269" fill="#7A8493" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="12">oddzielne konto</text></g>
+    <rect x="438" y="322" width="302" height="536" rx="18" fill="white" stroke="#E2E7EF"/>
+    <text x="460" y="356" fill="#29303B" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="15" font-weight="700">Projekty</text><text x="714" y="356" fill="#8C94A2" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="12">3</text>
+    <rect x="454" y="374" width="270" height="70" rx="12" fill="url(#blue)"/><rect x="467" y="391" width="34" height="34" rx="9" fill="white" fill-opacity=".16"/><path d="M475 402h7l3 3h7v9h-17v-12Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/><text x="513" y="400" fill="white" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="14" font-weight="700">Agent Workbench</text><text x="513" y="420" fill="white" fill-opacity=".76" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="11">Sesja aktywna</text><circle cx="704" cy="409" r="4" fill="white"/>
+    <rect x="454" y="454" width="270" height="70" rx="12" fill="#FAFBFC"/><rect x="467" y="471" width="34" height="34" rx="9" fill="#EAF3FF"/><path d="M475 482h7l3 3h7v9h-17v-12Z" stroke="#0877F9" stroke-width="1.6" stroke-linejoin="round"/><text x="513" y="480" fill="#2B3442" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="14" font-weight="700">landing-page</text><text x="513" y="500" fill="#8A93A1" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="11">Repozytorium</text>
+    <rect x="454" y="534" width="270" height="70" rx="12" fill="#FAFBFC"/><rect x="467" y="551" width="34" height="34" rx="9" fill="#EAF3FF"/><path d="M475 562h7l3 3h7v9h-17v-12Z" stroke="#0877F9" stroke-width="1.6" stroke-linejoin="round"/><text x="513" y="560" fill="#2B3442" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="14" font-weight="700">ios-experiments</text><text x="513" y="580" fill="#8A93A1" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="11">Gotowy do startu</text>
+    <rect x="758" y="322" width="571" height="536" rx="18" fill="white" stroke="#E2E7EF"/>
+    <text x="784" y="365" fill="#1C2430" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="22" font-weight="700">Agent Workbench</text><text x="784" y="389" fill="#8A93A1" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11">/Users/Shared/AgentWork/Projects/agent-workbench</text>
+    <rect x="784" y="420" width="144" height="42" rx="21" fill="#0877F9"/><path d="M806 438h8l-4 5 4 5h-8" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><text x="828" y="445" fill="white" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="13" font-weight="700">Uruchom Codex</text>
+    <rect x="940" y="420" width="133" height="42" rx="21" fill="#F0F2F6"/><text x="962" y="446" fill="#303846" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="13" font-weight="600">✦  Uruchom Claude</text>
+    <rect x="1085" y="420" width="83" height="42" rx="21" fill="#F0F2F6"/><text x="1108" y="446" fill="#303846" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="13" font-weight="600">Terminal</text>
+    <rect x="784" y="491" width="519" height="1" fill="#E6EAF0"/>
+    <text x="784" y="527" fill="#8A93A1" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="11" font-weight="700">OSTATNIE SESJE</text><text x="1199" y="527" fill="#9AA2AF" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="11">dzisiaj, 12:04</text>
+    <rect x="784" y="548" width="519" height="72" rx="12" fill="#F9FBFD"/><rect x="803" y="567" width="32" height="32" rx="9" fill="#EAF9EF"/><path d="M811 582h16m-8-8v16" stroke="#22A35A" stroke-width="1.6" stroke-linecap="round"/><text x="849" y="578" fill="#2B3442" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="14" font-weight="700">Codex</text><text x="849" y="597" fill="#8A93A1" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="11">Działa od 12:04</text><rect x="1191" y="570" width="91" height="27" rx="14" fill="#EAF9EF"/><circle cx="1207" cy="584" r="4" fill="#25A65D"/><text x="1218" y="588" fill="#278350" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="11" font-weight="600">Uruchomiony</text>
+    <rect x="784" y="632" width="519" height="72" rx="12" fill="#F9FBFD"/><rect x="803" y="651" width="32" height="32" rx="9" fill="#EDF1F7"/><path d="M811 666h16" stroke="#6E7785" stroke-width="1.6" stroke-linecap="round"/><text x="849" y="662" fill="#2B3442" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="14" font-weight="700">Terminal</text><text x="849" y="681" fill="#8A93A1" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="11">wczoraj, 18:46</text><rect x="1199" y="654" width="83" height="27" rx="14" fill="#EEF1F5"/><text x="1215" y="672" fill="#78818E" font-family="-apple-system, BlinkMacSystemFont, Arial" font-size="11" font-weight="600">Zakończony</text>
+  </g>
+</svg>

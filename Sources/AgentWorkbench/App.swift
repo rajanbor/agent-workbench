@@ -85,14 +85,18 @@ struct MainView: View {
     var body: some View {
         NavigationSplitView {
             VStack(spacing: 0) {
-                HStack(spacing: 10) {
-                    Image(systemName: "terminal.fill").font(.title2).foregroundStyle(.tint)
+                HStack(spacing: 11) {
+                    Image(systemName: "terminal.fill")
+                        .font(.title3.weight(.semibold))
+                        .foregroundStyle(.white)
+                        .frame(width: 34, height: 34)
+                        .background(Color.accentColor.gradient, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Agent Workbench").font(.headline)
-                        Text("Lokalne środowisko pracy").font(.caption2).foregroundStyle(.secondary)
+                        Text("Lokalne środowisko pracy").font(.caption).foregroundStyle(.secondary)
                     }
                     Spacer()
-                }.padding(.horizontal, 16).padding(.vertical, 22)
+                }.padding(.horizontal, 17).padding(.vertical, 20)
                 List(selection: $model.section) {
                     Section("WORKSPACE") {
                         Label("Projekty", systemImage: "folder").tag("Projects")
@@ -100,8 +104,13 @@ struct MainView: View {
                     }
                     Section { Label("Ustawienia", systemImage: "slider.horizontal.3").tag("Settings") }
                 }.listStyle(.sidebar)
-                HStack(spacing: 7) { Image(systemName: "person.crop.circle"); Text("Konto: agent"); Spacer(); Text("Lokalnie").font(.caption2) }
-                    .font(.caption).foregroundStyle(.secondary).padding(16)
+                VStack(alignment: .leading, spacing: 7) {
+                    HStack(spacing: 7) { Image(systemName: "checkmark.shield.fill").foregroundStyle(.green); Text("Konto: agent"); Spacer() }
+                    Text("Działa lokalnie na tym Macu").font(.caption2).foregroundStyle(.secondary)
+                }
+                .font(.caption).padding(12).frame(maxWidth: .infinity, alignment: .leading)
+                .background(.quaternary, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .padding(12)
             }.navigationSplitViewColumnWidth(min: 210, ideal: 230, max: 270)
         } detail: {
             Group {
@@ -123,50 +132,111 @@ struct MainView: View {
 }
 struct ProjectsView: View {
     @Bindable var model: AppModel
+    private var runningSessions: Int {
+        model.sessions.values.flatMap { $0 }.filter { Sessions.state($0).hasPrefix("Running") }.count
+    }
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            HStack(alignment: .center) {
-                VStack(alignment: .leading, spacing: 5) {
-                    Text("Projekty").font(.largeTitle.weight(.semibold))
-                    Text("\(model.config.projects.count) projektów · oddzielne konto macOS").foregroundStyle(.secondary)
-                }
-                Spacer()
-                Button { Task { await model.refresh() } } label: { Image(systemName: "arrow.clockwise") }.help("Odśwież status")
-                Menu {
-                    Button("GitHub…") { model.githubImporting = true }
-                    Button("Istniejący workspace…") { model.add() }
-                    Button("Izolowana kopia repozytorium…") { model.creating = true }
-                } label: { Label("Dodaj projekt", systemImage: "plus") }.menuStyle(.borderlessButton).fixedSize().padding(.leading, 10)
-            }.padding(24)
-            if model.config.projects.isEmpty {
-                ContentUnavailableView("Miejsce na Twój pierwszy projekt", systemImage: "folder.badge.plus", description: Text("Dodaj katalog z AgentWork lub utwórz izolowaną kopię repozytorium."))
-            } else {
-                Table(model.config.projects, selection: $model.selection) {
-                    TableColumn("Projekt") { project in
-                        HStack(spacing: 10) {
-                            Image(systemName: "folder.fill").foregroundStyle(.tint)
-                            VStack(alignment: .leading, spacing: 3) {
-                                Text(project.name).fontWeight(.medium)
-                                Text(project.path).font(.caption).foregroundStyle(.secondary).lineLimit(1).truncationMode(.middle)
-                            }.padding(.vertical, 6)
-                        }
-                    }.width(min: 200, ideal: 280)
-                    TableColumn("Git") { project in
-                        let status = model.git[project.id] ?? ""
-                        Text(status.hasPrefix("##") ? String(status.components(separatedBy: "\n")[0].dropFirst(3)) : "Niezweryfikowany")
-                            .font(.callout).foregroundStyle(.secondary)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 26) {
+                HStack(alignment: .center, spacing: 20) {
+                    VStack(alignment: .leading, spacing: 7) {
+                        Text("Workspace").font(.largeTitle.weight(.bold))
+                        Text("Twoje projekty uruchamiane na oddzielnym koncie macOS.")
+                            .foregroundStyle(.secondary)
                     }
-                    TableColumn("Sesja") { project in
-                        let latest = model.sessions[project.id]?.first
-                        if let latest { StatusBadge(state: Sessions.state(latest)) } else { Text("Gotowy do startu").font(.caption).foregroundStyle(.secondary) }
-                    }.width(150)
-                }.frame(minHeight: 130, idealHeight: 180, maxHeight: 240)
-                Divider()
-                if let project = model.config.projects.first(where: { $0.id == model.selection }) {
-                    ProjectDetail(model: model, project: project)
-                } else { ContentUnavailableView("Wybierz projekt", systemImage: "cursorarrow", description: Text("Narzędzia i ostatnie sesje pojawią się tutaj.")) }
+                    Spacer()
+                    Button { Task { await model.refresh() } } label: { Image(systemName: "arrow.clockwise") }
+                        .buttonStyle(.bordered).help("Odśwież status")
+                    Menu {
+                        Button("GitHub…") { model.githubImporting = true }
+                        Button("Istniejący workspace…") { model.add() }
+                        Button("Izolowana kopia repozytorium…") { model.creating = true }
+                    } label: { Label("Dodaj projekt", systemImage: "plus") }
+                    .menuStyle(.borderlessButton).fixedSize().buttonStyle(.borderedProminent)
+                }
+                HStack(spacing: 12) {
+                    DashboardMetric(icon: "folder.fill", title: "Projekty", value: "\(model.config.projects.count)", detail: "w workspace")
+                    DashboardMetric(icon: "bolt.fill", title: "Aktywne sesje", value: "\(runningSessions)", detail: runningSessions == 0 ? "gotowe do startu" : "uruchomione teraz", tint: runningSessions == 0 ? .secondary : .green)
+                    DashboardMetric(icon: "lock.shield.fill", title: "Izolacja", value: "agent", detail: "oddzielne konto", tint: .blue)
+                }
+                if model.config.projects.isEmpty {
+                    ContentUnavailableView("Miejsce na Twój pierwszy projekt", systemImage: "folder.badge.plus", description: Text("Dodaj katalog z AgentWork lub utwórz izolowaną kopię repozytorium."))
+                        .frame(maxWidth: .infinity, minHeight: 350)
+                } else {
+                    HStack(alignment: .top, spacing: 18) {
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack {
+                                Text("Projekty").font(.headline)
+                                Spacer()
+                                Text("\(model.config.projects.count)").font(.caption.weight(.semibold)).foregroundStyle(.secondary)
+                            }
+                            ForEach(model.config.projects) { project in
+                                ProjectRow(project: project, selected: project.id == model.selection, git: model.git[project.id], session: model.sessions[project.id]?.first) {
+                                    model.selection = project.id
+                                }
+                            }
+                        }
+                        .padding(16).frame(minWidth: 265, idealWidth: 310, maxWidth: 340)
+                        .background(.background, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                        .overlay { RoundedRectangle(cornerRadius: 18, style: .continuous).stroke(.quaternary) }
+                        if let project = model.config.projects.first(where: { $0.id == model.selection }) {
+                            ProjectDetail(model: model, project: project)
+                                .frame(maxWidth: .infinity, minHeight: 430, alignment: .topLeading)
+                                .background(.background, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                                .overlay { RoundedRectangle(cornerRadius: 18, style: .continuous).stroke(.quaternary) }
+                        }
+                    }
+                }
             }
+            .padding(28)
         }
+        .background(Color(nsColor: .windowBackgroundColor).opacity(0.45))
+    }
+}
+struct DashboardMetric: View {
+    let icon: String
+    let title: String
+    let value: String
+    let detail: String
+    var tint: Color = .accentColor
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon).foregroundStyle(tint).font(.headline).frame(width: 30, height: 30).background(tint.opacity(0.12), in: RoundedRectangle(cornerRadius: 9, style: .continuous))
+            VStack(alignment: .leading, spacing: 1) {
+                Text(title).font(.caption).foregroundStyle(.secondary)
+                HStack(spacing: 6) { Text(value).font(.title3.weight(.semibold)); Text(detail).font(.caption).foregroundStyle(.secondary) }
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(15).frame(maxWidth: .infinity, alignment: .leading)
+        .background(.background, in: RoundedRectangle(cornerRadius: 15, style: .continuous))
+        .overlay { RoundedRectangle(cornerRadius: 15, style: .continuous).stroke(.quaternary) }
+    }
+}
+struct ProjectRow: View {
+    let project: Project
+    let selected: Bool
+    let git: String?
+    let session: SessionRecord?
+    let action: () -> Void
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 11) {
+                Image(systemName: "folder.fill").font(.headline).foregroundStyle(selected ? .white : Color.accentColor)
+                    .frame(width: 34, height: 34).background((selected ? Color.white.opacity(0.18) : Color.accentColor.opacity(0.1)), in: RoundedRectangle(cornerRadius: 9, style: .continuous))
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(project.name).font(.subheadline.weight(.semibold)).lineLimit(1)
+                    Text(session.map { Sessions.state($0).hasPrefix("Running") ? "Sesja aktywna" : "Gotowy do startu" } ?? (git?.isEmpty == false ? "Repozytorium" : "Workspace"))
+                        .font(.caption).foregroundStyle(selected ? .white.opacity(0.8) : .secondary).lineLimit(1)
+                }
+                Spacer(minLength: 0)
+                if session.map({ Sessions.state($0).hasPrefix("Running") }) == true { Circle().fill(selected ? .white : .green).frame(width: 7, height: 7) }
+            }
+            .padding(11).contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(selected ? .white : .primary)
+        .background(selected ? Color.accentColor : Color.clear, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 }
 struct StatusBadge: View {
