@@ -29,11 +29,13 @@ pnpm install
 pnpm tauri dev
 ```
 
-See [the cross-platform migration design](docs/CROSS_PLATFORM.md) for the
+See [the cross-platform migration design](.ai/architecture/CROSS_PLATFORM_MIGRATION.md) for the
 platform-specific security plan.
 
-The product, architecture and implementation backlog are organized in the
-[Open Cube roadmap](docs/ROADMAP.md).
+AI-assisted product, architecture and implementation work is governed by
+[`.ai/README.md`](.ai/README.md), with the delivery order in the
+[Open Cube roadmap](.ai/roadmap/ROADMAP.md). Repository-wide instructions for
+agents are in [`AGENTS.md`](AGENTS.md).
 
 [Polski: instalacja krok po kroku](docs/QUICKSTART.pl.md) ·
 [Download for macOS](https://rajanbor.github.io/open-cube/) ·
