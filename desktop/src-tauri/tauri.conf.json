@@ -13,15 +13,28 @@
     "windows": [
       {
         "title": "Open Cube",
-        "width": 1280,
-        "height": 820,
-        "minWidth": 980,
-        "minHeight": 680
+        "label": "main",
+        "width": 1440,
+        "height": 900,
+        "minWidth": 1000,
+        "minHeight": 680,
+        "center": true,
+        "titleBarStyle": "Overlay",
+        "hiddenTitle": true,
+        "transparent": true,
+        "windowEffects": {
+          "effects": [
+            "underWindowBackground"
+          ],
+          "state": "followsWindowActiveState",
+          "radius": 12
+        }
       }
     ],
     "security": {
       "csp": null
-    }
+    },
+    "macOSPrivateApi": true
   },
   "bundle": {
     "active": true,
