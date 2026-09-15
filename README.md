@@ -32,6 +32,9 @@ pnpm tauri dev
 See [the cross-platform migration design](docs/CROSS_PLATFORM.md) for the
 platform-specific security plan.
 
+The product, architecture and implementation backlog are organized in the
+[Open Cube roadmap](docs/ROADMAP.md).
+
 [Polski: instalacja krok po kroku](docs/QUICKSTART.pl.md) ·
 [Download for macOS](https://rajanbor.github.io/open-cube/) ·
 [Security model](docs/SECURITY.md)
