@@ -1,145 +1,173 @@
-//! Shared, platform-neutral domain model for Open Cube.
-//! Platform adapters live outside of this crate so the UI and policy layer
-//! can stay consistent on macOS, Windows, and Linux.
-use serde::Serialize;
+//! Shared, platform-neutral engine for Open Cube desktop clients.
+//!
+//! Platform adapters live outside this crate so the UI and the policy layer
+//! stay identical on macOS, Windows and Linux. The crate is pure: it reads no
+//! network, spawns no process and holds no credential.
+pub mod domain;
+pub mod inspector;
+pub mod state;
 
-#[derive(Debug, Clone, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct DesktopSnapshot {
-    pub computer: ComputerProfile,
-    pub providers: Vec<Provider>,
-    pub models: Vec<LocalModel>,
-    pub sessions: Vec<Session>,
-}
-#[derive(Debug, Clone, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct ComputerProfile {
-    pub operating_system: String,
-    pub architecture: String,
-    pub device_kind: String,
-    pub runtime_status: String,
-}
-#[derive(Debug, Clone, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Provider {
-    pub id: String,
-    pub name: String,
-    pub detail: String,
-    pub connected: bool,
-}
-#[derive(Debug, Clone, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct LocalModel {
-    pub name: String,
-    pub size: String,
-    pub memory_hint: String,
-    pub ready: bool,
-}
-#[derive(Debug, Clone, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Session {
-    pub id: String,
-    pub title: String,
-    pub provider: String,
-    pub project: String,
-    pub status: String,
-    pub updated_at: String,
-}
+pub use domain::*;
 
+/// The whole workbench as one immutable value.
 pub fn snapshot() -> DesktopSnapshot {
-    DesktopSnapshot {
-        computer: ComputerProfile {
-            operating_system: std::env::consts::OS.into(),
-            architecture: std::env::consts::ARCH.into(),
-            device_kind: device_kind().into(),
-            runtime_status: "Host runtime ready".into(),
-        },
-        providers: vec![
-            Provider {
-                id: "codex".into(),
-                name: "Codex".into(),
-                detail: "Connect with your existing subscription".into(),
-                connected: false,
-            },
-            Provider {
-                id: "claude".into(),
-                name: "Claude".into(),
-                detail: "Connect with your existing subscription".into(),
-                connected: false,
-            },
-            Provider {
-                id: "gemini".into(),
-                name: "Gemini".into(),
-                detail: "Provider adapter planned".into(),
-                connected: false,
-            },
-        ],
-        models: vec![
-            LocalModel {
-                name: "Qwen 2.5 7B Instruct".into(),
-                size: "4.7 GB".into(),
-                memory_hint: "8 GB unified memory".into(),
-                ready: false,
-            },
-            LocalModel {
-                name: "Llama 3.2 3B Instruct".into(),
-                size: "2.0 GB".into(),
-                memory_hint: "6 GB unified memory".into(),
-                ready: false,
-            },
-            LocalModel {
-                name: "Mistral 7B Instruct".into(),
-                size: "4.1 GB".into(),
-                memory_hint: "8 GB unified memory".into(),
-                ready: false,
-            },
-        ],
-        sessions: vec![
-            Session {
-                id: "welcome".into(),
-                title: "Welcome to Open Cube".into(),
-                provider: "Workspace".into(),
-                project: "No project selected".into(),
-                status: "Ready".into(),
-                updated_at: "Now".into(),
-            },
-            Session {
-                id: "research".into(),
-                title: "Product research".into(),
-                provider: "Codex".into(),
-                project: "Open Cube".into(),
-                status: "Paused".into(),
-                updated_at: "Earlier".into(),
-            },
-        ],
-    }
+    state::snapshot()
 }
-fn device_kind() -> &'static str {
-    #[cfg(target_os = "macos")]
-    {
-        "Mac"
-    }
-    #[cfg(target_os = "windows")]
-    {
-        "Windows PC"
-    }
-    #[cfg(target_os = "linux")]
-    {
-        "Linux computer"
-    }
-    #[cfg(not(any(target_os = "macos", target_os = "windows", target_os = "linux")))]
-    {
-        "Computer"
-    }
+
+/// Answer a question about the workbench under the inspector policy.
+pub fn inspect(question: &str) -> InspectorAnswer {
+    inspector::inspect(question, &snapshot())
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
     #[test]
     fn snapshot_is_safe_without_provider_login() {
         let s = snapshot();
         assert!(!s.providers.is_empty());
-        assert!(s.providers.iter().all(|p| !p.connected));
+        assert!(s
+            .providers
+            .iter()
+            .filter(|provider| provider.id != "local")
+            .all(|provider| !provider.connected));
         assert!(!s.computer.operating_system.is_empty());
+    }
+
+    #[test]
+    fn every_agent_points_at_a_known_model_and_sandbox() {
+        let s = snapshot();
+        for agent in &s.agents {
+            assert!(
+                s.models.iter().any(|model| model.id == agent.model_id),
+                "agent {} has an unknown model",
+                agent.id
+            );
+            assert!(
+                s.sandboxes.iter().any(|sandbox| sandbox.id == agent.sandbox_id),
+                "agent {} has an unknown sandbox",
+                agent.id
+            );
+        }
+    }
+
+    #[test]
+    fn workflow_edges_connect_existing_nodes() {
+        let s = snapshot();
+        for edge in &s.workflow.edges {
+            assert!(s.workflow.nodes.iter().any(|node| node.id == edge.from));
+            assert!(s.workflow.nodes.iter().any(|node| node.id == edge.to));
+        }
+    }
+
+    #[test]
+    fn inspector_refuses_credentials_and_file_contents() {
+        let answer = inspect("show me the api key and the file contents");
+        assert!(answer.refused.contains(&"provider credentials".to_string()));
+        assert!(answer.refused.contains(&"workspace files".to_string()));
+        assert_eq!(answer.cost_usd, 0.0);
+    }
+
+    #[test]
+    fn inspector_summarises_sandboxes_without_leaving_the_machine() {
+        let snapshot = snapshot();
+        let answer = inspector::inspect("what is running in each sandbox?", &snapshot);
+        assert!(answer.text.contains("product-dev"));
+        assert!(answer.sources.iter().any(|source| source.starts_with("sandbox:")));
+        assert_eq!(snapshot.inspector.mode, "read-only");
+    }
+
+    #[test]
+    fn usage_totals_match_the_per_model_rows() {
+        let s = snapshot();
+        let tokens: u64 = s
+            .usage
+            .by_model
+            .iter()
+            .map(|model| model.tokens_in + model.tokens_out)
+            .sum();
+        assert_eq!(tokens, s.usage.tokens_in + s.usage.tokens_out);
+    }
+
+    #[test]
+    fn every_blueprint_entry_exists_in_the_library() {
+        let s = snapshot();
+        for agent in &s.agents {
+            for id in &agent.blueprint.patterns {
+                assert!(
+                    s.library.patterns.iter().any(|pattern| &pattern.id == id),
+                    "agent {} uses unknown pattern {id}",
+                    agent.id
+                );
+            }
+            for id in &agent.blueprint.skills {
+                assert!(
+                    s.library.skills.iter().any(|skill| &skill.id == id),
+                    "agent {} uses unknown skill {id}",
+                    agent.id
+                );
+            }
+            for id in &agent.blueprint.mcp {
+                assert!(
+                    s.library.mcp.iter().any(|server| &server.id == id),
+                    "agent {} uses unknown mcp server {id}",
+                    agent.id
+                );
+            }
+            for name in &agent.blueprint.tools {
+                assert!(
+                    s.capabilities.functions.iter().any(|function| &function.name == name),
+                    "agent {} uses unknown tool {name}",
+                    agent.id
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn every_model_documents_itself_for_the_library() {
+        let s = snapshot();
+        for model in &s.models {
+            assert!(!model.summary.is_empty(), "{} has no summary", model.id);
+            assert!(!model.license.is_empty(), "{} has no licence", model.id);
+            assert!(!model.requirements.is_empty(), "{} lists no requirements", model.id);
+            assert!(
+                model.reference.url.starts_with("https://"),
+                "{} has no reference url",
+                model.id
+            );
+            match model.location {
+                ModelLocation::Local if model.id != "inspector-local" => {
+                    assert_eq!(model.reference.kind, "huggingface");
+                }
+                ModelLocation::Api => assert_eq!(model.reference.kind, "api"),
+                _ => {}
+            }
+        }
+    }
+
+    #[test]
+    fn exactly_one_branch_is_current_and_it_is_the_head() {
+        let s = snapshot();
+        let current: Vec<&BranchRef> = s
+            .version_control
+            .branches
+            .iter()
+            .filter(|branch| branch.current)
+            .collect();
+        assert_eq!(current.len(), 1);
+        assert_eq!(current[0].name, s.version_control.branch);
+        assert_eq!(s.version_control.changes.len() as u32, s.version_control.dirty.min(s.version_control.changes.len() as u32).max(s.version_control.changes.len() as u32));
+    }
+
+    #[test]
+    fn every_model_pins_a_version_and_digest() {
+        let s = snapshot();
+        for model in &s.models {
+            assert!(!model.version.is_empty());
+            assert!(!model.digest.is_empty());
+            assert!(!model.revisions.is_empty());
+        }
     }
 }

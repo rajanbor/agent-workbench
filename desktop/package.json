@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "fallback": "cargo run --offline --manifest-path engine/Cargo.toml --example dump > src/data/prototype-snapshot.json",
+    "test:engine": "cargo test --offline --manifest-path engine/Cargo.toml"
   },
   "dependencies": {
     "react": "^19.1.0",
