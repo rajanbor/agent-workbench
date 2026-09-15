@@ -14,6 +14,24 @@ connection controls. Docker, Gemini execution and provider API-key storage are
 visible in the interface but are not yet launchable; the existing `agent` user
 runtime remains the supported execution path.
 
+## Cross-platform desktop preview
+
+The next desktop client lives in [`desktop/`](desktop/). It uses a shared Rust
+engine with a Tauri + React desktop shell, so the same application architecture
+can target macOS, Windows and Linux. The preview currently has a working native
+shell, read-only computer profile and provider/model/session dashboard. It does
+not yet launch agents, providers or Docker; use the Swift macOS app above for
+that while the runtime adapters are migrated.
+
+```sh
+cd desktop
+pnpm install
+pnpm tauri dev
+```
+
+See [the cross-platform migration design](docs/CROSS_PLATFORM.md) for the
+platform-specific security plan.
+
 [Polski: instalacja krok po kroku](docs/QUICKSTART.pl.md) ·
 [Download for macOS](https://rajanbor.github.io/agent-workbench/) ·
 [Security model](docs/SECURITY.md)
@@ -64,7 +82,7 @@ also works). Install Apple's tools with `xcode-select --install` if missing and
 finish the system installer before continuing.
 
 ```sh
-git clone --branch v0.1.0-alpha.3 https://github.com/rajanbor/agent-workbench.git
+git clone https://github.com/rajanbor/agent-workbench.git
 cd agent-workbench
 bash scripts/quickstart.sh
 ```

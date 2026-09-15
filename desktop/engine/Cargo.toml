@@ -1,0 +1,9 @@
+[package]
+name = "agent-workbench-engine"
+version = "0.2.0-alpha.1"
+edition = "2021"
+license = "MIT"
+description = "Portable engine types for Agent Workbench desktop clients"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
