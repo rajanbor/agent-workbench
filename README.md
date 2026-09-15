@@ -27,6 +27,10 @@ Intel are supported by one universal installer. Agent tools require their own pr
    its prompts without typing shell commands.
 4. Use **Zaloguj Codex** / **Zaloguj Claude**, then add your first project.
 
+Open **Sesje → Nowa sesja** to create a Codex, Claude, or Terminal session for
+one project. Each one opens a separate native control window in Agent Workbench;
+the interactive tool remains in Terminal, where macOS handles the account switch.
+
 The app prepares the user-scoped launcher and `~/.local/bin/agentctl` on launch.
 The guide asks before creating an account, granting workspace access,
 restricting the main HOME or installing agent tools. Existing account passwords

@@ -24,9 +24,13 @@ import WorkbenchCore
         diagnostic = results.0; git = Dictionary(uniqueKeysWithValues: results.1)
         refreshSessions()
     }
-    func launch(_ project: Project, _ action: LaunchAction) async {
+    func launch(_ project: Project, _ action: LaunchAction) async -> SessionRecord? {
         busy = true; defer { busy = false }; let workbench = workbench
-        do { try await Task.detached { try workbench.launch(project, action: action) }.value; reload() } catch { message = error.localizedDescription }
+        do {
+            let record = try await Task.detached { try workbench.launch(project, action: action) }.value
+            reload(); refreshSessions()
+            return record
+        } catch { message = error.localizedDescription; return nil }
     }
     func refreshSessions() { sessions = Dictionary(uniqueKeysWithValues: config.projects.map { ($0.id, Sessions.records(projectID: $0.id)) }) }
     func add() {
@@ -77,11 +81,16 @@ import WorkbenchCore
             await model.refresh()
             model.setup = !UserDefaults.standard.bool(forKey: "welcomeDismissed") || !FileManager.default.fileExists(atPath: Sessions.runtime + "/agentctl")
         } }
+        WindowGroup("Sesja agenta", for: String.self) { $sessionID in
+            if let sessionID { SessionWindowView(model: model, sessionID: sessionID).frame(minWidth: 620, minHeight: 520) }
+            else { ContentUnavailableView("Brak sesji", systemImage: "terminal") }
+        }
         Settings { SettingsView(model: model).frame(width: 650, height: 530).padding() }
     }
 }
 struct MainView: View {
     @Bindable var model: AppModel
+    @Environment(\.openWindow) private var openWindow
     var body: some View {
         NavigationSplitView {
             VStack(spacing: 0) {
@@ -100,6 +109,7 @@ struct MainView: View {
                 List(selection: $model.section) {
                     Section("WORKSPACE") {
                         Label("Projekty", systemImage: "folder").tag("Projects")
+                        Label("Sesje", systemImage: "rectangle.on.rectangle").tag("Sessions")
                         Label("Agenci", systemImage: "terminal").tag("Agents")
                     }
                     Section { Label("Ustawienia", systemImage: "slider.horizontal.3").tag("Settings") }
@@ -115,8 +125,9 @@ struct MainView: View {
         } detail: {
             Group {
                 if model.section == "Settings" { SettingsView(model: model) }
+                else if model.section == "Sessions" { SessionsView(model: model, openSession: { openWindow(value: $0) }) }
                 else if model.section == "Agents" { AgentsView(model: model) }
-                else { ProjectsView(model: model) }
+                else { ProjectsView(model: model, openSession: { openWindow(value: $0) }) }
             }.navigationTitle("")
         }
         .task { while !Task.isCancelled { model.refreshSessions(); try? await Task.sleep(for: .seconds(2)) } }
@@ -132,6 +143,7 @@ struct MainView: View {
 }
 struct ProjectsView: View {
     @Bindable var model: AppModel
+    let openSession: (String) -> Void
     private var runningSessions: Int {
         model.sessions.values.flatMap { $0 }.filter { Sessions.state($0).hasPrefix("Running") }.count
     }
@@ -180,7 +192,7 @@ struct ProjectsView: View {
                         .background(.background, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
                         .overlay { RoundedRectangle(cornerRadius: 18, style: .continuous).stroke(.quaternary) }
                         if let project = model.config.projects.first(where: { $0.id == model.selection }) {
-                            ProjectDetail(model: model, project: project)
+                            ProjectDetail(model: model, project: project, openSession: openSession)
                                 .frame(maxWidth: .infinity, minHeight: 430, alignment: .topLeading)
                                 .background(.background, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
                                 .overlay { RoundedRectangle(cornerRadius: 18, style: .continuous).stroke(.quaternary) }
@@ -262,6 +274,7 @@ struct StatusBadge: View {
 struct ProjectDetail: View {
     @Bindable var model: AppModel
     let project: Project
+    let openSession: (String) -> Void
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
@@ -274,9 +287,9 @@ struct ProjectDetail: View {
                     Button { model.editing = project } label: { Image(systemName: "slider.horizontal.3") }.help("Zmienne środowiskowe i profil")
                 }
                 HStack(spacing: 10) {
-                    Button { Task { await model.launch(project, .codex) } } label: { Label("Uruchom Codex", systemImage: "terminal") }.buttonStyle(.borderedProminent)
-                    Button { Task { await model.launch(project, .claude) } } label: { Label("Uruchom Claude", systemImage: "sparkle") }.buttonStyle(.bordered)
-                    Button("Terminal") { Task { await model.launch(project, .terminal) } }
+                    Button { Task { if let session = await model.launch(project, .codex) { openSession(session.id) } } } label: { Label("Nowy Codex", systemImage: "terminal") }.buttonStyle(.borderedProminent)
+                    Button { Task { if let session = await model.launch(project, .claude) { openSession(session.id) } } } label: { Label("Nowy Claude", systemImage: "sparkle") }.buttonStyle(.bordered)
+                    Button("Nowy Terminal") { Task { if let session = await model.launch(project, .terminal) { openSession(session.id) } } }
                     Spacer()
                     Menu {
                         Button("Pokaż w Finderze") {
@@ -303,6 +316,7 @@ struct ProjectDetail: View {
                             Text(session.action.capitalized).fontWeight(.medium)
                             Text(session.created.formatted(date: .omitted, time: .shortened)).font(.caption).foregroundStyle(.secondary)
                             Spacer(); StatusBadge(state: state)
+                            Button { openSession(session.id) } label: { Image(systemName: "arrow.up.right.square") }.buttonStyle(.borderless).help("Otwórz okno sesji")
                             if state.hasPrefix("Running") {
                                 Button("Zatrzymaj") { do { try Sessions.stop(session) } catch { model.message = error.localizedDescription } }
                             }
@@ -316,6 +330,139 @@ struct ProjectDetail: View {
                 }
                 Text("Profil \(project.profile.rawValue) jest informacyjny — nie blokuje internetu. Lando: nie sprawdzano.").font(.caption).foregroundStyle(.tertiary)
             }.padding(24)
+        }
+    }
+}
+struct SessionsView: View {
+    @Bindable var model: AppModel
+    let openSession: (String) -> Void
+    @State private var creating = false
+    private var records: [SessionRecord] { model.sessions.values.flatMap { $0 }.sorted { $0.created > $1.created } }
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                HStack(alignment: .center) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Sesje agentów").font(.largeTitle.weight(.bold))
+                        Text("Każda sesja działa na koncie macOS agent i ma osobne okno kontroli.").foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Button { creating = true } label: { Label("Nowa sesja", systemImage: "plus") }.buttonStyle(.borderedProminent)
+                }
+                if records.isEmpty {
+                    ContentUnavailableView("Jeszcze nie ma sesji", systemImage: "rectangle.on.rectangle", description: Text("Utwórz sesję Codex, Claude lub Terminal dla jednego z projektów."))
+                        .frame(maxWidth: .infinity, minHeight: 360)
+                } else {
+                    VStack(spacing: 10) {
+                        ForEach(records) { session in
+                            let project = model.config.projects.first(where: { $0.id == session.projectID })
+                            Button { openSession(session.id) } label: {
+                                HStack(spacing: 14) {
+                                    Image(systemName: icon(for: session.action)).font(.headline).foregroundStyle(.tint)
+                                        .frame(width: 40, height: 40).background(Color.accentColor.opacity(0.1), in: RoundedRectangle(cornerRadius: 11, style: .continuous))
+                                    VStack(alignment: .leading, spacing: 3) {
+                                        Text(label(for: session.action)).font(.headline)
+                                        Text(project?.name ?? "Usunięty projekt").font(.subheadline).foregroundStyle(.secondary)
+                                    }
+                                    Spacer()
+                                    VStack(alignment: .trailing, spacing: 5) {
+                                        StatusBadge(state: Sessions.state(session))
+                                        Text(session.created.formatted(date: .abbreviated, time: .shortened)).font(.caption).foregroundStyle(.secondary)
+                                    }
+                                    Image(systemName: "chevron.right").font(.caption.weight(.semibold)).foregroundStyle(.tertiary)
+                                }
+                                .padding(15).background(.background, in: RoundedRectangle(cornerRadius: 15, style: .continuous))
+                                .overlay { RoundedRectangle(cornerRadius: 15, style: .continuous).stroke(.quaternary) }
+                            }.buttonStyle(.plain)
+                        }
+                    }
+                }
+            }.padding(28)
+        }
+        .sheet(isPresented: $creating) { NewSessionView(model: model, openSession: openSession) }
+    }
+    private func label(for action: String) -> String { action == "claude" ? "Claude" : action == "codex" ? "Codex" : "Terminal" }
+    private func icon(for action: String) -> String { action == "claude" ? "sparkle" : "terminal" }
+}
+struct NewSessionView: View {
+    @Bindable var model: AppModel
+    let openSession: (String) -> Void
+    @Environment(\.dismiss) private var dismiss
+    @State private var projectID: UUID?
+    @State private var action: LaunchAction = .codex
+    var body: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading, spacing: 5) {
+                Text("Nowa sesja").font(.title2.weight(.bold))
+                Text("Wybierz projekt i agenta. Otworzymy okno kontroli sesji oraz Terminal do rozmowy z narzędziem.").foregroundStyle(.secondary)
+            }
+            Picker("Projekt", selection: $projectID) {
+                Text("Wybierz projekt").tag(UUID?.none)
+                ForEach(model.config.projects) { project in Text(project.name).tag(Optional(project.id)) }
+            }
+            Picker("Agent", selection: $action) {
+                Label("Codex", systemImage: "terminal").tag(LaunchAction.codex)
+                Label("Claude", systemImage: "sparkle").tag(LaunchAction.claude)
+                Label("Terminal", systemImage: "chevron.left.forwardslash.chevron.right").tag(LaunchAction.terminal)
+            }.pickerStyle(.segmented)
+            Label("Hasło, jeśli będzie potrzebne, wpisujesz wyłącznie w Terminalu do sudo. Sesja nie otrzymuje praw administratora.", systemImage: "lock")
+                .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            HStack {
+                Button("Anuluj") { dismiss() }
+                Spacer()
+                Button("Utwórz sesję") {
+                    guard let project = model.config.projects.first(where: { $0.id == projectID }) else { return }
+                    Task { if let session = await model.launch(project, action) { dismiss(); openSession(session.id) } }
+                }.buttonStyle(.borderedProminent).disabled(projectID == nil || model.busy)
+            }
+        }
+        .padding(26).frame(width: 540)
+        .onAppear { if projectID == nil { projectID = model.config.projects.first?.id } }
+    }
+}
+struct SessionWindowView: View {
+    @Bindable var model: AppModel
+    let sessionID: String
+    private var session: SessionRecord? { Sessions.record(id: sessionID) }
+    var body: some View {
+        Group {
+            if let session, let project = model.config.projects.first(where: { $0.id == session.projectID }) {
+                let state = Sessions.state(session)
+                VStack(alignment: .leading, spacing: 0) {
+                    HStack(alignment: .top, spacing: 14) {
+                        Image(systemName: session.action == "claude" ? "sparkle" : "terminal.fill")
+                            .font(.title2).foregroundStyle(.white).frame(width: 46, height: 46)
+                            .background(Color.accentColor.gradient, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(session.action == "claude" ? "Claude" : session.action == "codex" ? "Codex" : "Terminal").font(.title2.weight(.bold))
+                            Text(project.name).foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        StatusBadge(state: state)
+                    }.padding(26)
+                    Divider()
+                    VStack(alignment: .leading, spacing: 18) {
+                        Label("Sesja działa w osobnym Terminalu na koncie agent.", systemImage: "person.badge.key")
+                            .font(.headline)
+                        Text("To okno pokazuje jej stan i zachowuje kontekst projektu. W Terminalu prowadzisz rozmowę z Codex lub Claude, dzięki czemu macOS może bezpiecznie poprosić o hasło do przełączenia konta.")
+                            .foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                        HStack(spacing: 12) {
+                            Button("Odśwież stan") { model.refreshSessions() }.buttonStyle(.bordered)
+                            if state.hasPrefix("Running") || state.hasPrefix("Awaiting") {
+                                Button("Zatrzymaj sesję", role: .destructive) { do { try Sessions.stop(session); model.refreshSessions() } catch { model.message = error.localizedDescription } }
+                            }
+                        }
+                        Divider()
+                        LabeledContent("Projekt", value: project.name)
+                        LabeledContent("Utworzono", value: session.created.formatted(date: .abbreviated, time: .standard))
+                        LabeledContent("ID sesji", value: String(session.id.prefix(8)).uppercased())
+                    }.padding(26)
+                    Spacer()
+                }
+                .task { while !Task.isCancelled { model.refreshSessions(); try? await Task.sleep(for: .seconds(2)) } }
+            } else {
+                ContentUnavailableView("Sesja jest niedostępna", systemImage: "exclamationmark.triangle", description: Text("Nie znaleziono jej zapisu lub powiązanego projektu."))
+            }
         }
     }
 }

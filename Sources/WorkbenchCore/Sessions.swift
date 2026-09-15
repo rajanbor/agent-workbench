@@ -36,6 +36,14 @@ public enum Sessions {
             return record
         }.sorted { $0.created > $1.created }
     }
+    public static func record(id: String) -> SessionRecord? {
+        guard UUID(uuidString: id) != nil else { return nil }
+        let path = runtime + "/sessions/" + id + "/record.json"
+        guard let data = try? Data(contentsOf: URL(fileURLWithPath: path)),
+              let record = try? JSONDecoder().decode(SessionRecord.self, from: data),
+              record.id == id else { return nil }
+        return record
+    }
     public static func state(_ record: SessionRecord) -> String {
         let path = runtime + "/sessions/" + record.id + "/state"
         guard let attributes = try? FileManager.default.attributesOfItem(atPath: path), let date = attributes[.modificationDate] as? Date,

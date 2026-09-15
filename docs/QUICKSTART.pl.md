@@ -121,6 +121,11 @@ Alternatywnie: Dodaj projekt → Izolowana kopia repozytorium → wybierz lokaln
 zaufane źródło → sprawdź docelową ścieżkę i branch → utwórz. Następnie wybierz
 Codex lub Claude.
 
+W widoku **Sesje** wybierz **Nowa sesja**, projekt i narzędzie. Każda sesja ma
+własne okno kontroli w Agent Workbench, gdzie widać jej stan i można ją zatrzymać.
+Rozmowa z Codex lub Claude nadal odbywa się w Terminalu, ponieważ to macOS
+bezpiecznie obsługuje przełączenie na konto `agent` i ewentualne hasło sudo.
+
 ```sh
 ~/.local/bin/agentctl list
 ~/.local/bin/agentctl codex nazwa-projektu

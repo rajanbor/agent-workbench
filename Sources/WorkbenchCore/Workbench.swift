@@ -10,12 +10,14 @@ public struct Workbench: Sendable {
         configuration.projects.append(Project(name: URL(fileURLWithPath: path).lastPathComponent, path: path))
         try store.save(configuration)
     }
-    public func launch(_ project: Project, action: LaunchAction) throws {
+    @discardableResult public func launch(_ project: Project, action: LaunchAction) throws -> SessionRecord {
         var config = try store.load()
         let session = try Sessions.prepare(project, action: action)
         let command = try Launcher.command(project: project, configuration: config, action: action, session: session)
         try Launcher.open(command: command, terminal: config.terminal)
         if let index = config.projects.firstIndex(where: { $0.id == project.id }) { config.projects[index].lastLaunch = Date(); try store.save(config) }
+        guard let record = Sessions.record(id: URL(fileURLWithPath: session).lastPathComponent) else { throw WorkbenchError.invalid("Session record was not created") }
+        return record
     }
     public func gitStatus(_ project: Project) throws -> String {
         let config = try store.load()
