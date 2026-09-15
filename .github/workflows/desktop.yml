@@ -1,0 +1,42 @@
+name: Cross-platform desktop
+
+on:
+  push:
+    paths:
+      - "desktop/**"
+      - ".github/workflows/desktop.yml"
+  pull_request:
+    paths:
+      - "desktop/**"
+      - ".github/workflows/desktop.yml"
+
+jobs:
+  engine:
+    name: Engine (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo test --manifest-path desktop/engine/Cargo.toml
+
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: desktop/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+        working-directory: desktop
+      - run: pnpm build
+        working-directory: desktop
