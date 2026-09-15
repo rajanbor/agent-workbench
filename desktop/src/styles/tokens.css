@@ -1,0 +1,270 @@
+/* Open Cube design tokens.
+   One palette per theme, plus translucency for the native macOS window.
+   Components never hardcode a colour value.
+   `data-theme` on <html> pins a theme; absent means "follow the system".
+   `data-runtime="tauri"` means the window itself is translucent. */
+
+:root {
+  --font-ui: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Mono", Menlo, monospace;
+
+  /* Quiet type scale: most of the interface sits at 12-13px. */
+  --text-xs: 11px;
+  --text-sm: 12px;
+  --text-base: 13px;
+  --text-md: 13.5px;
+  --text-lg: 15px;
+  --text-xl: 19px;
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-pill: 999px;
+
+  --rail-width: 248px;
+  --rail-right-width: 292px;
+  --topbar-height: 46px;
+  --statusbar-height: 24px;
+
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --blur: saturate(180%) blur(22px);
+}
+
+/* ---------------------------------------------------------------- dark ---- */
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #0b0c0e;
+  --bg-sidebar: #0e0f12;
+  --bg-surface: #141517;
+  --bg-surface-raised: #191a1e;
+  --bg-hover: rgba(255, 255, 255, 0.045);
+  --bg-active: rgba(255, 255, 255, 0.08);
+  --bg-code: #0d0e11;
+  --bg-scrim: rgba(0, 0, 0, 0.5);
+
+  /* Translucent layers: the native window shows the desktop through them. */
+  --layer-chrome: rgba(17, 18, 21, 0.72);
+  --layer-panel: rgba(20, 21, 24, 0.66);
+  --layer-float: rgba(26, 27, 31, 0.86);
+
+  --border: rgba(255, 255, 255, 0.075);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --border-subtle: rgba(255, 255, 255, 0.045);
+  --border-dashed: rgba(255, 255, 255, 0.12);
+
+  --text: #edeef0;
+  --text-secondary: #a8abb2;
+  --text-muted: #7c8089;
+  --text-faint: #5b5f68;
+
+  --accent: #5b7cfa;
+  --accent-hover: #6f8cff;
+  --accent-text: #93aaff;
+  --accent-bg: rgba(91, 124, 250, 0.14);
+  --accent-border: rgba(91, 124, 250, 0.38);
+  --accent-glow: rgba(91, 124, 250, 0.08);
+  --on-accent: #ffffff;
+
+  --green: #3fb950;
+  --green-text: #57d364;
+  --green-bg: rgba(63, 185, 80, 0.13);
+  --green-border: rgba(63, 185, 80, 0.32);
+
+  --amber: #d29922;
+  --amber-text: #e3b341;
+  --amber-bg: rgba(210, 153, 34, 0.13);
+  --amber-border: rgba(210, 153, 34, 0.3);
+
+  --red: #f85149;
+  --red-text: #ff8078;
+  --red-bg: rgba(248, 81, 73, 0.13);
+  --red-border: rgba(248, 81, 73, 0.3);
+
+  --violet-text: #b892ff;
+  --violet-bg: rgba(163, 113, 247, 0.14);
+  --violet-border: rgba(163, 113, 247, 0.32);
+
+  --blue-text: #6fb6ff;
+  --blue-bg: rgba(56, 152, 255, 0.14);
+  --blue-border: rgba(56, 152, 255, 0.32);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --shadow-pop: 0 20px 60px rgba(0, 0, 0, 0.6);
+
+  --syntax-comment: #6b7280;
+  --syntax-keyword: #b99cff;
+  --syntax-string: #7ee787;
+  --syntax-number: #f0a868;
+  --syntax-fn: #93aaff;
+  --syntax-type: #6ee7d6;
+  --syntax-punct: #868b94;
+}
+
+/* --------------------------------------------------------------- light ---- */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: #f7f8fa;
+  --bg-sidebar: #fbfbfd;
+  --bg-surface: #ffffff;
+  --bg-surface-raised: #ffffff;
+  --bg-hover: rgba(15, 20, 35, 0.04);
+  --bg-active: rgba(15, 20, 35, 0.07);
+  --bg-code: #f7f8fa;
+  --bg-scrim: rgba(22, 25, 33, 0.22);
+
+  --layer-chrome: rgba(252, 252, 253, 0.74);
+  --layer-panel: rgba(255, 255, 255, 0.68);
+  --layer-float: rgba(255, 255, 255, 0.9);
+
+  --border: rgba(15, 20, 35, 0.085);
+  --border-strong: rgba(15, 20, 35, 0.16);
+  --border-subtle: rgba(15, 20, 35, 0.055);
+  --border-dashed: rgba(15, 20, 35, 0.14);
+
+  --text: #15171c;
+  --text-secondary: #474d57;
+  --text-muted: #6b7280;
+  --text-faint: #939aa4;
+
+  --accent: #4459e0;
+  --accent-hover: #3a4dc9;
+  --accent-text: #3a4dc9;
+  --accent-bg: rgba(68, 89, 224, 0.08);
+  --accent-border: rgba(68, 89, 224, 0.26);
+  --accent-glow: rgba(68, 89, 224, 0.05);
+  --on-accent: #ffffff;
+
+  --green: #1a7f37;
+  --green-text: #14702f;
+  --green-bg: rgba(26, 127, 55, 0.09);
+  --green-border: rgba(26, 127, 55, 0.22);
+
+  --amber: #9a6700;
+  --amber-text: #8a5c00;
+  --amber-bg: rgba(154, 103, 0, 0.1);
+  --amber-border: rgba(154, 103, 0, 0.22);
+
+  --red: #cf222e;
+  --red-text: #b91c26;
+  --red-bg: rgba(207, 34, 46, 0.08);
+  --red-border: rgba(207, 34, 46, 0.2);
+
+  --violet-text: #7d4ed8;
+  --violet-bg: rgba(125, 78, 216, 0.09);
+  --violet-border: rgba(125, 78, 216, 0.22);
+
+  --blue-text: #0b62c4;
+  --blue-bg: rgba(11, 98, 196, 0.09);
+  --blue-border: rgba(11, 98, 196, 0.22);
+
+  --shadow-sm: 0 1px 2px rgba(20, 24, 31, 0.05);
+  --shadow-md: 0 8px 26px rgba(20, 24, 31, 0.09);
+  --shadow-pop: 0 22px 56px rgba(20, 24, 31, 0.16);
+
+  --syntax-comment: #8a929d;
+  --syntax-keyword: #6a45c9;
+  --syntax-string: #0a7a45;
+  --syntax-number: #b3541e;
+  --syntax-fn: #3a4dc9;
+  --syntax-type: #0f766e;
+  --syntax-punct: #5b636d;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+
+    --bg: #f7f8fa;
+    --bg-sidebar: #fbfbfd;
+    --bg-surface: #ffffff;
+    --bg-surface-raised: #ffffff;
+    --bg-hover: rgba(15, 20, 35, 0.04);
+    --bg-active: rgba(15, 20, 35, 0.07);
+    --bg-code: #f7f8fa;
+    --bg-scrim: rgba(22, 25, 33, 0.22);
+
+    --layer-chrome: rgba(252, 252, 253, 0.74);
+    --layer-panel: rgba(255, 255, 255, 0.68);
+    --layer-float: rgba(255, 255, 255, 0.9);
+
+    --border: rgba(15, 20, 35, 0.085);
+    --border-strong: rgba(15, 20, 35, 0.16);
+    --border-subtle: rgba(15, 20, 35, 0.055);
+    --border-dashed: rgba(15, 20, 35, 0.14);
+
+    --text: #15171c;
+    --text-secondary: #474d57;
+    --text-muted: #6b7280;
+    --text-faint: #939aa4;
+
+    --accent: #4459e0;
+    --accent-hover: #3a4dc9;
+    --accent-text: #3a4dc9;
+    --accent-bg: rgba(68, 89, 224, 0.08);
+    --accent-border: rgba(68, 89, 224, 0.26);
+    --accent-glow: rgba(68, 89, 224, 0.05);
+    --on-accent: #ffffff;
+
+    --green: #1a7f37;
+    --green-text: #14702f;
+    --green-bg: rgba(26, 127, 55, 0.09);
+    --green-border: rgba(26, 127, 55, 0.22);
+
+    --amber: #9a6700;
+    --amber-text: #8a5c00;
+    --amber-bg: rgba(154, 103, 0, 0.1);
+    --amber-border: rgba(154, 103, 0, 0.22);
+
+    --red: #cf222e;
+    --red-text: #b91c26;
+    --red-bg: rgba(207, 34, 46, 0.08);
+    --red-border: rgba(207, 34, 46, 0.2);
+
+    --violet-text: #7d4ed8;
+    --violet-bg: rgba(125, 78, 216, 0.09);
+    --violet-border: rgba(125, 78, 216, 0.22);
+
+    --blue-text: #0b62c4;
+    --blue-bg: rgba(11, 98, 196, 0.09);
+    --blue-border: rgba(11, 98, 196, 0.22);
+
+    --shadow-sm: 0 1px 2px rgba(20, 24, 31, 0.05);
+    --shadow-md: 0 8px 26px rgba(20, 24, 31, 0.09);
+    --shadow-pop: 0 22px 56px rgba(20, 24, 31, 0.16);
+
+    --syntax-comment: #8a929d;
+    --syntax-keyword: #6a45c9;
+    --syntax-string: #0a7a45;
+    --syntax-number: #b3541e;
+    --syntax-fn: #3a4dc9;
+    --syntax-type: #0f766e;
+    --syntax-punct: #5b636d;
+  }
+}
+
+/* Native window: the vibrancy behind the web view provides the base colour,
+   so the page itself stays transparent and the panels sit on top of it. */
+:root[data-runtime="tauri"] {
+  --bg: transparent;
+  --bg-sidebar: transparent;
+  --layer-chrome: rgba(255, 255, 255, 0.04);
+  --layer-panel: rgba(255, 255, 255, 0.03);
+}
+
+:root[data-runtime="tauri"][data-theme="light"],
+:root[data-runtime="tauri"]:not([data-theme="dark"]) {
+  --layer-chrome: rgba(255, 255, 255, 0.5);
+  --layer-panel: rgba(255, 255, 255, 0.38);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-runtime="tauri"]:not([data-theme="light"]) {
+    --layer-chrome: rgba(255, 255, 255, 0.04);
+    --layer-panel: rgba(255, 255, 255, 0.03);
+  }
+}

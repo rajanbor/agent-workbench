@@ -1,30 +1,318 @@
-import { useState } from "react";
-import "./App.css";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import "./styles/tokens.css";
+import "./styles/app.css";
 
-type Activity = "workspace" | "agents" | "machines" | "canvas" | "git" | "search" | "settings";
-type Panel = "Chat" | "Terminal" | "Runs" | "Logs";
-const icons: Record<string, string> = { workspace:"▦", agents:"✦", machines:"◉", canvas:"◇", git:"⌘", search:"⌕", settings:"⚙", terminal:"›_", chat:"◌", runs:"↻", logs:"≡", split:"⊞", close:"×", more:"···", chevron:"›" };
-const Icon = ({name}:{name:string}) => <span className="ico">{icons[name] ?? "·"}</span>;
-const activities: {id:Activity; label:string}[] = [{id:"workspace",label:"Workspace"},{id:"agents",label:"Agents"},{id:"machines",label:"Machines"},{id:"canvas",label:"Canvas"},{id:"git",label:"Git"},{id:"search",label:"Search"},{id:"settings",label:"Settings"}];
-const panels: Panel[] = ["Chat","Terminal","Runs","Logs"];
+import { TopBar } from "./components/TopBar";
+import { LeftRail } from "./components/LeftRail";
+import { RightRail } from "./components/RightRail";
+import { TerminalDock } from "./components/TerminalDock";
+import { StatusBar } from "./components/StatusBar";
+import { CommandPalette } from "./components/CommandPalette";
+import { Icon } from "./components/Icon";
 
-function Explorer({activity, select}:{activity:Activity;select:(name:string)=>void}) {
-  if (activity === "machines") return <><h2>Machines</h2><Tree title="MacBook Pro" sub="macOS · Local" open items={["runtime · native", "sandboxes · 2", "models · 3"]}/><Tree title="Home Server" sub="Ubuntu · Offline" items={["RTX 5090", "models · 2"]}/></>;
-  if (activity === "agents") return <><h2>Agents</h2><Tree title="Claude · Orchestrator" sub="sandbox: product-dev" open items={["running · 8m", "budget · $0.31"]}/><Tree title="Codex · Backend" sub="waiting for task"/><Tree title="Qwen Local · Research" sub="idle"/></>;
-  if (activity === "canvas") return <><h2>Canvas</h2><p className="side-copy">Live relationships between workspaces, agents and tools will appear here.</p><button className="side-action" onClick={()=>select("Canvas")}>Open canvas <Icon name="chevron"/></button></>;
-  if (activity === "git") return <><h2>Source control</h2><Tree title="main" sub="3 changed files" open items={["App.tsx", "App.css", "WORKBENCH_SHELL.md"]}/></>;
-  if (activity === "search") return <><h2>Search</h2><input className="search-input" placeholder="Search workspace" autoFocus/><p className="side-copy">Search is a shell prototype.</p></>;
-  if (activity === "settings") return <><h2>Settings</h2><Tree title="Workspace" sub="Local-first defaults"/><Tree title="Appearance" sub="Dark · system"/><Tree title="Security" sub="Review permissions"/></>;
-  return <><h2>Workspace</h2><Tree title="Open Cube" sub="/Projects/open-cube" open items={["product-dev", "Claude · running", "Codex · waiting", "Terminal · active"]}/><Tree title="Design system" sub="/Projects/design-system"/><button className="side-action" onClick={()=>select("New session")}>+ New workspace</button></>;
+import { ChatView } from "./views/ChatView";
+import { CanvasView } from "./views/CanvasView";
+import { SandboxView } from "./views/SandboxView";
+import { ModelsView } from "./views/ModelsView";
+import { UsageView } from "./views/UsageView";
+import { AgentView } from "./views/AgentView";
+import { SettingsView } from "./views/SettingsView";
+
+import {
+  ask,
+  isTauri,
+  loadSnapshot,
+  prototypeSnapshot,
+  type DesktopSnapshot,
+  type EngineSource,
+} from "./lib/engine";
+import { useTheme } from "./lib/theme";
+import type { ChatMessage, Selection, ViewId } from "./lib/shell";
+
+/** First message of an agent thread, so a chat opens with context, not a blank pane. */
+function seedThreads(snapshot: DesktopSnapshot): Record<string, ChatMessage[]> {
+  const threads: Record<string, ChatMessage[]> = { workbench: [] };
+  for (const agent of snapshot.agents) {
+    threads[agent.id] = [
+      {
+        id: `${agent.id}-seed`,
+        role: "assistant",
+        text: agent.lastMessage,
+        modelId: agent.modelId,
+        tokens: agent.tokensOut,
+        costUsd: agent.costUsd,
+        sources: [`agent:${agent.id}`],
+      },
+    ];
+  }
+  return threads;
 }
-function Tree({title,sub,items,open}:{title:string;sub:string;items?:string[];open?:boolean}) { return <div className="tree"><button className="tree-head"><span className={open?"tree-open":""}>›</span><i className={open?"dot running":"dot"}/><div><strong>{title}</strong><small>{sub}</small></div></button>{open && <div className="tree-children">{items?.map((item)=><button key={item}><span>{item.includes("Terminal")?"›_":"◇"}</span>{item}</button>)}</div>}</div>; }
-function PanelView({panel}:{panel:Panel}) { if(panel === "Terminal") return <div className="terminal"><p><b>claude@product-dev</b> <span>~/open-cube</span></p><p>$ inspect workbench shell</p><p className="term-muted">Reading .ai/specs/WORKBENCH_SHELL.md</p><p className="term-muted">Building panel registry...</p><p><i>●</i> Ready for a provider runtime</p></div>; if(panel === "Runs") return <div className="run-list"><b>Claude · Workbench shell</b><span className="run"><i/> Running · 8m</span><p>Reading architecture and building shell prototype.</p><b>Qwen Local · UI audit</b><span className="muted">Idle · no runtime connected</span></div>; if(panel === "Logs") return <div className="terminal"><p className="term-muted">14:42:03 workspace loaded</p><p className="term-muted">14:42:05 mock state hydrated</p><p className="term-muted">14:42:07 inspector selection: Claude</p></div>; return <div className="chat"><div className="bubble assistant">I’m ready in <b>product-dev</b>. The workbench shell is using prototype data until <code>workbenchd</code> is implemented.</div><div className="bubble user">Build the agent workbench shell.</div><div className="thinking"><i/> Claude is reading the workspace specification…</div><div className="chat-box"><span>+</span><span className="placeholder">Message Claude</span><kbd>⌘ ↵</kbd><button>↑</button></div></div>; }
 
-export default function App() { const [activity,setActivity]=useState<Activity>("workspace"); const [active,setActive]=useState<Panel>("Chat"); const [split,setSplit]=useState(false); const [inspector,setInspector]=useState(true); const [max,setMax]=useState(false); const [notice,setNotice]=useState(""); const addPanel=(p:Panel)=>{setActive(p);setSplit(true)}; return <main className={`workbench ${!inspector?"inspector-closed":""} ${max?"maximized":""}`}>
-  <aside className="activity"><div className="cube">C</div>{activities.map(a=><button key={a.id} className={activity===a.id?"active":""} title={a.label} onClick={()=>setActivity(a.id)}><Icon name={a.id}/></button>)}<span/><button title="Open settings" onClick={()=>setActivity("settings")}><Icon name="settings"/></button><div className="user">RB</div></aside>
-  <aside className="explorer"><header><div><span className="eyebrow">{activity}</span><h1>Open Cube</h1></div><button onClick={()=>setNotice("Command palette is planned for this shell.")}>⌘K</button></header><Explorer activity={activity} select={(value)=>setNotice(`${value} is a prototype action.`)}/><footer><i className="dot running"/> Prototype data · local only</footer></aside>
-  <section className="centre"><header className="tabs"><div>{panels.map(p=><button className={active===p?"selected":""} key={p} onClick={()=>setActive(p)}><Icon name={p.toLowerCase()}/>{p}{active===p&&<span className="dirty">●</span>}</button>)}</div><div className="tab-actions"><button onClick={()=>setSplit(!split)} title="Split panel"><Icon name="split"/></button><button onClick={()=>setMax(!max)} title="Maximize panel">↗</button></div></header>{notice&&<div className="toast">{notice}<button onClick={()=>setNotice("")}>×</button></div>}<div className={split?"panel-grid split":"panel-grid"}><article className="panel"><PanelHeader panel={active} onAdd={addPanel}/><PanelView panel={active}/></article>{split&&<article className="panel"><PanelHeader panel="Terminal" onAdd={addPanel}/><PanelView panel="Terminal"/></article>}</div></section>
-  {inspector&&<aside className="inspector"><header><span>INSPECTOR</span><button onClick={()=>setInspector(false)}>×</button></header><section><label>AGENT</label><h2>Claude</h2><p>Orchestrator · running</p></section><section><label>MODEL</label><strong>Claude Sonnet</strong><p>Provider connection not configured</p></section><section><label>SANDBOX</label><strong>product-dev</strong><p>Native sandbox · mock policy</p></section><section><label>MACHINE</label><strong>MacBook Pro</strong><p>macOS · local</p></section><section><label>PERMISSIONS</label><div className="permissions"><span>Files <b>workspace</b></span><span>Network <b>limited</b></span><span>Shell <b>enabled</b></span><span>Delegation <b>none</b></span></div></section></aside>}
-  {!inspector&&<button className="show-inspector" onClick={()=>setInspector(true)}>Inspector</button>}<footer className="status"><span>⑂ main</span><span>◇ product-dev</span><span>✦ Claude Sonnet</span><span>◉ MacBook Pro</span><span><i/> 1 agent running</span><span className="push">12.4k tokens</span><span>$0.31</span></footer>
-</main>; }
-function PanelHeader({panel,onAdd}:{panel:Panel;onAdd:(p:Panel)=>void}) {return <header className="panel-header"><div><Icon name={panel.toLowerCase()}/><strong>{panel}</strong><span>product-dev · MacBook Pro</span></div><div><button onClick={()=>onAdd(panel==="Chat"?"Terminal":"Chat")}><Icon name="split"/></button><button><Icon name="more"/></button></div></header>}
+export default function App() {
+  const theme = useTheme();
+  const [snapshot, setSnapshot] = useState<DesktopSnapshot>(prototypeSnapshot);
+  const [source, setSource] = useState<EngineSource>("preview");
+  const [view, setView] = useState<ViewId>("chat");
+  const [selection, setSelection] = useState<Selection>({
+    chat: "workbench",
+    agent: null,
+    sandbox: prototypeSnapshot.sandboxes[0].id,
+    model: prototypeSnapshot.models[0].id,
+  });
+  const [panels, setPanels] = useState({ left: true, right: false, terminal: false });
+  const [terminalHeight, setTerminalHeight] = useState(240);
+  const [activeTerminal, setActiveTerminal] = useState(prototypeSnapshot.terminals[0].id);
+  const [threads, setThreads] = useState<Record<string, ChatMessage[]>>(() =>
+    seedThreads(prototypeSnapshot),
+  );
+  const [busy, setBusy] = useState(false);
+  const [chatModelId, setChatModelId] = useState(prototypeSnapshot.inspector.modelId);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [toast, setToast] = useState("");
+
+  const notify = useCallback((message: string) => setToast(message), []);
+
+  useEffect(() => {
+    // index.html sets this before first paint; repeat it here in case the IPC
+    // bridge lands after the head script ran. Native mode turns the page
+    // transparent and leaves room for the traffic lights.
+    if (isTauri()) document.documentElement.dataset.runtime = "tauri";
+  }, []);
+
+  useEffect(() => {
+    loadSnapshot().then((result) => {
+      setSnapshot(result.snapshot);
+      setSource(result.source);
+      setThreads(seedThreads(result.snapshot));
+      setChatModelId(result.snapshot.inspector.modelId);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = window.setTimeout(() => setToast(""), 4600);
+    return () => window.clearTimeout(timer);
+  }, [toast]);
+
+  const togglePanel = useCallback((panel: "left" | "right" | "terminal") => {
+    setPanels((current) => ({ ...current, [panel]: !current[panel] }));
+  }, []);
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      const meta = event.metaKey || event.ctrlKey;
+      if (!meta) return;
+      const key = event.key.toLowerCase();
+      if (key === "k") {
+        event.preventDefault();
+        setPaletteOpen((open) => !open);
+      }
+      if (key === "b") {
+        event.preventDefault();
+        togglePanel("left");
+      }
+      if (key === "j") {
+        event.preventDefault();
+        togglePanel("terminal");
+      }
+      if (key === "i") {
+        event.preventDefault();
+        togglePanel("right");
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [togglePanel]);
+
+  const select = useCallback((next: ViewId, patch?: Partial<Selection>) => {
+    setView(next);
+    if (patch) setSelection((current) => ({ ...current, ...patch }));
+  }, []);
+
+  const chatModel =
+    snapshot.models.find((model) => model.id === chatModelId) ?? snapshot.models[0];
+  const activeAgent = useMemo(
+    () => snapshot.agents.find((agent) => agent.id === selection.chat) ?? null,
+    [selection.chat, snapshot.agents],
+  );
+
+  const send = useCallback(
+    async (text: string) => {
+      const thread = selection.chat;
+      const agent = snapshot.agents.find((item) => item.id === thread) ?? null;
+      const stamp = Date.now();
+
+      setThreads((current) => ({
+        ...current,
+        [thread]: [...(current[thread] ?? []), { id: `u${stamp}`, role: "user", text }],
+      }));
+      setBusy(true);
+
+      const answer = await ask(text, snapshot);
+
+      setThreads((current) => {
+        const existing = current[thread] ?? [];
+        const notice: ChatMessage[] = agent
+          ? [
+              {
+                id: `s${stamp}`,
+                role: "system",
+                text: `${agent.name} cannot run yet — the provider runtime is still on the Swift app. The built-in inspector answered from the snapshot instead.`,
+              },
+            ]
+          : [];
+        return {
+          ...current,
+          [thread]: [
+            ...existing,
+            ...notice,
+            {
+              id: `a${stamp}`,
+              role: "assistant",
+              text: answer.text,
+              modelId: answer.modelId,
+              tokens: answer.tokens,
+              costUsd: answer.costUsd,
+              sources: answer.sources,
+              refused: answer.refused,
+              redacted: answer.redacted,
+            },
+          ],
+        };
+      });
+      setBusy(false);
+    },
+    [selection.chat, snapshot],
+  );
+
+  return (
+    <div className="app">
+      <TopBar
+        snapshot={snapshot}
+        source={source}
+        chatModel={chatModel}
+        onChatModel={setChatModelId}
+        panels={panels}
+        onTogglePanel={togglePanel}
+        theme={theme.choice}
+        onTheme={theme.setChoice}
+        onPalette={() => setPaletteOpen(true)}
+        onUsage={() => select("usage")}
+        onAction={notify}
+      />
+
+      <div className="app__body">
+        {panels.left && (
+          <LeftRail
+            snapshot={snapshot}
+            view={view}
+            selection={selection}
+            onSelect={select}
+            onOpenTerminal={(id) => {
+              setActiveTerminal(id);
+              setPanels((current) => ({ ...current, terminal: true }));
+            }}
+            onAction={notify}
+          />
+        )}
+
+        <main className="workspace">
+          <div className="workspace__view">
+            {view === "chat" && (
+              <ChatView
+                snapshot={snapshot}
+                agent={activeAgent}
+                model={chatModel}
+                messages={threads[selection.chat] ?? []}
+                busy={busy}
+                onSend={send}
+                onOpenAgent={(id) => select("agent", { agent: id })}
+                onAction={notify}
+              />
+            )}
+            {view === "canvas" && <CanvasView snapshot={snapshot} onAction={notify} />}
+            {view === "sandboxes" && (
+              <SandboxView
+                snapshot={snapshot}
+                sandboxId={selection.sandbox}
+                onSelect={(id) => select("sandboxes", { sandbox: id })}
+                onOpenAgent={(id) => select("agent", { agent: id })}
+                onAction={notify}
+              />
+            )}
+            {view === "models" && (
+              <ModelsView
+                snapshot={snapshot}
+                modelId={selection.model}
+                onSelect={(id) => select("models", { model: id })}
+                onAction={notify}
+              />
+            )}
+            {view === "usage" && <UsageView snapshot={snapshot} />}
+            {view === "agent" && (
+              <AgentView
+                snapshot={snapshot}
+                agentId={selection.agent ?? snapshot.agents[0].id}
+                onChat={(id) => select("chat", { chat: id, agent: id })}
+                onSandbox={(id) => select("sandboxes", { sandbox: id })}
+                onModel={(id) => select("models", { model: id })}
+                onAction={notify}
+              />
+            )}
+            {view === "settings" && (
+              <SettingsView
+                snapshot={snapshot}
+                source={source}
+                theme={theme.choice}
+                onTheme={theme.setChoice}
+                onAction={notify}
+              />
+            )}
+          </div>
+
+          {panels.terminal && (
+            <TerminalDock
+              snapshot={snapshot}
+              activeId={activeTerminal}
+              onActive={setActiveTerminal}
+              height={terminalHeight}
+              onHeight={setTerminalHeight}
+              onClose={() => togglePanel("terminal")}
+              onAction={notify}
+            />
+          )}
+        </main>
+
+        {panels.right && (
+          <RightRail snapshot={snapshot} onClose={() => togglePanel("right")} onAction={notify} />
+        )}
+      </div>
+
+      <StatusBar
+        snapshot={snapshot}
+        source={source}
+        model={chatModel}
+        sandboxId={selection.sandbox}
+        onSelectUsage={() => select("usage")}
+      />
+
+      {toast && (
+        <div className="toast" role="status">
+          <Icon name="alert" size={15} />
+          <span>{toast}</span>
+          <button onClick={() => setToast("")} aria-label="Dismiss">
+            <Icon name="close" size={13} />
+          </button>
+        </div>
+      )}
+
+      <CommandPalette
+        open={paletteOpen}
+        snapshot={snapshot}
+        onClose={() => setPaletteOpen(false)}
+        onSelect={select}
+        onAction={notify}
+      />
+    </div>
+  );
+}
