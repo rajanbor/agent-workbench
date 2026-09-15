@@ -4,7 +4,7 @@ set -euo pipefail
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 script_dir="$(cd "$(dirname "$0")" && pwd -P)"
 source_dir="$(dirname "$script_dir")"
-bundle="$source_dir/dist/Agent Workbench.app"
+bundle="$source_dir/dist/Open Cube.app"
 dry_run=false
 for option in "$@"; do
     case "$option" in
@@ -19,7 +19,7 @@ done
 codesign --verify --deep --strict "$bundle"
 owner_uid="$(id -u)"
 runtime="/Users/Shared/AgentWorkbench-$owner_uid"
-destination="$HOME/Applications/Agent Workbench.app"
+destination="$HOME/Applications/Open Cube.app"
 cli="$HOME/.local/bin/agentctl"
 check_owned_directory() {
     local directory="$1"
@@ -45,12 +45,12 @@ mkdir -p "$runtime" "$HOME/Applications" "$HOME/.local/bin"
 check_owned_directory "$runtime"
 staging="$(mktemp -d "$runtime/install.XXXXXXXX")"
 echo "Installation staging (retained for recovery): $staging"
-ditto "$bundle" "$staging/Agent Workbench.app"
+ditto "$bundle" "$staging/Open Cube.app"
 cp "$bundle/Contents/MacOS/agentctl" "$staging/agentctl"
 chmod 755 "$staging/agentctl"
 codesign --verify --strict "$staging/agentctl"
-if [[ -e "$destination" ]]; then mv "$destination" "$staging/Previous Agent Workbench.app"; fi
-mv "$staging/Agent Workbench.app" "$destination"
+if [[ -e "$destination" ]]; then mv "$destination" "$staging/Previous Open Cube.app"; fi
+mv "$staging/Open Cube.app" "$destination"
 mv -f "$staging/agentctl" "$runtime/agentctl"
 [[ -L "$cli" ]] || ln -s "$runtime/agentctl" "$cli"
 printf '\nInstalled. Next: bash scripts/setup-macos.sh\nOpen: open "%s"\nCLI: "%s"\n' "$destination" "$cli"

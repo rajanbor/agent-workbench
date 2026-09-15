@@ -41,8 +41,8 @@ jobs:
           fi
           sudo /usr/sbin/sysadminctl -addUser agent -password "$(uuidgen)" -shell /bin/zsh
           bash scripts/install.sh
-          bash 'dist/Agent Workbench.app/Contents/Resources/Setup/prepare-runtime.sh' "$PWD/dist/Agent Workbench.app"
-          bash 'dist/Agent Workbench.app/Contents/Resources/Setup/configure-macos.sh' --dry-run
+          bash 'dist/Open Cube.app/Contents/Resources/Setup/prepare-runtime.sh' "$PWD/dist/Open Cube.app"
+          bash 'dist/Open Cube.app/Contents/Resources/Setup/configure-macos.sh' --dry-run
           printf 'YES\nYES\n' | bash scripts/setup-macos.sh --apply
           printf 'YES\nYES\n' | bash scripts/setup-macos.sh --apply
           swift test
@@ -78,17 +78,17 @@ jobs:
           # A previous user-local copy must not redirect the package installation.
           ditto -x -k release-assets/AgentWorkbench-macos-arm64.zip legacy
           mkdir -p "$HOME/Applications"
-          ditto 'legacy/AgentWorkbench/dist/Agent Workbench.app' "$HOME/Applications/Agent Workbench.app"
-          legacy_hash="$(shasum -a 256 "$HOME/Applications/Agent Workbench.app/Contents/MacOS/AgentWorkbench")"
+          ditto 'legacy/AgentWorkbench/dist/Open Cube.app' "$HOME/Applications/Open Cube.app"
+          legacy_hash="$(shasum -a 256 "$HOME/Applications/Open Cube.app/Contents/MacOS/AgentWorkbench")"
           sudo installer -pkg release-assets/AgentWorkbench-macos-universal.pkg -target /
           sudo installer -pkg release-assets/AgentWorkbench-macos-universal.pkg -target /
-          test "$legacy_hash" = "$(shasum -a 256 "$HOME/Applications/Agent Workbench.app/Contents/MacOS/AgentWorkbench")"
-          codesign --verify --deep --strict '/Applications/Agent Workbench.app'
+          test "$legacy_hash" = "$(shasum -a 256 "$HOME/Applications/Open Cube.app/Contents/MacOS/AgentWorkbench")"
+          codesign --verify --deep --strict '/Applications/Open Cube.app'
           for executable in AgentWorkbench agentctl; do
-            lipo "/Applications/Agent Workbench.app/Contents/MacOS/$executable" -verify_arch arm64 x86_64
+            lipo "/Applications/Open Cube.app/Contents/MacOS/$executable" -verify_arch arm64 x86_64
           done
-          bash '/Applications/Agent Workbench.app/Contents/Resources/Setup/prepare-runtime.sh' '/Applications/Agent Workbench.app'
-          bash '/Applications/Agent Workbench.app/Contents/Resources/Setup/configure-macos.sh' --dry-run
+          bash '/Applications/Open Cube.app/Contents/Resources/Setup/prepare-runtime.sh' '/Applications/Open Cube.app'
+          bash '/Applications/Open Cube.app/Contents/Resources/Setup/configure-macos.sh' --dry-run
           "$HOME/.local/bin/agentctl" list
           (cd release-assets && shasum -a 256 -c *.sha256)
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -105,5 +105,5 @@ jobs:
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
           gh release create "$RELEASE_TAG" release-assets/*.pkg release-assets/*.zip release-assets/*.sha256 \
-            --verify-tag --prerelease --title "Agent Workbench $RELEASE_TAG" \
+            --verify-tag --prerelease --title "Open Cube $RELEASE_TAG" \
             --notes-file docs/RELEASE_NOTES.md

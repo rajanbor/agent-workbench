@@ -1,6 +1,6 @@
 #[tauri::command]
-fn desktop_snapshot() -> agent_workbench_engine::DesktopSnapshot {
-    agent_workbench_engine::snapshot()
+fn desktop_snapshot() -> open_cube_engine::DesktopSnapshot {
+    open_cube_engine::snapshot()
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

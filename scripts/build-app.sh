@@ -4,7 +4,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 swift build -c release
 binary_dir="$(swift build -c release --show-bin-path)"
-bundle="dist/Agent Workbench.app"
+bundle="dist/Open Cube.app"
 mkdir -p "$bundle/Contents/MacOS" "$bundle/Contents/Resources"
 cp "$binary_dir/AgentWorkbench" "$bundle/Contents/MacOS/AgentWorkbench"
 cp "$binary_dir/agentctl" "$bundle/Contents/MacOS/agentctl"

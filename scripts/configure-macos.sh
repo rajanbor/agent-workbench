@@ -13,9 +13,9 @@ case "${1:-}" in
     '') ;;
     *) exit 1 ;;
 esac
-[[ "$(id -u)" != 0 && "$(id -un)" != agent ]] || { echo 'Open Agent Workbench from your main account.' >&2; exit 1; }
+[[ "$(id -u)" != 0 && "$(id -un)" != agent ]] || { echo 'Open Open Cube from your main account.' >&2; exit 1; }
 trap 'echo "Konfiguracja została przerwana. Komunikat powyżej wyjaśnia przyczynę. Możesz spróbować ponownie z aplikacji."' ERR
-printf '\nAgent Workbench — pierwsza konfiguracja\n\n'
+printf '\nOpen Cube — pierwsza konfiguracja\n\n'
 echo 'Nie wpisuj żadnych komend. Odpowiadaj na pytania poniżej.'
 echo 'Hasła obsługuje macOS. Konto agent pozostaje użytkownikiem standardowym.'
 /bin/bash "$script_dir/prepare-runtime.sh" "$bundle"

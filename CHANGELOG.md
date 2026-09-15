@@ -14,7 +14,7 @@
 ## 0.1.0-alpha.4
 
 - Create Codex, Claude and Terminal sessions from a dedicated native sessions view.
-- Each tracked session has its own Agent Workbench control window with state, project context and stop action.
+- Each tracked session has its own Open Cube control window with state, project context and stop action.
 - Refresh the workspace dashboard and public product preview.
 
 ## 0.1.0-alpha.3

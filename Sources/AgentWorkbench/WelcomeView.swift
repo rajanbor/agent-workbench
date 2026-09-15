@@ -8,7 +8,7 @@ struct WelcomeView: View {
                 Image(systemName: "terminal.fill").font(.system(size: 32)).foregroundStyle(.tint)
                     .frame(width: 64, height: 64).background(.tint.opacity(0.08), in: RoundedRectangle(cornerRadius: 16))
                 VStack(alignment: .leading, spacing: 5) {
-                    Text("Witaj w Agent Workbench").font(.title2.bold())
+                    Text("Witaj w Open Cube").font(.title2.bold())
                     Text("Przygotuj Maca do pracy z agentami.").foregroundStyle(.secondary)
                 }
             }
@@ -29,7 +29,7 @@ struct WelcomeView: View {
             Label("Hasła podajesz do macOS. Agent nie otrzymuje praw administratora.", systemImage: "lock")
                 .font(.callout).foregroundStyle(.secondary)
             HStack {
-                Button("Instrukcja i pomoc") { NSWorkspace.shared.open(URL(string: "https://rajanbor.github.io/agent-workbench/#instalacja")!) }
+                Button("Instrukcja i pomoc") { NSWorkspace.shared.open(URL(string: "https://rajanbor.github.io/open-cube/#instalacja")!) }
                 Spacer()
                 Button("Przejdź do projektów") {
                     UserDefaults.standard.set(true, forKey: "welcomeDismissed")

@@ -17,7 +17,7 @@ export default function App() {
   const send = () => { if (message.trim()) { setNotice("Session actions will be enabled as each provider adapter is migrated."); setMessage(""); } };
   return <main className="app-shell">
     <aside className="sidebar">
-      <div className="brand"><span className="brand-mark">A</span><span>Agent Workbench</span><span className="alpha">ALPHA</span></div>
+      <div className="brand"><span className="brand-mark">A</span><span>Open Cube</span><span className="alpha">ALPHA</span></div>
       <button className="new-session" onClick={() => setNotice("New session creation is the next shared-engine capability.")}><Icon name="plus" />New session</button>
       <div className="search">⌕ <span>Search workspace</span><kbd>⌘ K</kbd></div>
       <nav><p className="nav-label">WORKSPACE</p><button className="nav-item active"><Icon name="chat" />Sessions <span>{data.sessions.length}</span></button><button className="nav-item"><Icon name="grid" />Projects</button><button className="nav-item"><Icon name="terminal" />Runtimes</button><p className="nav-label space">RECENT</p>{data.sessions.map((session) => <button key={session.id} onClick={() => setActiveSession(session.id)} className={`recent ${activeSession === session.id ? "selected" : ""}`}><span className="session-dot" />{session.title}</button>)}</nav>

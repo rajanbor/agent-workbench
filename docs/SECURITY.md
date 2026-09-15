@@ -37,7 +37,7 @@ Main-account SSH keys, AWS config, GitHub CLI auth, provider keys and Keychain e
 ## GitHub import
 
 The GitHub button uses the user-installed official GitHub CLI. Its browser login
-stores credentials in the main account's macOS Keychain; Agent Workbench neither
+stores credentials in the main account's macOS Keychain; Open Cube neither
 reads nor stores the token. Repository listing uses that CLI only as the main
 user. Import first clones the selected repository into a main-owned private
 staging directory, creates the existing isolated Git copy, removes the staging

@@ -82,7 +82,7 @@ import WorkbenchCore
 @main struct AgentWorkbenchApp: App {
     @State private var model = AppModel()
     var body: some Scene {
-        WindowGroup("Agent Workbench") { MainView(model: model).frame(minWidth: 940, minHeight: 660).task {
+        WindowGroup("Open Cube") { MainView(model: model).frame(minWidth: 940, minHeight: 660).task {
             await model.prepareRuntime()
             await model.refresh()
             model.setup = !UserDefaults.standard.bool(forKey: "welcomeDismissed") || !FileManager.default.fileExists(atPath: Sessions.runtime + "/agentctl")
@@ -108,7 +108,7 @@ struct MainView: View {
                         .frame(width: 34, height: 34)
                         .background(Color.accentColor.gradient, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Agent Workbench").font(.headline)
+                        Text("Open Cube").font(.headline)
                         Text("Lokalne środowisko pracy").font(.caption).foregroundStyle(.secondary)
                     }
                     Spacer()
@@ -169,7 +169,7 @@ struct MainView: View {
         .sheet(isPresented: $model.creating) { RepositoryView(model: model) }
         .sheet(isPresented: $model.githubImporting) { GitHubImportView(model: model) }
         .sheet(item: $model.editing) { project in EnvironmentView(model: model, project: project) }
-        .alert("Agent Workbench", isPresented: Binding(get: { model.message != nil }, set: { if !$0 { model.message = nil } })) { Button("OK") { model.message = nil } } message: { Text(model.message ?? "") }
+        .alert("Open Cube", isPresented: Binding(get: { model.message != nil }, set: { if !$0 { model.message = nil } })) { Button("OK") { model.message = nil } } message: { Text(model.message ?? "") }
         .sheet(isPresented: $model.setup) {
             WelcomeView(model: model)
         }
@@ -665,7 +665,7 @@ struct SettingsView: View {
     @Bindable var model: AppModel
     var body: some View {
         Form {
-            Section { Text("Ustawienia").font(.largeTitle.weight(.semibold)); Text("Lokalna konfiguracja Agent Workbench.").foregroundStyle(.secondary) }
+            Section { Text("Ustawienia").font(.largeTitle.weight(.semibold)); Text("Lokalna konfiguracja Open Cube.").foregroundStyle(.secondary) }
             Section("Środowisko") {
                 Button("Otwórz pierwszą konfigurację") { model.setup = true }
                 LabeledContent("Workspace", value: model.config.workspaceRoot)

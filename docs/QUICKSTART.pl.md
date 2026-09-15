@@ -1,14 +1,14 @@
-# Agent Workbench — instalacja na macOS
+# Open Cube — instalacja na macOS
 
 Wersja alpha. Wymagany macOS 14+ i główne konto uprawnione do użycia sudo.
 Konto agenta jest standardowe; nie otrzymuje uprawnień administratora.
 
 ## Najprościej: instalator macOS
 
-1. Wejdź na [stronę aplikacji](https://rajanbor.github.io/agent-workbench/).
+1. Wejdź na [stronę aplikacji](https://rajanbor.github.io/open-cube/).
 2. Kliknij **Pobierz na macOS**. Jeden plik `.pkg` działa na Apple Silicon i Intelu.
 3. Otwórz pobrany plik i przejdź przez instalator macOS.
-4. Otwórz Finder → **Aplikacje → Agent Workbench**.
+4. Otwórz Finder → **Aplikacje → Open Cube**.
 5. Kliknij **Skonfiguruj Maca**. W Terminalu odpowiadaj na pytania — nie wpisujesz komend.
 6. Wróć do aplikacji i użyj **Zaloguj Codex** / **Zaloguj Claude**.
 7. Przejdź do projektów i dodaj pierwszy workspace.
@@ -23,7 +23,7 @@ Jeśli masz poprzednią kopię w `~/Applications`, otwórz nową z `/Application
 Projekty i ustawienia są wspólne i zachowane. Pierwszą konfigurację możesz ponownie
 otworzyć w Ustawieniach aplikacji.
 
-[Wydanie, kod źródłowy i sumy SHA-256](https://github.com/rajanbor/agent-workbench/releases/tag/v0.1.0-alpha.3).
+[Wydanie, kod źródłowy i sumy SHA-256](https://github.com/rajanbor/open-cube/releases/tag/v0.1.0-alpha.3).
 
 Hasło głównego konta podajesz do sudo. Przy tworzeniu konta macOS poprosi
 osobno o nowe hasło dla użytkownika agent. Skrypty nie przechowują haseł.
@@ -46,8 +46,8 @@ xcode-select --install
 Zakończ instalację w oknie macOS. Następnie:
 
 ```sh
-git clone --branch v0.1.0-alpha.3 https://github.com/rajanbor/agent-workbench.git
-cd agent-workbench
+git clone --branch v0.1.0-alpha.3 https://github.com/rajanbor/open-cube.git
+cd open-cube
 bash scripts/quickstart.sh
 ```
 
@@ -71,7 +71,7 @@ bash scripts/setup-macos.sh --apply
 bash scripts/install-agent-tools.sh
 bash scripts/install-agent-tools.sh --apply
 
-open "$HOME/Applications/Agent Workbench.app"
+open "$HOME/Applications/Open Cube.app"
 ```
 
 Setup domyślnie tylko pokazuje plan. `--apply` pyta przed każdą zmianą.
@@ -122,7 +122,7 @@ zaufane źródło → sprawdź docelową ścieżkę i branch → utwórz. Nastę
 Codex lub Claude.
 
 W widoku **Sesje** wybierz **Nowa sesja**, projekt i narzędzie. Każda sesja ma
-własne okno kontroli w Agent Workbench, gdzie widać jej stan i można ją zatrzymać.
+własne okno kontroli w Open Cube, gdzie widać jej stan i można ją zatrzymać.
 Rozmowa z Codex lub Claude nadal odbywa się w Terminalu, ponieważ to macOS
 bezpiecznie obsługuje przełączenie na konto `agent` i ewentualne hasło sudo.
 

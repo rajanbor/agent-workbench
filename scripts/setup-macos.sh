@@ -24,7 +24,7 @@ confirm() {
     read -r answer
     [[ "$answer" == YES ]]
 }
-echo 'Agent Workbench — macOS setup'
+echo 'Open Cube — macOS setup'
 printf 'Main account: %s\nWorkspace: %s\n' "$main_user" "$workspace"
 echo 'No sudoers changes, administrator rights for agent, credential copies, or Docker access.'
 if ! id agent >/dev/null 2>&1; then

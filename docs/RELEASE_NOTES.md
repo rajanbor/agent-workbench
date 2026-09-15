@@ -1,10 +1,10 @@
 ## Install without ZIPs or shell commands
 
-Open **[the download page](https://rajanbor.github.io/agent-workbench/)**, download
+Open **[the download page](https://rajanbor.github.io/open-cube/)**, download
 **AgentWorkbench-macos-universal.pkg**, and follow macOS Installer.
 One installer supports Apple Silicon and Intel on macOS 14+.
 
-Open **Applications → Agent Workbench → Skonfiguruj Maca**. The app opens the
+Open **Applications → Open Cube → Skonfiguruj Maca**. The app opens the
 guided account/tool setup in Terminal. Answer the prompts; no commands to type.
 Use **Zaloguj Codex** / **Zaloguj Claude** to log in, then add a project.
 
@@ -25,7 +25,7 @@ official download if it is missing.
 If upgrading from a manual install in ~/Applications, open the new copy from
 /Applications. The older ZIP/source workflow remains available for developers.
 
-[Polska instrukcja](https://github.com/rajanbor/agent-workbench/blob/main/docs/QUICKSTART.pl.md)
+[Polska instrukcja](https://github.com/rajanbor/open-cube/blob/main/docs/QUICKSTART.pl.md)
 
 ## Validation and alpha limitations
 

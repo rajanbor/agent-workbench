@@ -1,6 +1,6 @@
-# Agent Workbench
+# Open Cube
 
-[![CI](https://github.com/rajanbor/agent-workbench/actions/workflows/ci.yml/badge.svg)](https://github.com/rajanbor/agent-workbench/actions/workflows/ci.yml)
+[![CI](https://github.com/rajanbor/open-cube/actions/workflows/ci.yml/badge.svg)](https://github.com/rajanbor/open-cube/actions/workflows/ci.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Status: alpha](https://img.shields.io/badge/status-alpha-orange.svg)](CHANGELOG.md)
 
@@ -33,7 +33,7 @@ See [the cross-platform migration design](docs/CROSS_PLATFORM.md) for the
 platform-specific security plan.
 
 [Polski: instalacja krok po kroku](docs/QUICKSTART.pl.md) ·
-[Download for macOS](https://rajanbor.github.io/agent-workbench/) ·
+[Download for macOS](https://rajanbor.github.io/open-cube/) ·
 [Security model](docs/SECURITY.md)
 
 > Experimental alpha, not independently security-audited. A separate account is
@@ -45,14 +45,14 @@ platform-specific security plan.
 Requires macOS 14+ and a main account authorized to use sudo. Apple Silicon and
 Intel are supported by one universal installer. Agent tools require their own provider login.
 
-1. Open the [download page](https://rajanbor.github.io/agent-workbench/) and click **Pobierz na macOS**.
+1. Open the [download page](https://rajanbor.github.io/open-cube/) and click **Pobierz na macOS**.
 2. Open the `.pkg` and follow macOS Installer. The app is installed into `/Applications`.
-3. Open **Agent Workbench → Skonfiguruj Maca**. The guide opens Terminal; answer
+3. Open **Open Cube → Skonfiguruj Maca**. The guide opens Terminal; answer
    its prompts without typing shell commands.
 4. Use **Zaloguj Codex** / **Zaloguj Claude**, then add your first project.
 
 Open **Sesje → Nowa sesja** to create a Codex, Claude, or Terminal session for
-one project. Each one opens a separate native control window in Agent Workbench;
+one project. Each one opens a separate native control window in Open Cube;
 the interactive tool remains in Terminal, where macOS handles the account switch.
 
 The app prepares the user-scoped launcher and `~/.local/bin/agentctl` on launch.
@@ -82,8 +82,8 @@ also works). Install Apple's tools with `xcode-select --install` if missing and
 finish the system installer before continuing.
 
 ```sh
-git clone https://github.com/rajanbor/agent-workbench.git
-cd agent-workbench
+git clone https://github.com/rajanbor/open-cube.git
+cd open-cube
 bash scripts/quickstart.sh
 ```
 
@@ -105,7 +105,7 @@ bash scripts/setup-macos.sh                 # preview only
 bash scripts/setup-macos.sh --apply         # prompts before each change
 bash scripts/install-agent-tools.sh         # preview only
 bash scripts/install-agent-tools.sh --apply
-open "$HOME/Applications/Agent Workbench.app"
+open "$HOME/Applications/Open Cube.app"
 ```
 
 The setup creates standard `agent` only if missing, uses

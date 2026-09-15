@@ -10,18 +10,18 @@ staging="$(mktemp -d "$PWD/dist/installer.XXXXXXXX")"
 for architecture in arm64 x86_64; do
     (cd "$assets" && shasum -a 256 -c "AgentWorkbench-macos-$architecture.zip.sha256")
     ditto -x -k "$assets/AgentWorkbench-macos-$architecture.zip" "$staging/$architecture"
-    codesign --verify --deep --strict "$staging/$architecture/AgentWorkbench/dist/Agent Workbench.app"
+    codesign --verify --deep --strict "$staging/$architecture/AgentWorkbench/dist/Open Cube.app"
 done
-cmp "$staging/arm64/AgentWorkbench/dist/Agent Workbench.app/Contents/Info.plist" \
-    "$staging/x86_64/AgentWorkbench/dist/Agent Workbench.app/Contents/Info.plist"
-diff -qr "$staging/arm64/AgentWorkbench/dist/Agent Workbench.app/Contents/Resources" \
-    "$staging/x86_64/AgentWorkbench/dist/Agent Workbench.app/Contents/Resources"
-bundle="$staging/root/Applications/Agent Workbench.app"
+cmp "$staging/arm64/AgentWorkbench/dist/Open Cube.app/Contents/Info.plist" \
+    "$staging/x86_64/AgentWorkbench/dist/Open Cube.app/Contents/Info.plist"
+diff -qr "$staging/arm64/AgentWorkbench/dist/Open Cube.app/Contents/Resources" \
+    "$staging/x86_64/AgentWorkbench/dist/Open Cube.app/Contents/Resources"
+bundle="$staging/root/Applications/Open Cube.app"
 mkdir -p "$staging/root/Applications"
-ditto "$staging/arm64/AgentWorkbench/dist/Agent Workbench.app" "$bundle"
+ditto "$staging/arm64/AgentWorkbench/dist/Open Cube.app" "$bundle"
 for executable in AgentWorkbench agentctl; do
-    lipo -create "$staging/arm64/AgentWorkbench/dist/Agent Workbench.app/Contents/MacOS/$executable" \
-        "$staging/x86_64/AgentWorkbench/dist/Agent Workbench.app/Contents/MacOS/$executable" \
+    lipo -create "$staging/arm64/AgentWorkbench/dist/Open Cube.app/Contents/MacOS/$executable" \
+        "$staging/x86_64/AgentWorkbench/dist/Open Cube.app/Contents/MacOS/$executable" \
         -output "$bundle/Contents/MacOS/$executable"
     lipo "$bundle/Contents/MacOS/$executable" -verify_arch arm64 x86_64
 done

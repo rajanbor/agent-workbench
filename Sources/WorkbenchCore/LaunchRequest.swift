@@ -47,14 +47,14 @@ public struct LaunchRequest: Codable, Sendable {
         let request = try load(path)
         guard request.mainUID == getuid() else { throw WorkbenchError.invalid("Launch from your main account") }
         let identity = try AgentIdentity.inspect("agent")
-        print("\nAgent Workbench · \(request.action.capitalized)")
+        print("\nOpen Cube · \(request.action.capitalized)")
         print("Project: \(request.project.name)\nAccount: agent (UID \(identity.uid))\n")
         print("macOS may ask for your login password to switch accounts.")
         print("The password goes to sudo; the agent receives no administrator privileges.\n")
         fflush(stdout)
         let helper = Sessions.runtime + "/agentctl"
         let command = [helper, "__run", path].map(Shell.quote).joined(separator: " ")
-        let arguments = ["-p", "Agent Workbench — password for %u: ", "-iu", "agent", "/usr/bin/env", "-i", "HOME=\(identity.home)", "USER=agent", "LOGNAME=agent", "SHELL=/bin/zsh", "TERM=xterm-256color", "PATH=\(identity.home)/.local/node/bin:\(identity.home)/.local/npm/bin:\(identity.home)/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin", "/bin/zsh", "-lc", "exec " + command]
+        let arguments = ["-p", "Open Cube — password for %u: ", "-iu", "agent", "/usr/bin/env", "-i", "HOME=\(identity.home)", "USER=agent", "LOGNAME=agent", "SHELL=/bin/zsh", "TERM=xterm-256color", "PATH=\(identity.home)/.local/node/bin:\(identity.home)/.local/npm/bin:\(identity.home)/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin", "/bin/zsh", "-lc", "exec " + command]
         let status = try ProcessRunner.interactive("/usr/bin/sudo", arguments)
         if status != 0 {
             let existing = (try? String(contentsOfFile: request.session + "/state", encoding: .utf8)) ?? ""

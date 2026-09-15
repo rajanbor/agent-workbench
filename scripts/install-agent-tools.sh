@@ -58,9 +58,9 @@ mkdir -p "$HOME/.local/npm"
 npm config set prefix "$HOME/.local/npm"
 npm install --global --registry=https://registry.npmjs.org @openai/codex @anthropic-ai/claude-code
 # One managed line, only in agent's profile. Existing content is preserved.
-profile_line='export PATH="$HOME/.local/node/bin:$HOME/.local/npm/bin:$HOME/.local/bin:$PATH" # Agent Workbench'
+profile_line='export PATH="$HOME/.local/node/bin:$HOME/.local/npm/bin:$HOME/.local/bin:$PATH" # Open Cube'
 [[ ! -L "$HOME/.zprofile" ]] || { echo 'Symlinked .zprofile preserved. Add the PATH line manually.' >&2; exit 1; }
-if ! grep -Fq '# Agent Workbench' "$HOME/.zprofile" 2>/dev/null; then printf '\n%s\n' "$profile_line" >> "$HOME/.zprofile"; fi
+if ! grep -Fq '# Open Cube' "$HOME/.zprofile" 2>/dev/null; then printf '\n%s\n' "$profile_line" >> "$HOME/.zprofile"; fi
 printf '\nInstalled as %s (UID %s):\n' "$(id -un)" "$(id -u)"
 node --version
 codex --version

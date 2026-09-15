@@ -1,4 +1,4 @@
-//! Shared, platform-neutral domain model for Agent Workbench.
+//! Shared, platform-neutral domain model for Open Cube.
 //! Platform adapters live outside of this crate so the UI and policy layer
 //! can stay consistent on macOS, Windows, and Linux.
 use serde::Serialize;
@@ -97,7 +97,7 @@ pub fn snapshot() -> DesktopSnapshot {
         sessions: vec![
             Session {
                 id: "welcome".into(),
-                title: "Welcome to Agent Workbench".into(),
+                title: "Welcome to Open Cube".into(),
                 provider: "Workspace".into(),
                 project: "No project selected".into(),
                 status: "Ready".into(),
@@ -107,7 +107,7 @@ pub fn snapshot() -> DesktopSnapshot {
                 id: "research".into(),
                 title: "Product research".into(),
                 provider: "Codex".into(),
-                project: "Agent Workbench".into(),
+                project: "Open Cube".into(),
                 status: "Paused".into(),
                 updated_at: "Earlier".into(),
             },
