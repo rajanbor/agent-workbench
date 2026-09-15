@@ -20,6 +20,10 @@
   refuses anything needing a live pty, a canvas workflow editor with drag, link,
   zoom and pan, a sandbox boundary visualisation, a model catalogue with version
   control, and a usage and cost view.
+- Turn the model catalogue into a library: each model carries a summary, what
+  it is good at, its requirements, its licence and one reference — Hugging Face
+  for open weights, the provider's API documentation for hosted models — opened
+  in the system browser, with filters for local, API and ready-to-use.
 - Give every model its own icon, accent, pinned version and revision history;
   surface version control in the top bar next to the branch.
 - Generate the browser preview snapshot from the engine (`pnpm fallback`) so the
