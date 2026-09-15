@@ -29,6 +29,12 @@
 - Ship the shell as a native window: transparent macOS window with
   `underWindowBackground` vibrancy, overlay title bar, the top bar as drag
   region, and translucent chrome that follows the window material.
+- Paint the app's own theme as the ground in the native window and sync the
+  window appearance with it, so a light theme stays light on a dark desktop;
+  raise the blur and lower the transparency of every chrome layer.
+- Add the account menu at the bottom of the left rail, a workspace bar for an
+  open agent (project, branch with switcher, working tree, chats) and one line
+  of context — model, state, branch — under each agent.
 - Quiet the interface: one-line rail rows, answer provenance and counts on
   hover, a five-item status bar, the workbench API rail and terminal dock closed
   on first run, and safety flags — refusals and redactions — always visible.

@@ -37,6 +37,12 @@ export interface Pricing {
   outputPerMtok: number;
 }
 
+export interface Reference {
+  kind: string;
+  label: string;
+  url: string;
+}
+
 export interface ModelCard {
   id: string;
   name: string;
@@ -55,12 +61,37 @@ export interface ModelCard {
   digest: string;
   revisions: ModelRevision[];
   pricing: Pricing | null;
+  summary: string;
+  strengths: string[];
+  requirements: string[];
+  license: string;
+  reference: Reference;
 }
 
 export interface Permission {
   label: string;
   value: string;
   level: string;
+}
+
+export interface ProjectRef {
+  name: string;
+  path: string;
+  branch: string;
+}
+
+export interface ChatRef {
+  id: string;
+  title: string;
+  updatedAt: string;
+}
+
+export interface AgentBlueprint {
+  instructions: string;
+  patterns: string[];
+  skills: string[];
+  mcp: string[];
+  tools: string[];
 }
 
 export interface Agent {
@@ -80,6 +111,9 @@ export interface Agent {
   tokensOut: number;
   costUsd: number;
   permissions: Permission[];
+  project: ProjectRef;
+  chats: ChatRef[];
+  blueprint: AgentBlueprint;
 }
 
 export interface Mount {
@@ -190,6 +224,39 @@ export interface Capabilities {
   modules: ModuleEntry[];
 }
 
+export interface SkillCard {
+  id: string;
+  name: string;
+  category: string;
+  summary: string;
+  detail: string;
+  requires: string[];
+  installed: boolean;
+}
+
+export interface PatternCard {
+  id: string;
+  name: string;
+  summary: string;
+  effect: string;
+}
+
+export interface McpServer {
+  id: string;
+  name: string;
+  transport: string;
+  status: string;
+  summary: string;
+  scopes: string[];
+  reference: Reference | null;
+}
+
+export interface Library {
+  skills: SkillCard[];
+  patterns: PatternCard[];
+  mcp: McpServer[];
+}
+
 export interface ModelUsage {
   modelId: string;
   name: string;
@@ -232,6 +299,19 @@ export interface Commit {
   when: string;
 }
 
+export interface BranchRef {
+  name: string;
+  current: boolean;
+  ahead: number;
+  behind: number;
+  updated: string;
+}
+
+export interface FileChange {
+  path: string;
+  state: string;
+}
+
 export interface VersionControl {
   branch: string;
   head: Commit;
@@ -239,6 +319,8 @@ export interface VersionControl {
   behind: number;
   dirty: number;
   recent: Commit[];
+  branches: BranchRef[];
+  changes: FileChange[];
 }
 
 export interface InspectorScope {
@@ -275,6 +357,7 @@ export interface DesktopSnapshot {
   terminals: TerminalSession[];
   workflow: Workflow;
   capabilities: Capabilities;
+  library: Library;
   usage: UsageSummary;
   versionControl: VersionControl;
   inspector: InspectorPolicy;

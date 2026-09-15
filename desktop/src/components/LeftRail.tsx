@@ -1,9 +1,11 @@
 import { Icon } from "./Icon";
+import { Menu } from "./Menu";
 import { RailSection } from "./RailSection";
 import { AgentFace, ModelGlyph } from "./Glyph";
-import { StatusDot } from "./primitives";
-import { accentOf, toneOf } from "../lib/identity";
+import { Avatar, StatusDot } from "./primitives";
+import { accentOf, modelOf, toneOf } from "../lib/identity";
 import type { DesktopSnapshot } from "../lib/engine";
+import type { ThemeChoice } from "../lib/theme";
 import type { Selection, ViewId } from "../lib/shell";
 
 type Props = {
@@ -13,10 +15,22 @@ type Props = {
   onSelect: (view: ViewId, selection?: Partial<Selection>) => void;
   onOpenTerminal: (terminalId: string) => void;
   onAction: (message: string) => void;
+  theme: ThemeChoice;
+  onTheme: (theme: ThemeChoice) => void;
 };
 
-export function LeftRail({ snapshot, view, selection, onSelect, onOpenTerminal, onAction }: Props) {
+export function LeftRail({
+  snapshot,
+  view,
+  selection,
+  onSelect,
+  onOpenTerminal,
+  onAction,
+  theme,
+  onTheme,
+}: Props) {
   const isChat = (id: string) => view === "chat" && selection.chat === id;
+  const isAgent = (id: string) => view === "chat" && selection.agent === id;
 
   return (
     <aside className="rail rail--left">
@@ -44,13 +58,19 @@ export function LeftRail({ snapshot, view, selection, onSelect, onOpenTerminal, 
           {snapshot.agents.map((agent) => (
             <button
               key={agent.id}
-              className={`rail-row ${isChat(agent.id) ? "is-active" : ""}`}
-              onClick={() => onSelect("chat", { chat: agent.id, agent: agent.id })}
+              className={`rail-row rail-row--agent ${isAgent(agent.id) ? "is-active" : ""}`}
+              onClick={() =>
+                onSelect("chat", { chat: agent.chats[0]?.id ?? agent.id, agent: agent.id })
+              }
+              title={agent.task}
             >
               <AgentFace accent={accentOf(agent.accent)} size={24} />
               <span className="rail-row__main">
                 <strong>{agent.name}</strong>
-                <small>{agent.task}</small>
+                <small>
+                  {modelOf(snapshot, agent.modelId)?.name ?? "no model"} · {agent.status} ·{" "}
+                  {agent.project.branch}
+                </small>
               </span>
               <span className="rail-row__tail">
                 <StatusDot tone={toneOf(agent.status)} pulse={agent.status === "running"} />
@@ -144,6 +164,71 @@ export function LeftRail({ snapshot, view, selection, onSelect, onOpenTerminal, 
         </RailSection>
       </div>
 
+
+      <footer className="rail__account">
+        <Menu
+          className="menu--account"
+          placement="above"
+          title="Account and appearance"
+          label={
+            <>
+              <Avatar name="Rajan Bor" tone="accent" />
+              <span className="rail__account-name">
+                <strong>Rajan Bor</strong>
+                <small>Local account</small>
+              </span>
+            </>
+          }
+        >
+          {(close) => (
+            <>
+              <p className="menu__label">Account</p>
+              <div className="menu__note">
+                Open Cube has no sign-in. This profile is local to the machine, and no
+                provider credential is stored by the app.
+              </div>
+              <button
+                className="menu__item"
+                onClick={() => {
+                  onSelect("settings");
+                  close();
+                }}
+              >
+                <Icon name="settings" size={14} />
+                <span>Settings</span>
+              </button>
+              <button
+                className="menu__item"
+                onClick={() => {
+                  onAction("⌘K palette · ⌘B agents · ⌘J terminals · ⌘I workbench API");
+                  close();
+                }}
+              >
+                <Icon name="code" size={14} />
+                <span>Keyboard shortcuts</span>
+              </button>
+              <p className="menu__label">Appearance</p>
+              {(["light", "dark", "system"] as ThemeChoice[]).map((option) => (
+                <button
+                  key={option}
+                  className={`menu__item ${theme === option ? "is-checked" : ""}`}
+                  onClick={() => {
+                    onTheme(option);
+                    close();
+                  }}
+                >
+                  <Icon
+                    name={option === "light" ? "sun" : option === "dark" ? "moon" : "monitor"}
+                    size={14}
+                  />
+                  <span className="capitalize">{option}</span>
+                  {theme === option && <Icon name="check" size={13} />}
+                </button>
+              ))}
+            </>
+          )}
+        </Menu>
+      </footer>
     </aside>
   );
 }
