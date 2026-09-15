@@ -54,7 +54,10 @@ export function AgentStudioView({
   onOpenChat: (id: string) => void;
   onAction: (message: string) => void;
 }) {
-  const [drafts, setDrafts] = useState<Drafts>(loadDrafts);
+  // Drafts live in browser storage; adopting them after mount keeps the first
+  // render identical to the prerendered HTML.
+  const [drafts, setDrafts] = useState<Drafts>({});
+  const [adopted, setAdopted] = useState(false);
   const [tab, setTab] = useState<Tab>("patterns");
   const [creating, setCreating] = useState(agentId === null);
   const [newAgent, setNewAgent] = useState({
@@ -75,7 +78,14 @@ export function AgentStudioView({
     [blueprint, snapshot.library],
   );
 
-  useEffect(() => saveDrafts(drafts), [drafts]);
+  useEffect(() => {
+    setDrafts(loadDrafts());
+    setAdopted(true);
+  }, []);
+
+  useEffect(() => {
+    if (adopted) saveDrafts(drafts);
+  }, [adopted, drafts]);
 
   const edit = (patch: Partial<AgentBlueprint>) => {
     if (!agent) return;

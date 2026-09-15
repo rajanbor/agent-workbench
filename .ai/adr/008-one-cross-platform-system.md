@@ -22,15 +22,17 @@ crates/core     domain, prototype state, inspector policy   (platform neutral)
 crates/app      the Tauri window                            (macOS, Windows, Linux)
 crates/runtime  agent execution and the account boundary    (planned, #32)
 crates/cli      the `open-cube` command                     (planned, #32)
-web/            Next.js + React + TypeScript client
+web/            Next.js + React + TypeScript client, statically exported
 ```
 
 - Platform differences live inside `crates/runtime` as adapters behind one
   contract, not in a second client. Cross-platform means one system with
   adapters, not one product per platform.
 - The client is web technology in a native window: React and TypeScript, built
-  by Next.js, rendered by Tauri. There is one interface, and it is the same on
-  every platform.
+  by Next.js with `output: "export"`, rendered by Tauri. There is one interface
+  and it is the same on every platform. The export is static on purpose: the
+  product ships no Node server, so nothing in the client may depend on one, and
+  anything touching `window` must survive prerendering.
 - Rust owns state, policy and execution. TypeScript renders and never decides
   what an agent may do.
 - The Swift client is retired once `crates/runtime` and `crates/cli` cover

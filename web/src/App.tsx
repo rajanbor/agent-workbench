@@ -1,7 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import "./styles/tokens.css";
-import "./styles/app.css";
-
 import { TopBar } from "./components/TopBar";
 import { LeftRail } from "./components/LeftRail";
 import { RightRail } from "./components/RightRail";

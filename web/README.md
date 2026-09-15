@@ -1,7 +1,9 @@
 # Open Cube client
 
-The interface of the one cross-platform system: React and TypeScript in a Tauri
-window over the Rust core in [`crates/core`](../crates/core). Run it as an
+The interface of the one cross-platform system: Next.js, React and TypeScript
+in a Tauri window over the Rust core in [`crates/core`](../crates/core). The
+client is exported statically — there is no Node server in the product, and
+nothing may depend on one. Run it as an
 application, not as a page — commands come from the repository root:
 
 ```sh
@@ -43,6 +45,7 @@ Shortcuts: `⌘K` palette · `⌘B` left rail · `⌘J` terminals · `⌘I` righ
 | `../crates/core/src/state.rs` | Deterministic prototype snapshot |
 | `../crates/core/src/inspector.rs` | Scoped, redacting summariser |
 | `../crates/app/src/lib.rs` | `desktop_snapshot` and `inspector_ask` commands |
+| `app/` | Next App Router: root layout, the client page, the error boundary |
 | `src/components/` | Top bar, rails, terminal dock, palette, primitives |
 | `src/views/` | Chat, canvas, sandboxes, models, usage, agent, settings |
 | `src/lib/` | Engine bridge, identity, theme, shell types, highlighting |
@@ -63,4 +66,6 @@ Shortcuts: `⌘K` palette · `⌘B` left rail · `⌘J` terminals · `⌘I` righ
 - Controls for capabilities that do not exist yet say why instead of failing
   silently. The client never spawns a process on the desktop account.
 - No web fonts, icon fonts or CDN assets: the shell makes no network request.
+- Everything that touches `window`, `localStorage` or `document` must be safe
+  while Next prerenders the page: guard it, or keep it in an effect.
 - Both themes ship from `tokens.css`; no component hardcodes a colour.

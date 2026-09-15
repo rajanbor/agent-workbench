@@ -7,7 +7,7 @@ Open Cube is one cross-platform system, described in
   inspector policy. It is platform neutral and carries the tests.
 - `crates/app` is the Tauri window for macOS, Windows and Linux. It exposes
   `desktop_snapshot` and `inspector_ask`.
-- `web/` is the client: React and TypeScript, in light and dark themes, with a
+- `web/` is the client: Next.js, React and TypeScript exported statically, in light and dark themes, with a
   chat-first main window backed by the in-app inspector, object rails, a
   terminal dock, a canvas workflow editor, a sandbox boundary view, a model
   library, usage accounting and the agent studio.
