@@ -119,6 +119,10 @@ final class SecurityTests: XCTestCase {
         var config = Configuration(); config.projects = [Project(name: "example", path: root + "/example")]
         try store.save(config); XCTAssertEqual(try store.load().projects, config.projects)
     } }
+    func testLegacyConfigurationDefaultsToMacOSUserRuntime() throws {
+        let data = Data(#"{"agentUser":"agent","workspaceRoot":"/Users/Shared/AgentWork","terminal":"Terminal","projects":[]}"#.utf8)
+        XCTAssertEqual(try JSONDecoder().decode(Configuration.self, from: data).runtimeMode, .macOSUser)
+    }
     func testRealAgentUIDLaunchOnDisposableCIHost() throws {
         try requireIntegration()
         guard ProcessInfo.processInfo.environment["CI"] == "true" else {

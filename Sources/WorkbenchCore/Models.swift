@@ -5,6 +5,7 @@ public enum WorkbenchError: Error, LocalizedError {
 }
 public enum TerminalChoice: String, Codable, CaseIterable, Sendable { case terminal = "Terminal", iterm = "iTerm" }
 public enum AgentProfile: String, Codable, CaseIterable, Sendable { case safe = "Safe", network = "Network" }
+public enum RuntimeMode: String, Codable, CaseIterable, Sendable { case macOSUser, docker }
 public struct Project: Codable, Identifiable, Sendable, Equatable {
     public var id: UUID = UUID()
     public var name: String
@@ -18,8 +19,18 @@ public struct Configuration: Codable, Sendable {
     public var agentUser = "agent"
     public var workspaceRoot = "/Users/Shared/AgentWork"
     public var terminal: TerminalChoice = .terminal
+    public var runtimeMode: RuntimeMode = .macOSUser
     public var projects: [Project] = []
     public init() {}
+    enum CodingKeys: String, CodingKey { case agentUser, workspaceRoot, terminal, runtimeMode, projects }
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        agentUser = try values.decodeIfPresent(String.self, forKey: .agentUser) ?? "agent"
+        workspaceRoot = try values.decodeIfPresent(String.self, forKey: .workspaceRoot) ?? "/Users/Shared/AgentWork"
+        terminal = try values.decodeIfPresent(TerminalChoice.self, forKey: .terminal) ?? .terminal
+        runtimeMode = try values.decodeIfPresent(RuntimeMode.self, forKey: .runtimeMode) ?? .macOSUser
+        projects = try values.decodeIfPresent([Project].self, forKey: .projects) ?? []
+    }
 }
 public struct ConfigurationStore: Sendable {
     public let url: URL

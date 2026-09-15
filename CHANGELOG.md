@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0-alpha.6
+
+- Reframe the macOS app as an agent desktop with a conversation-oriented sidebar and system modules.
+- Inspect the local Mac to show laptop or desktop type, chip, memory, logical cores and free storage.
+- Add a local model catalog with transparent 4-bit resource estimates and compatibility checks.
+- Add connections UI for Codex, Claude Code, Gemini preparation and explicit macOS-user or Docker runtime selection.
+
 ## 0.1.0-alpha.5
 
 - Name parallel agent sessions to organise multiple Terminal windows and their native control panels.

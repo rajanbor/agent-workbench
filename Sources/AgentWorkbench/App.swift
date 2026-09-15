@@ -16,15 +16,21 @@ import WorkbenchCore
     var editing: Project?
     var privacyHelp = false
     var sessions: [UUID: [SessionRecord]] = [:]
+    var computer = ComputerProfile.inspect()
+    var creatingSession = false
     let workbench = Workbench()
     func reload() { do { config = try workbench.store.load(); if selection == nil { selection = config.projects.first?.id } } catch { message = error.localizedDescription } }
     func refresh() async {
         reload(); let configuration = config; let workbench = workbench
         let results = await Task.detached { (Diagnostics.report(configuration), configuration.projects.map { ($0.id, (try? workbench.gitStatus($0)) ?? "Git unavailable") }) }.value
         diagnostic = results.0; git = Dictionary(uniqueKeysWithValues: results.1)
-        refreshSessions()
+        refreshSessions(); computer = ComputerProfile.inspect()
     }
     func launch(_ project: Project, _ action: LaunchAction, title: String? = nil) async -> SessionRecord? {
+        guard config.runtimeMode == .macOSUser else {
+            message = "Tryb Docker nie jest jeszcze skonfigurowany. Wybierz konto macOS agent albo dokończ konfigurację Docker w Połączeniach."
+            return nil
+        }
         busy = true; defer { busy = false }; let workbench = workbench
         do {
             let record = try await Task.detached { try workbench.launch(project, action: action, title: title) }.value
@@ -91,6 +97,7 @@ import WorkbenchCore
 struct MainView: View {
     @Bindable var model: AppModel
     @Environment(\.openWindow) private var openWindow
+    @State private var sessionSearch = ""
     var body: some View {
         NavigationSplitView {
             VStack(spacing: 0) {
@@ -106,13 +113,37 @@ struct MainView: View {
                     }
                     Spacer()
                 }.padding(.horizontal, 17).padding(.vertical, 20)
-                List(selection: $model.section) {
-                    Section("WORKSPACE") {
-                        Label("Projekty", systemImage: "folder").tag("Projects")
-                        Label("Sesje", systemImage: "rectangle.on.rectangle").tag("Sessions")
-                        Label("Agenci", systemImage: "terminal").tag("Agents")
+                Button { model.section = "Sessions"; model.creatingSession = true } label: { Label("Nowa sesja", systemImage: "square.and.pencil") }
+                    .buttonStyle(.borderedProminent).controlSize(.large).frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 12).padding(.bottom, 10)
+                TextField("Szukaj sesji", text: $sessionSearch).textFieldStyle(.roundedBorder).padding(.horizontal, 12).padding(.bottom, 6)
+                List {
+                    Section("ROZMOWY") {
+                        ForEach(recentSessions) { session in
+                            if sessionSearch.isEmpty || (session.title ?? session.action).localizedCaseInsensitiveContains(sessionSearch) {
+                                Button { openWindow(value: session.id) } label: {
+                                    HStack(spacing: 9) {
+                                        Image(systemName: session.action == "claude" ? "sparkle" : "terminal").foregroundStyle(.tint)
+                                        VStack(alignment: .leading, spacing: 1) {
+                                            Text(session.title ?? sessionLabel(session.action)).lineLimit(1)
+                                            Text(session.created.formatted(date: .omitted, time: .shortened)).font(.caption2).foregroundStyle(.secondary)
+                                        }
+                                    }
+                                }.buttonStyle(.plain)
+                            }
+                        }
+                        if recentSessions.isEmpty { Text("Utwórz pierwszą sesję").font(.caption).foregroundStyle(.secondary) }
                     }
-                    Section { Label("Ustawienia", systemImage: "slider.horizontal.3").tag("Settings") }
+                    Section("PRZESTRZEŃ") {
+                        sidebarButton("Projekty", icon: "folder", section: "Projects")
+                        sidebarButton("Wszystkie sesje", icon: "rectangle.on.rectangle", section: "Sessions")
+                    }
+                    Section("LOKALNIE") {
+                        sidebarButton("Modele", icon: "cube.transparent", section: "Models")
+                        sidebarButton("Twój komputer", icon: model.computer.icon, section: "Computer")
+                        sidebarButton("Połączenia", icon: "point.3.connected.trianglepath.dotted", section: "Connections")
+                        sidebarButton("Agenci", icon: "terminal", section: "Agents")
+                    }
+                    Section { sidebarButton("Ustawienia", icon: "slider.horizontal.3", section: "Settings") }
                 }.listStyle(.sidebar)
                 VStack(alignment: .leading, spacing: 7) {
                     HStack(spacing: 7) { Image(systemName: "checkmark.shield.fill").foregroundStyle(.green); Text("Konto: agent"); Spacer() }
@@ -125,6 +156,9 @@ struct MainView: View {
         } detail: {
             Group {
                 if model.section == "Settings" { SettingsView(model: model) }
+                else if model.section == "Models" { ModelsView(model: model) }
+                else if model.section == "Computer" { ComputerView(model: model) }
+                else if model.section == "Connections" { ConnectionsView(model: model) }
                 else if model.section == "Sessions" { SessionsView(model: model, openSession: { openWindow(value: $0) }) }
                 else if model.section == "Agents" { AgentsView(model: model) }
                 else { ProjectsView(model: model, openSession: { openWindow(value: $0) }) }
@@ -140,6 +174,11 @@ struct MainView: View {
             WelcomeView(model: model)
         }
     }
+    private var recentSessions: [SessionRecord] { model.sessions.values.flatMap { $0 }.sorted { $0.created > $1.created }.prefix(7).map { $0 } }
+    @ViewBuilder private func sidebarButton(_ title: String, icon: String, section: String) -> some View {
+        Button { model.section = section } label: { Label(title, systemImage: icon) }.buttonStyle(.plain)
+    }
+    private func sessionLabel(_ action: String) -> String { action == "claude" ? "Claude" : action == "codex" ? "Codex" : "Terminal" }
 }
 struct ProjectsView: View {
     @Bindable var model: AppModel
@@ -336,7 +375,6 @@ struct ProjectDetail: View {
 struct SessionsView: View {
     @Bindable var model: AppModel
     let openSession: (String) -> Void
-    @State private var creating = false
     private var records: [SessionRecord] { model.sessions.values.flatMap { $0 }.sorted { $0.created > $1.created } }
     var body: some View {
         ScrollView {
@@ -347,7 +385,7 @@ struct SessionsView: View {
                         Text("Każda sesja działa na koncie macOS agent i ma osobne okno kontroli.").foregroundStyle(.secondary)
                     }
                     Spacer()
-                    Button { creating = true } label: { Label("Nowa sesja", systemImage: "plus") }.buttonStyle(.borderedProminent)
+                    Button { model.creatingSession = true } label: { Label("Nowa sesja", systemImage: "plus") }.buttonStyle(.borderedProminent)
                 }
                 if records.isEmpty {
                     ContentUnavailableView("Jeszcze nie ma sesji", systemImage: "rectangle.on.rectangle", description: Text("Utwórz sesję Codex, Claude lub Terminal dla jednego z projektów."))
@@ -379,7 +417,7 @@ struct SessionsView: View {
                 }
             }.padding(28)
         }
-        .sheet(isPresented: $creating) { NewSessionView(model: model, openSession: openSession) }
+        .sheet(isPresented: $model.creatingSession) { NewSessionView(model: model, openSession: openSession) }
     }
     private func label(for action: String) -> String { action == "claude" ? "Claude" : action == "codex" ? "Codex" : "Terminal" }
     private func icon(for action: String) -> String { action == "claude" ? "sparkle" : "terminal" }
@@ -469,6 +507,131 @@ struct SessionWindowView: View {
                 ContentUnavailableView("Sesja jest niedostępna", systemImage: "exclamationmark.triangle", description: Text("Nie znaleziono jej zapisu lub powiązanego projektu."))
             }
         }
+    }
+}
+struct ModelsView: View {
+    @Bindable var model: AppModel
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Modele lokalne").font(.largeTitle.weight(.bold))
+                        Text("Uruchamiaj modele na swoim Macu. Katalog pokazuje estymację dla wariantów 4-bit.").foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Label("\(model.computer.memoryGB) GB RAM", systemImage: model.computer.icon)
+                        .font(.subheadline.weight(.medium)).padding(.horizontal, 12).padding(.vertical, 8).background(.quaternary, in: Capsule())
+                }
+                Label("Ocena uwzględnia RAM i wolną przestrzeń dyskową. Rzeczywiste użycie zależy od kontekstu, runnera i innych aplikacji.", systemImage: "info.circle")
+                    .font(.caption).foregroundStyle(.secondary).padding(14).background(Color.accentColor.opacity(0.06), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                LazyVStack(spacing: 10) {
+                    ForEach(LocalModel.catalog) { localModel in ModelCard(localModel: localModel, computer: model.computer) }
+                }
+            }.padding(28)
+        }
+    }
+}
+struct ModelCard: View {
+    let localModel: LocalModel
+    let computer: ComputerProfile
+    var available: Bool { localModel.fits(on: computer) }
+    var body: some View {
+        HStack(spacing: 16) {
+            Image(systemName: "cube.transparent.fill").font(.title3).foregroundStyle(available ? Color.accentColor : Color.secondary)
+                .frame(width: 42, height: 42).background((available ? Color.accentColor : Color.secondary).opacity(0.1), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 7) { Text(localModel.name).font(.headline); Text(localModel.parameters).font(.caption.weight(.semibold)).foregroundStyle(.secondary) }
+                Text(localModel.description).font(.subheadline).foregroundStyle(.secondary)
+                Text("około \(localModel.estimatedMemoryGB) GB RAM · pobieranie \(localModel.downloadGB.formatted(.number.precision(.fractionLength(0...1)))) GB").font(.caption).foregroundStyle(.tertiary)
+            }
+            Spacer()
+            VStack(alignment: .trailing, spacing: 8) {
+                Label(available ? "Możesz uruchomić" : "Za mało zasobów", systemImage: available ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
+                    .font(.caption.weight(.medium)).foregroundStyle(available ? .green : .orange)
+                Button("Runner wkrótce") {}.buttonStyle(.bordered).controlSize(.small).disabled(true)
+            }
+        }
+        .padding(16).background(.background, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .overlay { RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(.quaternary) }
+    }
+}
+struct ComputerView: View {
+    @Bindable var model: AppModel
+    var computer: ComputerProfile { model.computer }
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 25) {
+                HStack(alignment: .top) {
+                    Image(systemName: computer.icon).font(.system(size: 36, weight: .medium)).foregroundStyle(.white)
+                        .frame(width: 78, height: 78).background(Color.accentColor.gradient, in: RoundedRectangle(cornerRadius: 23, style: .continuous))
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Twój komputer").font(.largeTitle.weight(.bold))
+                        Text(computer.kind == .laptop ? "Laptop Mac" : "Komputer stacjonarny Mac").foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Button { model.computer = ComputerProfile.inspect() } label: { Label("Odśwież", systemImage: "arrow.clockwise") }.buttonStyle(.bordered)
+                }
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                    ComputerMetric(icon: "cpu", title: "Chip", value: computer.chip)
+                    ComputerMetric(icon: "memorychip", title: "Pamięć wspólna", value: "\(computer.memoryGB) GB")
+                    ComputerMetric(icon: "cpu.fill", title: "Rdzenie logiczne", value: "\(computer.cores)")
+                    ComputerMetric(icon: "internaldrive", title: "Wolne miejsce", value: "\(computer.freeStorageGB) GB")
+                }
+                VStack(alignment: .leading, spacing: 9) {
+                    Text("Szczegóły systemu").font(.headline)
+                    LabeledContent("Model Maca", value: computer.model)
+                    LabeledContent("System", value: computer.systemVersion)
+                    LabeledContent("Środowisko agentów", value: model.config.runtimeMode == .macOSUser ? "Oddzielne konto macOS: agent" : "Docker — konfiguracja wymagana")
+                }.padding(18).background(.background, in: RoundedRectangle(cornerRadius: 16, style: .continuous)).overlay { RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(.quaternary) }
+            }.padding(28)
+        }
+    }
+}
+struct ComputerMetric: View {
+    let icon: String; let title: String; let value: String
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Image(systemName: icon).foregroundStyle(.tint)
+            Text(title).font(.caption).foregroundStyle(.secondary)
+            Text(value).font(.headline).lineLimit(2)
+        }.frame(maxWidth: .infinity, minHeight: 100, alignment: .leading).padding(16).background(.background, in: RoundedRectangle(cornerRadius: 16, style: .continuous)).overlay { RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(.quaternary) }
+    }
+}
+struct ConnectionsView: View {
+    @Bindable var model: AppModel
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Połączenia").font(.largeTitle.weight(.bold))
+                    Text("Wybierz, z których narzędzi chcesz korzystać. Logowania odbywają się na koncie agent.").foregroundStyle(.secondary)
+                }
+                ConnectionCard(icon: "terminal.fill", title: "Codex", description: "Zaloguj subskrypcję Codex w Terminalu konta agent.", action: "Zaloguj Codex") { model.login(.codex) }
+                ConnectionCard(icon: "sparkle", title: "Claude Code", description: "Zaloguj Claude w Terminalu konta agent.", action: "Zaloguj Claude") { model.login(.claude) }
+                ConnectionCard(icon: "diamond", title: "Gemini", description: "Warstwa Gemini i bezpieczne przechowywanie kluczy API są przygotowywane dla wersji macOS.", action: "Wkrótce") {}
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Środowisko uruchomieniowe").font(.headline)
+                    Picker("Tryb", selection: $model.config.runtimeMode) {
+                        Text("Konto macOS agent").tag(RuntimeMode.macOSUser)
+                        Text("Docker").tag(RuntimeMode.docker)
+                    }.pickerStyle(.segmented).onChange(of: model.config.runtimeMode) { model.save() }
+                    Text(model.config.runtimeMode == .macOSUser ? "Agenci działają jak teraz: na oddzielnym, standardowym koncie macOS agent." : "Docker jest zapisany jako wybrany tryb, ale uruchamianie kontenerów nie zostanie wykonane, dopóki nie dodamy jawnego konfiguratora Docker Desktop i obrazu środowiska.")
+                        .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                }.padding(18).background(.background, in: RoundedRectangle(cornerRadius: 16, style: .continuous)).overlay { RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(.quaternary) }
+            }.padding(28)
+        }
+    }
+}
+struct ConnectionCard: View {
+    let icon: String; let title: String; let description: String; let action: String; let connect: () -> Void
+    var body: some View {
+        HStack(spacing: 15) {
+            Image(systemName: icon).font(.title3).foregroundStyle(.white).frame(width: 44, height: 44).background(Color.accentColor.gradient, in: RoundedRectangle(cornerRadius: 13, style: .continuous))
+            VStack(alignment: .leading, spacing: 4) { Text(title).font(.headline); Text(description).font(.subheadline).foregroundStyle(.secondary) }
+            Spacer()
+            Button(action, action: connect).buttonStyle(.bordered).disabled(action == "Wkrótce")
+        }.padding(16).background(.background, in: RoundedRectangle(cornerRadius: 16, style: .continuous)).overlay { RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(.quaternary) }
     }
 }
 struct AgentsView: View {

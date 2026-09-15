@@ -8,6 +8,12 @@ A native macOS app and CLI for running **Codex and Claude Code as a separate
 standard macOS user**. Local projects, explicit permissions, native Metal access.
 No VM, Electron, cloud backend, telemetry, or bundled agent credentials.
 
+The macOS app is evolving into an open agent desktop: named parallel sessions,
+an inspected local-computer profile, a local-model compatibility catalog and
+connection controls. Docker, Gemini execution and provider API-key storage are
+visible in the interface but are not yet launchable; the existing `agent` user
+runtime remains the supported execution path.
+
 [Polski: instalacja krok po kroku](docs/QUICKSTART.pl.md) ·
 [Download for macOS](https://rajanbor.github.io/agent-workbench/) ·
 [Security model](docs/SECURITY.md)
