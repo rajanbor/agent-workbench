@@ -1,5 +1,10 @@
 .build/
 dist/
+target/
+node_modules/
+web/dist/
+web/out/
+.next/
 .DS_Store
 .swiftpm/
 .env

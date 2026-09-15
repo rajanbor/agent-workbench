@@ -25,7 +25,7 @@ selection, or the view that owns it — see
 ## Themes and material
 
 Light and dark are equal citizens, defined once in
-`desktop/src/styles/tokens.css`; `data-theme` pins a theme and its absence
+`web/src/styles/tokens.css`; `data-theme` pins a theme and its absence
 follows the system. Chrome is drawn from the layer tokens
 (`--layer-chrome`, `--layer-panel`, `--layer-float`) with a backdrop blur. In the native window (`data-runtime="tauri"`) the page paints a translucent
 ground in the app's own theme and the macOS vibrancy stays a hint behind it;

@@ -29,7 +29,7 @@ The desktop shell uses one navigation sidebar and a master/detail content area.
   than in a separate inspector rail.
 - The top bar carries the breadcrumb, the object identity and the object's
   primary actions. The status bar keeps the live execution summary.
-- Colour, typography, radius and shadow come from `desktop/src/styles/tokens.css`
+- Colour, typography, radius and shadow come from `web/src/styles/tokens.css`
   as CSS custom properties, defined once per theme. Light and dark are both
   first-class: `data-theme` pins one, its absence follows the system.
 - Accent blue marks primary and selected; green, amber and red mark object
@@ -53,11 +53,11 @@ applies to the session work surface (chat, terminal, diff, logs) that Phase 2
 adds inside the session view, not to the application chrome. The inspector
 requirement in `.ai/specs/WORKBENCH_SHELL.md` is replaced by the detail column.
 New views must consume tokens and domain IDs; a colour literal or a web font in
-`desktop/src/` is a review failure.
+`web/src/` is a review failure.
 
 ## Migration and compatibility
 
-`desktop/src/App.tsx` was rewritten into `components/`, `views/`, `data/`,
+`web/src/App.tsx` was rewritten into `components/`, `views/`, `data/`,
 `lib/` and `styles/`. No Rust, engine or Swift interface changed; the shell
 still reads the read-only `desktop_snapshot` command and falls back to labeled
 prototype state in a browser preview.

@@ -17,7 +17,7 @@ shifts layout; every control for an unimplemented capability reports why.
 
 ## Prototype status
 
-Implemented in `desktop/src/`, split into `components/`, `views/`, `lib/`,
+Implemented in `web/src/`, split into `components/`, `views/`, `lib/`,
 `data/` and `styles/`. State comes from the Rust engine
 (`desktop_snapshot`, `inspector_ask`) under Tauri, and from the generated
 `src/data/prototype-snapshot.json` in a browser preview; the status bar and the

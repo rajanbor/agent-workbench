@@ -14,25 +14,35 @@ connection controls. Docker, Gemini execution and provider API-key storage are
 visible in the interface but are not yet launchable; the existing `agent` user
 runtime remains the supported execution path.
 
-## Cross-platform desktop preview
+## One cross-platform system
 
-The next desktop client lives in [`desktop/`](desktop/). It uses a shared Rust
-engine with a Tauri + React desktop shell, so the same application architecture
-can target macOS, Windows and Linux. The preview opens on a chat with an
-in-app inspector that answers from the engine snapshot — what each agent is
-doing, what runs in each sandbox, which model version was used and what it cost
-— under a read-only policy that refuses file contents and credentials and never
-reaches the network. Around it sit collapsible agent, sandbox, terminal,
-workflow and model rails, a workbench-API rail, a terminal dock, a canvas
-workflow editor, a sandbox boundary view and usage accounting, in light and
-dark themes. It does not yet launch agents, providers, ptys or Docker; use the
-Swift macOS app above for that while the runtime adapters are migrated.
+The product is a Rust workspace with one web client, described in
+[ADR 008](.ai/adr/008-one-cross-platform-system.md):
+
+| Path | What it is |
+| --- | --- |
+| `crates/core` | Domain, workbench state and the inspector policy. Platform neutral, carries the tests. |
+| `crates/app` | The Tauri window for macOS, Windows and Linux. |
+| `web/` | The client: React and TypeScript, light and dark themes. |
+| `Sources/`, `scripts/` | The Swift macOS app and its installer, retired once the Rust runtime lands (#32, #33). |
 
 ```sh
-cd desktop
 pnpm install
-pnpm tauri dev      # native window; pnpm tauri build produces the .app
+pnpm app        # the window, against the dev server
+pnpm test       # cargo test --workspace
+pnpm build      # build the client
 ```
+
+The window opens on a chat with an in-app inspector that answers from the
+engine snapshot — what each agent is doing, what runs in each sandbox, which
+model version was used and what it cost — under a read-only policy that refuses
+file contents and credentials and never reaches the network. Around it sit
+collapsible agent, sandbox, terminal, workflow and model rails, a workbench-API
+rail, a terminal dock, a canvas workflow editor, a sandbox boundary view, a
+model library and the agent studio.
+
+It does not launch agents, providers, ptys or Docker yet: that is the Swift app
+above, until `crates/runtime` and `crates/cli` take it over.
 
 See [the cross-platform migration design](.ai/architecture/CROSS_PLATFORM_MIGRATION.md) for the
 platform-specific security plan.
