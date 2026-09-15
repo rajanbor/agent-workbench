@@ -24,10 +24,10 @@ import WorkbenchCore
         diagnostic = results.0; git = Dictionary(uniqueKeysWithValues: results.1)
         refreshSessions()
     }
-    func launch(_ project: Project, _ action: LaunchAction) async -> SessionRecord? {
+    func launch(_ project: Project, _ action: LaunchAction, title: String? = nil) async -> SessionRecord? {
         busy = true; defer { busy = false }; let workbench = workbench
         do {
-            let record = try await Task.detached { try workbench.launch(project, action: action) }.value
+            let record = try await Task.detached { try workbench.launch(project, action: action, title: title) }.value
             reload(); refreshSessions()
             return record
         } catch { message = error.localizedDescription; return nil }
@@ -361,8 +361,8 @@ struct SessionsView: View {
                                     Image(systemName: icon(for: session.action)).font(.headline).foregroundStyle(.tint)
                                         .frame(width: 40, height: 40).background(Color.accentColor.opacity(0.1), in: RoundedRectangle(cornerRadius: 11, style: .continuous))
                                     VStack(alignment: .leading, spacing: 3) {
-                                        Text(label(for: session.action)).font(.headline)
-                                        Text(project?.name ?? "Usunięty projekt").font(.subheadline).foregroundStyle(.secondary)
+                                        Text(session.title ?? label(for: session.action)).font(.headline)
+                                        Text("\(label(for: session.action)) · \(project?.name ?? "Usunięty projekt")").font(.subheadline).foregroundStyle(.secondary)
                                     }
                                     Spacer()
                                     VStack(alignment: .trailing, spacing: 5) {
@@ -390,6 +390,7 @@ struct NewSessionView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var projectID: UUID?
     @State private var action: LaunchAction = .codex
+    @State private var title = ""
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             VStack(alignment: .leading, spacing: 5) {
@@ -405,6 +406,7 @@ struct NewSessionView: View {
                 Label("Claude", systemImage: "sparkle").tag(LaunchAction.claude)
                 Label("Terminal", systemImage: "chevron.left.forwardslash.chevron.right").tag(LaunchAction.terminal)
             }.pickerStyle(.segmented)
+            TextField("Nazwa sesji", text: $title, prompt: Text("np. Naprawa logowania"))
             Label("Hasło, jeśli będzie potrzebne, wpisujesz wyłącznie w Terminalu do sudo. Sesja nie otrzymuje praw administratora.", systemImage: "lock")
                 .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             HStack {
@@ -412,7 +414,10 @@ struct NewSessionView: View {
                 Spacer()
                 Button("Utwórz sesję") {
                     guard let project = model.config.projects.first(where: { $0.id == projectID }) else { return }
-                    Task { if let session = await model.launch(project, action) { dismiss(); openSession(session.id) } }
+                    Task {
+                        let name = title.trimmingCharacters(in: .whitespacesAndNewlines)
+                        if let session = await model.launch(project, action, title: name.isEmpty ? nil : name) { dismiss(); openSession(session.id) }
+                    }
                 }.buttonStyle(.borderedProminent).disabled(projectID == nil || model.busy)
             }
         }
@@ -434,7 +439,7 @@ struct SessionWindowView: View {
                             .font(.title2).foregroundStyle(.white).frame(width: 46, height: 46)
                             .background(Color.accentColor.gradient, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(session.action == "claude" ? "Claude" : session.action == "codex" ? "Codex" : "Terminal").font(.title2.weight(.bold))
+                            Text(session.title ?? (session.action == "claude" ? "Claude" : session.action == "codex" ? "Codex" : "Terminal")).font(.title2.weight(.bold))
                             Text(project.name).foregroundStyle(.secondary)
                         }
                         Spacer()

@@ -5,6 +5,7 @@ public struct SessionRecord: Codable, Sendable, Identifiable {
     public var projectID: UUID
     public var action: String
     public var created: Date
+    public var title: String?
 }
 public enum Sessions {
     public static var runtime: String { "/Users/Shared/AgentWorkbench-\(getuid())" }
@@ -17,7 +18,7 @@ public enum Sessions {
                   info.st_mode & S_IFMT != S_IFLNK else { throw WorkbenchError.invalid("Install the trusted launcher first: bash scripts/install.sh. Unsafe or missing runtime: \(path)") }
         }
     }
-    public static func prepare(_ project: Project, action: LaunchAction) throws -> String {
+    public static func prepare(_ project: Project, action: LaunchAction, title: String? = nil) throws -> String {
         try validateRuntime()
         let base = runtime + "/sessions"
         try FileManager.default.createDirectory(atPath: base, withIntermediateDirectories: true, attributes: [.posixPermissions: 0o755])
@@ -25,7 +26,7 @@ public enum Sessions {
         try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: false, attributes: [.posixPermissions: 0o700])
         try ProcessRunner.checked("/bin/chmod", ["+a", "user:agent allow read,write,execute,delete,delete_child,append,readattr,writeattr,readextattr,writeextattr,readsecurity,file_inherit,directory_inherit", path])
         try ProcessRunner.checked("/bin/chmod", ["+a", "user:\(NSUserName()) allow read,execute,readattr,readextattr,readsecurity,file_inherit,directory_inherit", path])
-        let record = SessionRecord(id: id, projectID: project.id, action: action.rawValue, created: Date())
+        let record = SessionRecord(id: id, projectID: project.id, action: action.rawValue, created: Date(), title: title)
         try JSONEncoder().encode(record).write(to: URL(fileURLWithPath: path + "/record.json"), options: .atomic)
         return path
     }

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.0-alpha.5
+
+- Name parallel agent sessions to organise multiple Terminal windows and their native control panels.
+
 ## 0.1.0-alpha.4
 
 - Create Codex, Claude and Terminal sessions from a dedicated native sessions view.
