@@ -11,7 +11,8 @@
    Agents, Sandboxes, Terminals, Workflows, Models — each row showing live
    state, and the account menu pinned at the bottom.
 3. Workspace: the active surface. An open agent adds a workspace bar with its
-   project, branch, working tree and chats. Chat is the default; canvas, sandbox
+   project, branch, working tree and chats, and the agent studio designs the
+   agent itself. Chat is the default; canvas, sandbox
    visualisation, model catalogue, usage, agent detail and settings share it.
 4. Terminal dock: bottom panel with one tab per sandbox terminal, resizable and
    dismissible without losing its buffer.
@@ -35,6 +36,9 @@
   anything that needs a live pty.
 - Read the workbench API — values, functions, modules — and the scopes the
   in-app model is granted or refused.
+- Design an agent: project, model and sandbox in basic mode; instructions,
+  patterns, skills, MCP servers and tools in the editor, each chosen from a
+  library that explains what it does and what it requires.
 
 ## Disclosure
 

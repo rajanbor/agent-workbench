@@ -1,6 +1,14 @@
 /** Shell-level types: which surface is open and what it is pointed at. */
 
-export type ViewId = "chat" | "canvas" | "sandboxes" | "models" | "usage" | "agent" | "settings";
+export type ViewId =
+  | "chat"
+  | "canvas"
+  | "sandboxes"
+  | "models"
+  | "usage"
+  | "agent"
+  | "studio"
+  | "settings";
 
 export interface Selection {
   /** Chat thread: "workbench" for the inspector, otherwise an agent id. */
@@ -17,6 +25,7 @@ export const viewTitles: Record<ViewId, string> = {
   models: "Models",
   usage: "Usage",
   agent: "Agent",
+  studio: "Agent studio",
   settings: "Settings",
 };
 

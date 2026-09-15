@@ -4,7 +4,7 @@
 
 `Machine → Runtime → Sandbox → Workspace → Session → Agent → Task → Run`.
 
-Models and providers are capabilities used by an agent. A terminal is a view of a sandbox or agent run. Canvas is a graph view of those same objects.
+Models and providers are capabilities used by an agent, alongside skills, prepared patterns and MCP servers; an agent's `AgentBlueprint` records which of them it was given, and the library describes each one. A terminal is a view of a sandbox or agent run. Canvas is a graph view of those same objects.
 
 ## Desktop navigation
 

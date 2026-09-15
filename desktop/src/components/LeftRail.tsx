@@ -51,8 +51,8 @@ export function LeftRail({
           count={snapshot.agents.length}
           action={{
             icon: "plus",
-            label: "New agent",
-            onClick: () => onAction("Creating agents needs the workbench daemon."),
+            label: "Design a new agent",
+            onClick: () => onSelect("studio", { agent: null }),
           }}
         >
           {snapshot.agents.map((agent) => (
