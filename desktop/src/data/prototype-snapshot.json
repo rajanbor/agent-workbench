@@ -1,0 +1,1385 @@
+{
+  "computer": {
+    "operatingSystem": "macos",
+    "architecture": "aarch64",
+    "deviceKind": "Mac",
+    "runtimeStatus": "Host runtime ready"
+  },
+  "providers": [
+    {
+      "id": "claude",
+      "name": "Claude",
+      "detail": "Connect with your existing subscription",
+      "connected": false
+    },
+    {
+      "id": "codex",
+      "name": "Codex",
+      "detail": "Connect with your existing subscription",
+      "connected": false
+    },
+    {
+      "id": "gemini",
+      "name": "Gemini",
+      "detail": "Provider adapter planned",
+      "connected": false
+    },
+    {
+      "id": "local",
+      "name": "Local runtime",
+      "detail": "Built-in inspector, no account required",
+      "connected": true
+    }
+  ],
+  "models": [
+    {
+      "id": "inspector-local",
+      "name": "Open Cube Inspector",
+      "vendor": "Built in",
+      "task": "Workspace summarisation",
+      "icon": "cube",
+      "accent": "accent",
+      "parameters": "rule based",
+      "context": "snapshot scoped",
+      "updated": "ships with the app",
+      "downloads": null,
+      "likes": null,
+      "location": "local",
+      "ready": true,
+      "version": "v1",
+      "digest": "sha256:0a91f4c2",
+      "revisions": [
+        {
+          "version": "v1",
+          "digest": "sha256:0a91f4c2",
+          "published": "with 0.2.0-alpha.1",
+          "note": "Read-only snapshot summariser, no egress",
+          "pinned": true
+        }
+      ],
+      "pricing": null,
+      "summary": "Answers questions about this workbench from the engine snapshot. Rule based, not a language model: it cannot improvise, and it cannot read anything its policy does not grant.",
+      "strengths": [
+        "Explains agents, sandboxes, spend and policy",
+        "Runs with no account and no network",
+        "Every answer names its sources"
+      ],
+      "requirements": [
+        "None — ships with the app"
+      ],
+      "license": "Apache-2.0 (part of Open Cube)",
+      "reference": {
+        "kind": "docs",
+        "label": "Inspector spec",
+        "url": "https://github.com/rajanbor/open-cube/blob/main/.ai/specs/INSPECTOR_MODEL.md"
+      }
+    },
+    {
+      "id": "claude-sonnet",
+      "name": "Claude Sonnet",
+      "vendor": "Anthropic",
+      "task": "Text · tools",
+      "icon": "agent",
+      "accent": "amber",
+      "parameters": "hosted",
+      "context": "200k",
+      "updated": "provider managed",
+      "downloads": null,
+      "likes": null,
+      "location": "api",
+      "ready": false,
+      "version": "provider default",
+      "digest": "pinned by provider",
+      "revisions": [
+        {
+          "version": "provider default",
+          "digest": "pinned by provider",
+          "published": "—",
+          "note": "Version follows the provider until an adapter pins it",
+          "pinned": false
+        }
+      ],
+      "pricing": {
+        "inputPerMtok": 3.0,
+        "outputPerMtok": 15.0
+      },
+      "summary": "Hosted general model with tool use and a long context. In Open Cube it runs through the Claude Code tool inside the agent account, so the subscription and the credentials stay with that tool.",
+      "strengths": [
+        "Long-context reading of a whole workspace",
+        "Tool use and multi-step planning",
+        "Strong at writing and reviewing prose"
+      ],
+      "requirements": [
+        "Provider account, signed in through Claude Code",
+        "Network access from the sandbox to api.anthropic.com"
+      ],
+      "license": "Commercial API terms",
+      "reference": {
+        "kind": "api",
+        "label": "Anthropic API documentation",
+        "url": "https://docs.anthropic.com/en/api/overview"
+      }
+    },
+    {
+      "id": "codex",
+      "name": "Codex",
+      "vendor": "OpenAI",
+      "task": "Code · tools",
+      "icon": "code",
+      "accent": "violet",
+      "parameters": "hosted",
+      "context": "provider managed",
+      "updated": "provider managed",
+      "downloads": null,
+      "likes": null,
+      "location": "api",
+      "ready": false,
+      "version": "provider default",
+      "digest": "pinned by provider",
+      "revisions": [
+        {
+          "version": "provider default",
+          "digest": "pinned by provider",
+          "published": "—",
+          "note": "Subscription execution through the agent account",
+          "pinned": false
+        }
+      ],
+      "pricing": null,
+      "summary": "Hosted coding agent driven by the Codex CLI. Cost is carried by the subscription rather than metered per token, so spend shows as zero here.",
+      "strengths": [
+        "Repository-scale code changes",
+        "Runs as its own CLI inside the sandbox"
+      ],
+      "requirements": [
+        "Provider account, signed in through the Codex CLI",
+        "Network access from the sandbox"
+      ],
+      "license": "Commercial API terms",
+      "reference": {
+        "kind": "api",
+        "label": "OpenAI platform documentation",
+        "url": "https://platform.openai.com/docs"
+      }
+    },
+    {
+      "id": "qwen2.5-7b",
+      "name": "Qwen2.5 7B Instruct",
+      "vendor": "Alibaba",
+      "task": "Text Generation",
+      "icon": "model",
+      "accent": "green",
+      "parameters": "7B",
+      "context": "32k",
+      "updated": "catalogued",
+      "downloads": "4.7 GB",
+      "likes": null,
+      "location": "local",
+      "ready": false,
+      "version": "q4_k_m",
+      "digest": "sha256:6d1e08b7",
+      "revisions": [
+        {
+          "version": "q4_k_m",
+          "digest": "sha256:6d1e08b7",
+          "published": "not downloaded",
+          "note": "4-bit build, 8 GB unified memory",
+          "pinned": true
+        },
+        {
+          "version": "q8_0",
+          "digest": "sha256:b20c93de",
+          "published": "not downloaded",
+          "note": "8-bit build, 12 GB unified memory",
+          "pinned": false
+        }
+      ],
+      "pricing": null,
+      "summary": "Open-weight instruct model that runs on the machine. Good default for review and summarisation work that should never leave the device.",
+      "strengths": [
+        "Runs offline, no account",
+        "Balanced quality for its size",
+        "Permissive licence"
+      ],
+      "requirements": [
+        "8 GB unified memory at 4-bit",
+        "4.7 GB free disk",
+        "Metal, CUDA or CPU fallback"
+      ],
+      "license": "Apache-2.0",
+      "reference": {
+        "kind": "huggingface",
+        "label": "Qwen/Qwen2.5-7B-Instruct",
+        "url": "https://huggingface.co/Qwen/Qwen2.5-7B-Instruct"
+      }
+    },
+    {
+      "id": "llama3.2-3b",
+      "name": "Llama 3.2 3B Instruct",
+      "vendor": "Meta",
+      "task": "Text Generation",
+      "icon": "bolt",
+      "accent": "red",
+      "parameters": "3B",
+      "context": "128k",
+      "updated": "catalogued",
+      "downloads": "2.0 GB",
+      "likes": null,
+      "location": "local",
+      "ready": false,
+      "version": "q4_k_m",
+      "digest": "sha256:91c4f0aa",
+      "revisions": [
+        {
+          "version": "q4_k_m",
+          "digest": "sha256:91c4f0aa",
+          "published": "not downloaded",
+          "note": "4-bit build, 6 GB unified memory",
+          "pinned": true
+        }
+      ],
+      "pricing": null,
+      "summary": "Small open-weight model for fast local passes: classification, triage and short summaries where latency matters more than depth.",
+      "strengths": [
+        "Fast on modest hardware",
+        "Long context for its size"
+      ],
+      "requirements": [
+        "6 GB unified memory at 4-bit",
+        "2.0 GB free disk",
+        "Licence acceptance on Hugging Face"
+      ],
+      "license": "Llama 3.2 Community License",
+      "reference": {
+        "kind": "huggingface",
+        "label": "meta-llama/Llama-3.2-3B-Instruct",
+        "url": "https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct"
+      }
+    },
+    {
+      "id": "mistral-7b",
+      "name": "Mistral 7B Instruct",
+      "vendor": "Mistral",
+      "task": "Text Generation",
+      "icon": "sandbox",
+      "accent": "violet",
+      "parameters": "7B",
+      "context": "32k",
+      "updated": "catalogued",
+      "downloads": "4.1 GB",
+      "likes": null,
+      "location": "local",
+      "ready": false,
+      "version": "q4_k_m",
+      "digest": "sha256:3ef7a105",
+      "revisions": [
+        {
+          "version": "q4_k_m",
+          "digest": "sha256:3ef7a105",
+          "published": "not downloaded",
+          "note": "4-bit build, 8 GB unified memory",
+          "pinned": true
+        }
+      ],
+      "pricing": null,
+      "summary": "Open-weight instruct model with a permissive licence, often used as a local fallback when a hosted provider is unavailable.",
+      "strengths": [
+        "Permissive licence, no account",
+        "Steady instruction following"
+      ],
+      "requirements": [
+        "8 GB unified memory at 4-bit",
+        "4.1 GB free disk"
+      ],
+      "license": "Apache-2.0",
+      "reference": {
+        "kind": "huggingface",
+        "label": "mistralai/Mistral-7B-Instruct-v0.3",
+        "url": "https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.3"
+      }
+    }
+  ],
+  "agents": [
+    {
+      "id": "chief",
+      "name": "Chief",
+      "role": "Orchestrator",
+      "status": "running",
+      "modelId": "claude-sonnet",
+      "sandboxId": "product-dev",
+      "machine": "MacBook Pro",
+      "task": "Rebuild the workbench shell",
+      "lastMessage": "Shell rebuilt, waiting on your review of the canvas layout.",
+      "updatedAt": "8 min",
+      "accent": "green",
+      "revision": "7b21e4a9",
+      "tokensIn": 9400,
+      "tokensOut": 3000,
+      "costUsd": 0.31,
+      "permissions": [
+        {
+          "label": "Files",
+          "value": "workspace",
+          "level": "scoped"
+        },
+        {
+          "label": "Network",
+          "value": "limited",
+          "level": "review"
+        },
+        {
+          "label": "Shell",
+          "value": "approval",
+          "level": "review"
+        },
+        {
+          "label": "Delegation",
+          "value": "none",
+          "level": "off"
+        }
+      ],
+      "project": {
+        "name": "Open Cube",
+        "path": "~/Projects/open-cube",
+        "branch": "main"
+      },
+      "chats": [
+        {
+          "id": "chief-main",
+          "title": "Shell rebuild",
+          "updatedAt": "8 min"
+        },
+        {
+          "id": "chief-review",
+          "title": "Design review",
+          "updatedAt": "yesterday"
+        }
+      ],
+      "blueprint": {
+        "instructions": "Read the workspace specification before proposing a change. Open a diff for review; never write outside the workspace root.",
+        "patterns": [
+          "review-before-write",
+          "one-change-per-run"
+        ],
+        "skills": [
+          "repo-map",
+          "diff-review",
+          "design-tokens"
+        ],
+        "mcp": [
+          "filesystem",
+          "git"
+        ],
+        "tools": [
+          "snapshot",
+          "inspect",
+          "agents_in"
+        ]
+      }
+    },
+    {
+      "id": "backend",
+      "name": "Backend Migrator",
+      "role": "Implementation",
+      "status": "waiting",
+      "modelId": "codex",
+      "sandboxId": "product-dev",
+      "machine": "MacBook Pro",
+      "task": "Port runtime adapters to the Rust engine",
+      "lastMessage": "Waiting for approval on `cargo test` before the next module.",
+      "updatedAt": "1 h",
+      "accent": "violet",
+      "revision": "c4e13d80",
+      "tokensIn": 28100,
+      "tokensOut": 10000,
+      "costUsd": 0.94,
+      "permissions": [
+        {
+          "label": "Files",
+          "value": "workspace",
+          "level": "scoped"
+        },
+        {
+          "label": "Network",
+          "value": "off",
+          "level": "off"
+        },
+        {
+          "label": "Shell",
+          "value": "approval",
+          "level": "review"
+        },
+        {
+          "label": "Delegation",
+          "value": "none",
+          "level": "off"
+        }
+      ],
+      "project": {
+        "name": "Open Cube",
+        "path": "~/Projects/open-cube",
+        "branch": "agent/runtime-migration"
+      },
+      "chats": [
+        {
+          "id": "backend-main",
+          "title": "Runtime migration",
+          "updatedAt": "1 h"
+        }
+      ],
+      "blueprint": {
+        "instructions": "Port one runtime adapter per run. Run the test suite before proposing the diff, and stop for approval before any shell command.",
+        "patterns": [
+          "one-change-per-run",
+          "test-before-propose",
+          "approval-for-shell"
+        ],
+        "skills": [
+          "repo-map",
+          "cargo-tests"
+        ],
+        "mcp": [
+          "filesystem",
+          "git"
+        ],
+        "tools": [
+          "snapshot",
+          "spend"
+        ]
+      }
+    },
+    {
+      "id": "auditor",
+      "name": "UI Auditor",
+      "role": "Review",
+      "status": "idle",
+      "modelId": "qwen2.5-7b",
+      "sandboxId": "review",
+      "machine": "MacBook Pro",
+      "task": "Contrast and focus sweep on changed screens",
+      "lastMessage": "No local model downloaded, so the sweep has not started.",
+      "updatedAt": "yesterday",
+      "accent": "blue",
+      "revision": "5aa90e17",
+      "tokensIn": 0,
+      "tokensOut": 0,
+      "costUsd": 0.0,
+      "permissions": [
+        {
+          "label": "Files",
+          "value": "workspace",
+          "level": "scoped"
+        },
+        {
+          "label": "Network",
+          "value": "off",
+          "level": "off"
+        },
+        {
+          "label": "Shell",
+          "value": "off",
+          "level": "off"
+        },
+        {
+          "label": "Delegation",
+          "value": "none",
+          "level": "off"
+        }
+      ],
+      "project": {
+        "name": "Design system",
+        "path": "~/Projects/design-system",
+        "branch": "main"
+      },
+      "chats": [
+        {
+          "id": "auditor-main",
+          "title": "Contrast sweep",
+          "updatedAt": "yesterday"
+        }
+      ],
+      "blueprint": {
+        "instructions": "Check contrast, focus order and spacing on changed screens in both themes. Report findings; do not edit files.",
+        "patterns": [
+          "read-only",
+          "report-findings"
+        ],
+        "skills": [
+          "design-tokens",
+          "accessibility-audit"
+        ],
+        "mcp": [
+          "filesystem"
+        ],
+        "tools": [
+          "snapshot"
+        ]
+      }
+    },
+    {
+      "id": "release",
+      "name": "Release Notes",
+      "role": "Writing",
+      "status": "approval",
+      "modelId": "claude-sonnet",
+      "sandboxId": "review",
+      "machine": "MacBook Pro",
+      "task": "Draft the alpha release note",
+      "lastMessage": "Draft ready. Needs your approval before it touches CHANGELOG.md.",
+      "updatedAt": "2 d",
+      "accent": "amber",
+      "revision": "a05e2f77",
+      "tokensIn": 4800,
+      "tokensOut": 1400,
+      "costUsd": 0.12,
+      "permissions": [
+        {
+          "label": "Files",
+          "value": "docs",
+          "level": "scoped"
+        },
+        {
+          "label": "Network",
+          "value": "off",
+          "level": "off"
+        },
+        {
+          "label": "Shell",
+          "value": "off",
+          "level": "off"
+        },
+        {
+          "label": "Delegation",
+          "value": "none",
+          "level": "off"
+        }
+      ],
+      "project": {
+        "name": "Open Cube",
+        "path": "~/Projects/open-cube",
+        "branch": "main"
+      },
+      "chats": [
+        {
+          "id": "release-main",
+          "title": "Alpha release note",
+          "updatedAt": "2 d"
+        }
+      ],
+      "blueprint": {
+        "instructions": "Draft release notes from the changelog and the commit history. Never touch a file without approval.",
+        "patterns": [
+          "review-before-write",
+          "report-findings"
+        ],
+        "skills": [
+          "changelog-writer"
+        ],
+        "mcp": [
+          "git"
+        ],
+        "tools": [
+          "snapshot",
+          "spend"
+        ]
+      }
+    }
+  ],
+  "sandboxes": [
+    {
+      "id": "product-dev",
+      "name": "product-dev",
+      "isolation": "Separate standard macOS user · agent",
+      "state": "active",
+      "machine": "MacBook Pro",
+      "disk": "1.8 GB of 20 GB",
+      "mounts": [
+        {
+          "path": "~/Projects/open-cube",
+          "mode": "read-write"
+        },
+        {
+          "path": "~/Library/Caches/open-cube",
+          "mode": "read-write"
+        },
+        {
+          "path": "/usr/local",
+          "mode": "denied"
+        }
+      ],
+      "network": {
+        "mode": "limited",
+        "allowlist": [
+          "localhost",
+          "api.anthropic.com"
+        ]
+      },
+      "processes": [
+        {
+          "pid": 4821,
+          "command": "claude --workspace open-cube",
+          "cpu": "12%",
+          "memory": "412 MB"
+        },
+        {
+          "pid": 4839,
+          "command": "vite --port 1420",
+          "cpu": "3%",
+          "memory": "188 MB"
+        }
+      ],
+      "agents": [
+        "chief",
+        "backend"
+      ]
+    },
+    {
+      "id": "review",
+      "name": "review",
+      "isolation": "Separate standard macOS user · agent-review",
+      "state": "idle",
+      "machine": "MacBook Pro",
+      "disk": "240 MB of 10 GB",
+      "mounts": [
+        {
+          "path": "~/Projects/open-cube/docs",
+          "mode": "read-only"
+        },
+        {
+          "path": "~/Projects/open-cube/.ai",
+          "mode": "read-only"
+        }
+      ],
+      "network": {
+        "mode": "off",
+        "allowlist": []
+      },
+      "processes": [],
+      "agents": [
+        "auditor",
+        "release"
+      ]
+    },
+    {
+      "id": "docker-linux",
+      "name": "docker-linux",
+      "isolation": "Container runtime",
+      "state": "planned",
+      "machine": "MacBook Pro",
+      "disk": "—",
+      "mounts": [
+        {
+          "path": "workspace",
+          "mode": "planned"
+        }
+      ],
+      "network": {
+        "mode": "planned",
+        "allowlist": []
+      },
+      "processes": [],
+      "agents": []
+    }
+  ],
+  "sessions": [
+    {
+      "id": "shell",
+      "title": "Workbench shell redesign",
+      "provider": "Claude",
+      "project": "Open Cube",
+      "status": "running",
+      "updatedAt": "8 min"
+    },
+    {
+      "id": "runtime",
+      "title": "Runtime adapter migration",
+      "provider": "Codex",
+      "project": "Open Cube",
+      "status": "waiting",
+      "updatedAt": "1 h"
+    },
+    {
+      "id": "audit",
+      "title": "Contrast audit",
+      "provider": "Qwen Local",
+      "project": "Design system",
+      "status": "idle",
+      "updatedAt": "yesterday"
+    }
+  ],
+  "terminals": [
+    {
+      "id": "term-product-dev",
+      "title": "product-dev",
+      "sandboxId": "product-dev",
+      "shell": "zsh",
+      "cwd": "~/Projects/open-cube",
+      "state": "detached",
+      "policy": "A live pty runs as the sandbox user and needs workbenchd; until then this pane replays the session log.",
+      "lines": [
+        {
+          "stream": "prompt",
+          "text": "agent@product-dev ~/Projects/open-cube %"
+        },
+        {
+          "stream": "input",
+          "text": "agentctl status"
+        },
+        {
+          "stream": "output",
+          "text": "runtime      native (agent user)"
+        },
+        {
+          "stream": "output",
+          "text": "sandbox      product-dev · active"
+        },
+        {
+          "stream": "output",
+          "text": "providers    none connected"
+        },
+        {
+          "stream": "prompt",
+          "text": "agent@product-dev ~/Projects/open-cube %"
+        },
+        {
+          "stream": "input",
+          "text": "cargo test -p open-cube-engine"
+        },
+        {
+          "stream": "output",
+          "text": "running 4 tests ... ok"
+        }
+      ]
+    },
+    {
+      "id": "term-review",
+      "title": "review",
+      "sandboxId": "review",
+      "shell": "zsh",
+      "cwd": "~/Projects/open-cube/docs",
+      "state": "detached",
+      "policy": "Read-only sandbox: this terminal may never write or reach the network.",
+      "lines": [
+        {
+          "stream": "prompt",
+          "text": "agent@review ~/Projects/open-cube/docs %"
+        },
+        {
+          "stream": "input",
+          "text": "ls"
+        },
+        {
+          "stream": "output",
+          "text": "QUICKSTART.pl.md  RELEASE_NOTES.md  SECURITY.md"
+        }
+      ]
+    }
+  ],
+  "workflow": {
+    "id": "overnight",
+    "name": "Overnight review",
+    "nodes": [
+      {
+        "id": "trigger",
+        "kind": "trigger",
+        "label": "Schedule",
+        "detail": "every night · 02:00",
+        "status": "ready",
+        "x": 40.0,
+        "y": 150.0
+      },
+      {
+        "id": "chief",
+        "kind": "agent",
+        "label": "Chief",
+        "detail": "claude-sonnet · product-dev",
+        "status": "running",
+        "x": 260.0,
+        "y": 60.0
+      },
+      {
+        "id": "backend",
+        "kind": "agent",
+        "label": "Backend Migrator",
+        "detail": "codex · product-dev",
+        "status": "waiting",
+        "x": 260.0,
+        "y": 240.0
+      },
+      {
+        "id": "sandbox",
+        "kind": "sandbox",
+        "label": "product-dev",
+        "detail": "native · limited network",
+        "status": "active",
+        "x": 500.0,
+        "y": 150.0
+      },
+      {
+        "id": "auditor",
+        "kind": "agent",
+        "label": "UI Auditor",
+        "detail": "qwen2.5-7b · review",
+        "status": "idle",
+        "x": 740.0,
+        "y": 60.0
+      },
+      {
+        "id": "report",
+        "kind": "output",
+        "label": "Report",
+        "detail": "notes + diff for review",
+        "status": "ready",
+        "x": 740.0,
+        "y": 240.0
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "from": "trigger",
+        "to": "chief",
+        "label": "start"
+      },
+      {
+        "id": "e2",
+        "from": "trigger",
+        "to": "backend",
+        "label": "start"
+      },
+      {
+        "id": "e3",
+        "from": "chief",
+        "to": "sandbox",
+        "label": "runs in"
+      },
+      {
+        "id": "e4",
+        "from": "backend",
+        "to": "sandbox",
+        "label": "runs in"
+      },
+      {
+        "id": "e5",
+        "from": "sandbox",
+        "to": "auditor",
+        "label": "diff"
+      },
+      {
+        "id": "e6",
+        "from": "auditor",
+        "to": "report",
+        "label": "findings"
+      }
+    ]
+  },
+  "capabilities": {
+    "values": [
+      {
+        "key": "workspace.root",
+        "value": "~/Projects/open-cube",
+        "scope": "workspace",
+        "secret": false
+      },
+      {
+        "key": "sandbox.default",
+        "value": "product-dev",
+        "scope": "workspace",
+        "secret": false
+      },
+      {
+        "key": "runtime.user",
+        "value": "agent",
+        "scope": "machine",
+        "secret": false
+      },
+      {
+        "key": "inspector.egress",
+        "value": "none",
+        "scope": "machine",
+        "secret": false
+      },
+      {
+        "key": "provider.token",
+        "value": "not stored by Open Cube",
+        "scope": "provider",
+        "secret": true
+      },
+      {
+        "key": "budget.daily",
+        "value": "$5.00",
+        "scope": "workspace",
+        "secret": false
+      }
+    ],
+    "functions": [
+      {
+        "name": "snapshot",
+        "signature": "fn snapshot() -> DesktopSnapshot",
+        "module": "engine::state",
+        "permission": "read",
+        "description": "Whole workbench state as one immutable value."
+      },
+      {
+        "name": "inspect",
+        "signature": "fn inspect(question: &str) -> InspectorAnswer",
+        "module": "engine::inspector",
+        "permission": "read",
+        "description": "Scoped, redacted summary of agents, sandboxes, models and cost."
+      },
+      {
+        "name": "agents_in",
+        "signature": "fn agents_in(sandbox: &str) -> Vec<&Agent>",
+        "module": "engine::state",
+        "permission": "read",
+        "description": "Agents attached to one sandbox."
+      },
+      {
+        "name": "spend",
+        "signature": "fn spend() -> UsageSummary",
+        "module": "engine::usage",
+        "permission": "read",
+        "description": "Tokens and cost per model, per agent and per day."
+      },
+      {
+        "name": "open_terminal",
+        "signature": "fn open_terminal(sandbox: &str) -> Result<TerminalSession>",
+        "module": "engine::terminal",
+        "permission": "execute",
+        "description": "Blocked until workbenchd owns the sandbox pty."
+      },
+      {
+        "name": "run_agent",
+        "signature": "fn run_agent(agent: &str) -> Result<Run>",
+        "module": "engine::runtime",
+        "permission": "execute",
+        "description": "Blocked until the provider runtime is migrated."
+      }
+    ],
+    "modules": [
+      {
+        "name": "engine::domain",
+        "version": "0.2.0",
+        "status": "stable",
+        "description": "Shared object model for every client.",
+        "functions": 0
+      },
+      {
+        "name": "engine::state",
+        "version": "0.2.0",
+        "status": "prototype",
+        "description": "Deterministic workbench snapshot.",
+        "functions": 3
+      },
+      {
+        "name": "engine::inspector",
+        "version": "0.2.0",
+        "status": "stable",
+        "description": "Read-only, redacting summariser.",
+        "functions": 2
+      },
+      {
+        "name": "engine::usage",
+        "version": "0.2.0",
+        "status": "prototype",
+        "description": "Token and cost accounting.",
+        "functions": 1
+      },
+      {
+        "name": "engine::terminal",
+        "version": "0.2.0",
+        "status": "planned",
+        "description": "Sandbox pty sessions.",
+        "functions": 1
+      },
+      {
+        "name": "engine::runtime",
+        "version": "0.2.0",
+        "status": "planned",
+        "description": "Provider execution adapters.",
+        "functions": 1
+      }
+    ]
+  },
+  "library": {
+    "skills": [
+      {
+        "id": "repo-map",
+        "name": "Repository map",
+        "category": "context",
+        "summary": "Indexes the workspace tree and keeps a short map of where things live.",
+        "detail": "Runs once per session and refreshes on branch change. Reads paths and file names only, never file contents outside the granted mounts.",
+        "requires": [
+          "Files: workspace"
+        ],
+        "installed": true
+      },
+      {
+        "id": "diff-review",
+        "name": "Diff review",
+        "category": "review",
+        "summary": "Reads a pending diff and comments on it before anything is written.",
+        "detail": "Pairs with the review-before-write pattern: the agent must produce a diff, and this skill is what reads it back.",
+        "requires": [
+          "Files: workspace",
+          "Pattern: review-before-write"
+        ],
+        "installed": true
+      },
+      {
+        "id": "design-tokens",
+        "name": "Design tokens",
+        "category": "design",
+        "summary": "Knows the token file and refuses colour literals in a review.",
+        "detail": "Loads desktop/src/styles/tokens.css and checks proposed CSS against it.",
+        "requires": [
+          "Files: workspace"
+        ],
+        "installed": true
+      },
+      {
+        "id": "cargo-tests",
+        "name": "Cargo tests",
+        "category": "verification",
+        "summary": "Runs the Rust test suite and reports failures with the failing assertion.",
+        "detail": "Needs shell approval per run until workbenchd owns the sandbox pty.",
+        "requires": [
+          "Shell: approval"
+        ],
+        "installed": false
+      },
+      {
+        "id": "accessibility-audit",
+        "name": "Accessibility audit",
+        "category": "review",
+        "summary": "Checks contrast, focus order and hit targets on changed screens.",
+        "detail": "Reports findings as notes; it never edits a file.",
+        "requires": [
+          "Files: workspace"
+        ],
+        "installed": true
+      },
+      {
+        "id": "changelog-writer",
+        "name": "Changelog writer",
+        "category": "writing",
+        "summary": "Drafts release notes from commits and the changelog.",
+        "detail": "Reads the commit list from the version-control state, not from the network.",
+        "requires": [
+          "Git: read"
+        ],
+        "installed": true
+      }
+    ],
+    "patterns": [
+      {
+        "id": "review-before-write",
+        "name": "Review before write",
+        "summary": "The agent proposes a diff and waits for approval before writing.",
+        "effect": "Every write becomes a two-step exchange; nothing lands unseen."
+      },
+      {
+        "id": "one-change-per-run",
+        "name": "One change per run",
+        "summary": "A run touches a single module or file group, then stops.",
+        "effect": "Keeps diffs reviewable and makes a failed run cheap to discard."
+      },
+      {
+        "id": "test-before-propose",
+        "name": "Test before propose",
+        "summary": "The test suite must pass before a diff is offered.",
+        "effect": "Adds a verification step and reports the failure instead of the diff when it breaks."
+      },
+      {
+        "id": "approval-for-shell",
+        "name": "Approval for shell",
+        "summary": "Each shell command is presented for approval before it runs.",
+        "effect": "Turns the shell permission from a grant into a per-command decision."
+      },
+      {
+        "id": "read-only",
+        "name": "Read only",
+        "summary": "The agent may read the workspace but never write to it.",
+        "effect": "Removes write tools from the agent entirely; findings arrive as notes."
+      },
+      {
+        "id": "report-findings",
+        "name": "Report findings",
+        "summary": "Results arrive as a structured list of findings with file and line.",
+        "effect": "Makes output reviewable and comparable between runs."
+      }
+    ],
+    "mcp": [
+      {
+        "id": "filesystem",
+        "name": "Filesystem",
+        "transport": "stdio",
+        "status": "connected",
+        "summary": "Scoped file access inside the sandbox mounts.",
+        "scopes": [
+          "read: workspace",
+          "write: workspace"
+        ],
+        "reference": {
+          "kind": "docs",
+          "label": "Model Context Protocol",
+          "url": "https://modelcontextprotocol.io"
+        }
+      },
+      {
+        "id": "git",
+        "name": "Git",
+        "transport": "stdio",
+        "status": "connected",
+        "summary": "Branch, status, log and diff for the workspace repository.",
+        "scopes": [
+          "read: repository"
+        ],
+        "reference": {
+          "kind": "docs",
+          "label": "Model Context Protocol",
+          "url": "https://modelcontextprotocol.io"
+        }
+      },
+      {
+        "id": "http-fetch",
+        "name": "HTTP fetch",
+        "transport": "stdio",
+        "status": "blocked",
+        "summary": "Fetches a URL for the agent. Blocked while the sandbox network policy is limited.",
+        "scopes": [
+          "network: allowlist"
+        ],
+        "reference": null
+      },
+      {
+        "id": "sqlite",
+        "name": "SQLite",
+        "transport": "stdio",
+        "status": "available",
+        "summary": "Reads a local database file inside the sandbox.",
+        "scopes": [
+          "read: workspace"
+        ],
+        "reference": null
+      }
+    ]
+  },
+  "usage": {
+    "window": "today",
+    "tokensIn": 42300,
+    "tokensOut": 14400,
+    "costUsd": 1.3699999999999999,
+    "byModel": [
+      {
+        "modelId": "claude-sonnet",
+        "name": "Claude Sonnet",
+        "version": "provider default",
+        "calls": 24,
+        "tokensIn": 14200,
+        "tokensOut": 4400,
+        "costUsd": 0.43
+      },
+      {
+        "modelId": "codex",
+        "name": "Codex",
+        "version": "provider default",
+        "calls": 11,
+        "tokensIn": 28100,
+        "tokensOut": 10000,
+        "costUsd": 0.94
+      },
+      {
+        "modelId": "inspector-local",
+        "name": "Open Cube Inspector",
+        "version": "v1",
+        "calls": 6,
+        "tokensIn": 0,
+        "tokensOut": 0,
+        "costUsd": 0.0
+      }
+    ],
+    "byAgent": [
+      {
+        "agentId": "chief",
+        "name": "Chief",
+        "modelId": "claude-sonnet",
+        "runs": 3,
+        "tokens": 12400,
+        "costUsd": 0.31
+      },
+      {
+        "agentId": "backend",
+        "name": "Backend Migrator",
+        "modelId": "codex",
+        "runs": 3,
+        "tokens": 38100,
+        "costUsd": 0.94
+      },
+      {
+        "agentId": "auditor",
+        "name": "UI Auditor",
+        "modelId": "qwen2.5-7b",
+        "runs": 0,
+        "tokens": 0,
+        "costUsd": 0.0
+      },
+      {
+        "agentId": "release",
+        "name": "Release Notes",
+        "modelId": "claude-sonnet",
+        "runs": 3,
+        "tokens": 6200,
+        "costUsd": 0.12
+      }
+    ],
+    "daily": [
+      {
+        "day": "Mon",
+        "tokens": 21400,
+        "costUsd": 0.52
+      },
+      {
+        "day": "Tue",
+        "tokens": 38900,
+        "costUsd": 0.88
+      },
+      {
+        "day": "Wed",
+        "tokens": 12600,
+        "costUsd": 0.29
+      },
+      {
+        "day": "Thu",
+        "tokens": 44100,
+        "costUsd": 1.12
+      },
+      {
+        "day": "Fri",
+        "tokens": 56700,
+        "costUsd": 1.37
+      }
+    ]
+  },
+  "versionControl": {
+    "branch": "main",
+    "head": {
+      "hash": "e56bed2",
+      "title": "Build Open Cube workbench shell prototype",
+      "author": "Rajan Bor",
+      "when": "today"
+    },
+    "ahead": 0,
+    "behind": 0,
+    "dirty": 6,
+    "recent": [
+      {
+        "hash": "e56bed2",
+        "title": "Build Open Cube workbench shell prototype",
+        "author": "Rajan Bor",
+        "when": "today"
+      },
+      {
+        "hash": "b1104bb",
+        "title": "Add canonical AI project system",
+        "author": "Rajan Bor",
+        "when": "2 days ago"
+      },
+      {
+        "hash": "91ed4e3",
+        "title": "Document Open Cube architecture and roadmap",
+        "author": "Rajan Bor",
+        "when": "3 days ago"
+      }
+    ],
+    "branches": [
+      {
+        "name": "main",
+        "current": true,
+        "ahead": 0,
+        "behind": 0,
+        "updated": "today"
+      },
+      {
+        "name": "agent/runtime-migration",
+        "current": false,
+        "ahead": 4,
+        "behind": 1,
+        "updated": "1 h"
+      },
+      {
+        "name": "agent/ui-audit",
+        "current": false,
+        "ahead": 2,
+        "behind": 0,
+        "updated": "yesterday"
+      }
+    ],
+    "changes": [
+      {
+        "path": "desktop/engine/src/state.rs",
+        "state": "modified"
+      },
+      {
+        "path": "desktop/src/views/AgentStudioView.tsx",
+        "state": "added"
+      },
+      {
+        "path": "desktop/src/styles/tokens.css",
+        "state": "modified"
+      },
+      {
+        "path": ".ai/specs/AGENT_STUDIO.md",
+        "state": "added"
+      }
+    ]
+  },
+  "inspector": {
+    "modelId": "inspector-local",
+    "mode": "read-only",
+    "egress": "none · answers never leave the machine",
+    "scopes": [
+      {
+        "name": "agents",
+        "granted": true,
+        "detail": "Status, task, model, permissions and cost"
+      },
+      {
+        "name": "sandboxes",
+        "granted": true,
+        "detail": "Isolation, mounts, network policy, processes"
+      },
+      {
+        "name": "models",
+        "granted": true,
+        "detail": "Catalogue, pinned version and digest"
+      },
+      {
+        "name": "usage",
+        "granted": true,
+        "detail": "Tokens and cost per model and agent"
+      },
+      {
+        "name": "workspace files",
+        "granted": false,
+        "detail": "File contents stay inside the sandbox"
+      },
+      {
+        "name": "provider credentials",
+        "granted": false,
+        "detail": "Never readable by any model"
+      },
+      {
+        "name": "terminal input",
+        "granted": false,
+        "detail": "Typed commands are not forwarded to a model"
+      }
+    ],
+    "redactions": [
+      "provider.token",
+      "api key",
+      "password",
+      "secret"
+    ]
+  }
+}

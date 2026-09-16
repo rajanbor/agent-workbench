@@ -1,7 +1,67 @@
-# Tauri + React + Typescript
+# Open Cube desktop client
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+Cross-platform shell for Open Cube: a Tauri window over a React + TypeScript
+front end and the shared Rust engine in [`engine/`](engine).
 
-## Recommended IDE Setup
+Run it as an application, not as a page:
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+```sh
+pnpm install
+pnpm tauri dev              # the app — translucent native window, engine state
+pnpm tauri build            # signed-less .app and installer in src-tauri/target
+pnpm test:engine            # cargo test for the engine crate
+pnpm fallback               # regenerate the preview snapshot from Rust
+pnpm dev                    # browser preview, for quick iteration only
+```
+
+The engine owns the state. In the browser preview the Tauri IPC is absent, so
+the shell reads `src/data/prototype-snapshot.json` — generated from the same
+Rust code by `pnpm fallback` — and the status bar says `preview snapshot`
+instead of `rust engine`. Translucency and the overlay title bar exist only in
+the native window, so visual review happens there.
+
+## Surfaces
+
+| Surface | What it does |
+| --- | --- |
+| Top bar | Workspace menu, version control (branch, head, commits, pinned model versions), chat model picker, tokens and cost, panel toggles, appearance |
+| Left rail | Collapsible sections: workbench chat, agents, sandboxes, terminals, workflows, models |
+| Chat | Main window. The in-app inspector answers from the engine snapshot and reports model, version, tokens, cost, sources and refusals |
+| Canvas | Workflow editor: drag, rename, link, delete, pan, zoom, reset to the engine layout |
+| Sandboxes | Isolation drawn as nested boundaries with mounts, network policy, processes and attached agents |
+| Models | Catalogue with per-model identity, pinned version, digest and revision history |
+| Usage | Spend and tokens per model, per agent and per day |
+| Terminal dock | One tab per sandbox terminal; engine-backed commands answer, everything else is refused with its reason |
+| Right rail | Workbench API: values, functions, modules, and the inspector policy |
+
+Shortcuts: `⌘K` palette · `⌘B` left rail · `⌘J` terminals · `⌘I` right rail.
+
+## Structure
+
+| Path | Contents |
+| --- | --- |
+| `engine/src/domain.rs` | Object model shared by every client |
+| `engine/src/state.rs` | Deterministic prototype snapshot |
+| `engine/src/inspector.rs` | Scoped, redacting summariser |
+| `src-tauri/src/lib.rs` | `desktop_snapshot` and `inspector_ask` commands |
+| `src/components/` | Top bar, rails, terminal dock, palette, primitives |
+| `src/views/` | Chat, canvas, sandboxes, models, usage, agent, settings |
+| `src/lib/` | Engine bridge, identity, theme, shell types, highlighting |
+| `src/styles/tokens.css` | Colour, type and radius tokens for both themes |
+
+## Rules
+
+- Quiet by default: a surface shows identity and state; counts, timestamps and
+  answer provenance appear on hover; the API rail and the dock start closed;
+  refusals and redactions are never hidden. Disclosure uses opacity, never
+  `display`, so nothing shifts under the cursor.
+- Chrome is drawn from the layer tokens with a backdrop blur; in the native
+  window the page is transparent and the macOS material is the ground.
+- State lives in Rust. A view renders the snapshot; it never invents an object.
+  New state starts in `engine/`, then `pnpm fallback` regenerates the preview.
+- The in-app model reads only what `InspectorPolicy` grants, and every answer
+  reports its model, version, tokens, cost, sources and refusals.
+- Controls for capabilities that do not exist yet say why instead of failing
+  silently. The client never spawns a process on the desktop account.
+- No web fonts, icon fonts or CDN assets: the shell makes no network request.
+- Both themes ship from `tokens.css`; no component hardcodes a colour.

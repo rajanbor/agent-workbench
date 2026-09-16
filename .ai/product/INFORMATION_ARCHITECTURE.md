@@ -8,9 +8,11 @@ Models and providers are capabilities used by an agent. A terminal is a view of 
 
 ## Desktop navigation
 
-The narrow activity bar exposes Workspace, Agents, Machines, Canvas, Git, Search, Extensions and Settings. Selecting an activity changes the secondary sidebar; it does not replace the entire application shell.
+The left rail exposes the objects: the workbench chat, agents, sandboxes, terminals, workflows and models, in collapsible sections. Selecting one changes the workspace surface; it never replaces the shell.
 
-The centre is a tabbed, dockable workspace. Supported panel kinds are Chat, Terminal, Canvas, Files, Editor, Runs, Logs, Diff and Browser. The right inspector is collapsible and shows the selected object. The status bar reports branch, sandbox, active agent, machine, running-agent count, token use and cost.
+The workspace holds one surface at a time — chat, canvas, sandbox, models, usage, agent or settings — with the terminal dock beneath it and the workbench API rail (values, functions, modules, inspector policy) beside it. Both start closed. The status bar reports branch, sandbox, running agents, state source and cost; the rest of the accounting lives in Usage.
+
+Detail is disclosed, not displayed: see `.ai/adr/007-quiet-shell-and-native-window.md`.
 
 ## Empty and onboarding states
 
