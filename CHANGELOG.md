@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+- Add a terminal board: as many terminals as the work needs, in windows that
+  open in a chosen sandbox, move, resize, raise, close and tidy into columns,
+  with the arrangement restored on the next start.
+- Let a terminal start a program. `claude`, `codex`, `qwen` and `agentctl` open
+  a session that takes a task per line until `exit`. None launches its real
+  binary — a program in a sandbox runs as the sandbox user, which needs the
+  daemon — so what answers is the built-in inspector under the read-only
+  policy, and the banner says so on every start, with the model, tokens and
+  cost on every answer.
+- Give a terminal one history wherever it is shown: the bottom panel and the
+  board are two views of the same buffer, and the panel's session list includes
+  the windows opened on the board.
+
 - Design an agent by clicking: purpose, project, model, sandbox, review — one
   question per step, every answer a card. A purpose is an object in the engine
   now, and choosing one fills the instructions, patterns, skills, servers and

@@ -705,6 +705,86 @@
       "modelNote": "Reads widely, answers briefly: a local model keeps this free."
     }
   ],
+  "programs": [
+    {
+      "id": "claude",
+      "command": "claude",
+      "name": "Claude Code",
+      "summary": "An agent session against the workspace this terminal is opened in.",
+      "modelId": "claude-opus",
+      "providerId": "claude",
+      "available": false,
+      "blockedBy": "The real CLI runs as the sandbox user and signs in with your subscription; both need workbenchd.",
+      "banner": [
+        "Claude Code — session opened by Open Cube",
+        "Standing in: the built-in inspector answers under the read-only policy.",
+        "It reads the workbench snapshot. It cannot read file contents, credentials or the network.",
+        "Type a task. `exit` closes the session, `help` lists what this shell answers."
+      ],
+      "examples": [
+        "What is each agent doing right now?",
+        "Where did today's spend go?",
+        "What can you not read?"
+      ]
+    },
+    {
+      "id": "codex",
+      "command": "codex",
+      "name": "Codex",
+      "summary": "A session on the subscription seat, for the same workspace.",
+      "modelId": "codex",
+      "providerId": "codex",
+      "available": false,
+      "blockedBy": "The provider is not connected, and launching its CLI in a sandbox needs workbenchd.",
+      "banner": [
+        "Codex — session opened by Open Cube",
+        "Standing in: the built-in inspector answers under the read-only policy.",
+        "Type a task. `exit` closes the session."
+      ],
+      "examples": [
+        "Summarise the sandboxes.",
+        "Which models are ready?"
+      ]
+    },
+    {
+      "id": "qwen",
+      "command": "qwen",
+      "name": "Qwen2.5 7B Instruct",
+      "summary": "A session on the model already downloaded to this machine.",
+      "modelId": "qwen2.5-7b",
+      "providerId": "local",
+      "available": false,
+      "blockedBy": "The weights are here, but a run still belongs to the sandbox user: workbenchd owns the process.",
+      "banner": [
+        "Qwen2.5 7B Instruct — local session opened by Open Cube",
+        "Standing in: the built-in inspector answers under the read-only policy.",
+        "A real run would cost electricity, not tokens. Type a task; `exit` closes the session."
+      ],
+      "examples": [
+        "What does this workspace contain?"
+      ]
+    },
+    {
+      "id": "agentctl",
+      "command": "agentctl",
+      "name": "agentctl",
+      "summary": "The workbench's own tool: status, sessions, and starting an agent.",
+      "modelId": null,
+      "providerId": null,
+      "available": false,
+      "blockedBy": "Reading state works here; starting or stopping an agent needs workbenchd.",
+      "banner": [
+        "agentctl — answering from the engine snapshot",
+        "`status`, `agents`, `sandboxes`, `models`, `cost` answer. Anything that starts or stops an agent is refused with its reason.",
+        "`exit` closes the session."
+      ],
+      "examples": [
+        "status",
+        "agents",
+        "cost"
+      ]
+    }
+  ],
   "agents": [
     {
       "id": "chief",

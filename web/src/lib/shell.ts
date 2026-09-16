@@ -10,6 +10,7 @@ export type ViewId =
   | "studio"
   | "project"
   | "new-project"
+  | "terminals"
   | "settings";
 
 export interface Selection {
@@ -30,6 +31,7 @@ export const viewTitles: Record<ViewId, string> = {
   studio: "Agent studio",
   project: "Project",
   "new-project": "New project",
+  terminals: "Terminal canvas",
   settings: "Settings",
 };
 

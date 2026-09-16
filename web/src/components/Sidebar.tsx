@@ -14,6 +14,7 @@ import {
   projectTab,
   sandboxTab,
   studioTab,
+  terminalsTab,
   usageTab,
   workbenchChatTab,
   type ActivityId,
@@ -428,6 +429,18 @@ function SandboxArea({ snapshot, focusedKey, onOpen, onOpenTerminal }: Props) {
       </RailSection>
 
       <RailSection title="Terminals" count={snapshot.terminals.length}>
+        <button
+          className={`rail-row ${focusedKey === terminalsTab().key ? "is-active" : ""}`}
+          onClick={() => onOpen(terminalsTab())}
+        >
+          <span className="rail-row__icon">
+            <Icon name="canvas" size={15} />
+          </span>
+          <span className="rail-row__main">
+            <strong>Terminal board</strong>
+            <small>many at once, with agent sessions in them</small>
+          </span>
+        </button>
         {snapshot.terminals.map((terminal) => (
           <button key={terminal.id} className="rail-row" onClick={() => onOpenTerminal(terminal.id)}>
             <span className="rail-row__icon">

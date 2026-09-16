@@ -175,6 +175,16 @@ export function modelTab(model: ModelCard): TabSpec {
   };
 }
 
+export function terminalsTab(): TabSpec {
+  return {
+    key: "terminals",
+    view: "terminals",
+    title: "Terminals",
+    icon: "terminal",
+    hint: "A board of terminals, with agent sessions inside them",
+  };
+}
+
 export function canvasTab(name: string): TabSpec {
   return { key: "canvas", view: "canvas", title: name, icon: "canvas", hint: "Agent workflow" };
 }

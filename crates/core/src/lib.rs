@@ -92,6 +92,41 @@ mod tests {
     }
 
     #[test]
+    fn no_program_claims_to_run_without_saying_what_is_missing() {
+        let s = snapshot();
+        assert!(!s.programs.is_empty(), "a terminal needs something to start");
+        for program in &s.programs {
+            assert_eq!(
+                program.available,
+                program.blocked_by.is_none(),
+                "program {} must either run or say why it cannot",
+                program.id
+            );
+            if let Some(id) = &program.model_id {
+                assert!(
+                    s.models.iter().any(|model| &model.id == id),
+                    "program {} names unknown model {}",
+                    program.id,
+                    id
+                );
+            }
+            if let Some(id) = &program.provider_id {
+                assert!(
+                    s.providers.iter().any(|provider| &provider.id == id),
+                    "program {} names unknown provider {}",
+                    program.id,
+                    id
+                );
+            }
+            assert!(
+                !program.banner.is_empty(),
+                "program {} would open a session that explains nothing",
+                program.id
+            );
+        }
+    }
+
+    #[test]
     fn every_purpose_names_things_the_library_actually_has() {
         let s = snapshot();
         assert!(!s.purposes.is_empty(), "a new agent needs somewhere to start");

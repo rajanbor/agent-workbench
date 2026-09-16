@@ -2,25 +2,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Icon } from "./Icon";
 import { Badge, IconButton } from "./primitives";
 import { countBySeverity, problemsOf } from "../lib/problems";
-import { ask, type DesktopSnapshot, type TerminalLine } from "../lib/engine";
+import { promptOf } from "../lib/terminal";
+import type { DesktopSnapshot, TerminalLine, TerminalSession } from "../lib/engine";
 import type { AppEvent } from "../lib/shell";
 
-type Buffers = Record<string, TerminalLine[]>;
 type PanelTab = "terminal" | "problems" | "output";
-
-const HELP: TerminalLine[] = [
-  { stream: "output", text: "Built-in commands, answered by the engine — no process is spawned:" },
-  { stream: "output", text: "  help                 this list" },
-  { stream: "output", text: "  status               machine, sandbox and provider state" },
-  { stream: "output", text: "  agents | sandboxes   objects in this workspace" },
-  { stream: "output", text: "  models | cost        catalogue, pinned versions, spend" },
-  { stream: "output", text: "  ask <question>       inspector answer under the read-only policy" },
-  { stream: "output", text: "  clear                clear this pane" },
-  {
-    stream: "warn",
-    text: "Anything else needs a live pty owned by the sandbox user; workbenchd is not implemented yet.",
-  },
-];
 
 /** The bottom panel. Tabs on the left, actions on the right, and — in the
  *  terminal tab — the sessions down the side, so the strip stops carrying
@@ -28,8 +14,14 @@ const HELP: TerminalLine[] = [
  *  rather than in a bar of its own, because that is how a shell reads. */
 export function TerminalDock({
   snapshot,
+  terminals,
   activeId,
   onActive,
+  buffers,
+  sessions,
+  busy: running,
+  onRun,
+  onBoard,
   height,
   onHeight,
   onClose,
@@ -37,8 +29,16 @@ export function TerminalDock({
   events,
 }: {
   snapshot: DesktopSnapshot;
+  /** Everything the engine ships, plus what this session opened on the board. */
+  terminals: TerminalSession[];
   activeId: string;
   onActive: (id: string) => void;
+  buffers: Record<string, TerminalLine[]>;
+  sessions: Record<string, string | null>;
+  busy: Record<string, boolean>;
+  onRun: (terminalId: string, input: string) => void;
+  /** Show this terminal as a window on the board. */
+  onBoard: (terminalId: string) => void;
   height: number;
   onHeight: (height: number) => void;
   onClose: () => void;
@@ -47,15 +47,14 @@ export function TerminalDock({
   events: AppEvent[];
 }) {
   const [tab, setTab] = useState<PanelTab>("terminal");
-  const [buffers, setBuffers] = useState<Buffers>({});
   const [input, setInput] = useState("");
-  const [busy, setBusy] = useState(false);
   const [maximised, setMaximised] = useState(false);
   const scroller = useRef<HTMLDivElement>(null);
   const field = useRef<HTMLInputElement>(null);
 
-  const terminal =
-    snapshot.terminals.find((item) => item.id === activeId) ?? snapshot.terminals[0];
+  const terminal = terminals.find((item) => item.id === activeId) ?? terminals[0];
+  const session = sessions[terminal?.id ?? ""] ?? null;
+  const busy = running[terminal?.id ?? ""] ?? false;
   const lines = useMemo(
     () => [...(terminal?.lines ?? []), ...(buffers[terminal?.id ?? ""] ?? [])],
     [buffers, terminal],
@@ -66,9 +65,6 @@ export function TerminalDock({
   useEffect(() => {
     scroller.current?.scrollTo({ top: scroller.current.scrollHeight });
   }, [lines.length, busy, tab]);
-
-  const push = (id: string, added: TerminalLine[]) =>
-    setBuffers((current) => ({ ...current, [id]: [...(current[id] ?? []), ...added] }));
 
   const startDrag = (event: React.PointerEvent) => {
     if (maximised) return;
@@ -86,60 +82,6 @@ export function TerminalDock({
     window.addEventListener("pointerup", up);
   };
 
-  const run = async (raw: string) => {
-    const command = raw.trim();
-    if (!command || !terminal) return;
-    const prompt = `agent@${terminal.sandboxId} ${terminal.cwd} %`;
-    push(terminal.id, [
-      { stream: "prompt", text: prompt },
-      { stream: "input", text: command },
-    ]);
-    setInput("");
-
-    if (command === "clear") {
-      setBuffers((current) => ({ ...current, [terminal.id]: [] }));
-      return;
-    }
-    if (command === "help") {
-      push(terminal.id, HELP);
-      return;
-    }
-
-    const question =
-      command === "status"
-        ? "overview"
-        : command.startsWith("ask ")
-          ? command.slice(4)
-          : ["agents", "sandboxes", "models", "cost"].includes(command)
-            ? command
-            : null;
-
-    if (question === null) {
-      push(terminal.id, [
-        {
-          stream: "error",
-          text: `${command.split(" ")[0]}: refused by policy — a live command runs as the sandbox user and needs workbenchd.`,
-        },
-        { stream: "output", text: "Type `help` for the commands this pane answers today." },
-      ]);
-      onAction("Live shell execution is not implemented yet.");
-      return;
-    }
-
-    setBusy(true);
-    const answer = await ask(question, snapshot);
-    setBusy(false);
-    push(terminal.id, [
-      ...answer.text.split("\n").map((text) => ({ stream: "output", text })),
-      {
-        stream: "info",
-        text: `— ${answer.modelId} · ${answer.tokens} tokens · $${answer.costUsd.toFixed(2)}${
-          answer.refused.length ? ` · refused: ${answer.refused.join(", ")}` : ""
-        }`,
-      },
-    ]);
-  };
-
   if (!terminal) return null;
 
   const tabs: { id: PanelTab; label: string; tail?: React.ReactNode }[] = [
@@ -153,7 +95,7 @@ export function TerminalDock({
       ),
     },
     { id: "output", label: "Output", tail: <em className="dock__tally">{events.length}</em> },
-    { id: "terminal", label: "Terminal", tail: <em className="dock__tally">{snapshot.terminals.length}</em> },
+    { id: "terminal", label: "Terminal", tail: <em className="dock__tally">{terminals.length}</em> },
   ];
 
   return (
@@ -200,7 +142,13 @@ export function TerminalDock({
                 icon="trash"
                 label="Clear this terminal"
                 size={14}
-                onClick={() => setBuffers((current) => ({ ...current, [terminal.id]: [] }))}
+                onClick={() => onRun(terminal.id, "clear")}
+              />
+              <IconButton
+                icon="canvas"
+                label="Open this terminal on the board"
+                size={14}
+                onClick={() => onBoard(terminal.id)}
               />
             </>
           )}
@@ -239,26 +187,28 @@ export function TerminalDock({
               className="dock__entry"
               onSubmit={(event) => {
                 event.preventDefault();
-                void run(input);
+                onRun(terminal.id, input);
+                setInput("");
               }}
             >
-              <span className="dock__prompt">
-                agent@{terminal.sandboxId} {terminal.cwd} %
-              </span>
+              <span className="dock__prompt">{promptOf(terminal, session, snapshot.programs)}</span>
               <input
                 ref={field}
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
-                placeholder="help"
+                placeholder={session ? "a task" : "help"}
                 spellCheck={false}
                 autoComplete="off"
                 aria-label={`Terminal input for ${terminal.title}`}
               />
+              <button type="submit" className="term__run" aria-label={`Run in ${terminal.title}`}>
+                <Icon name="send" size={12} />
+              </button>
             </form>
           </div>
 
           <ul className="dock__sessions" aria-label="Terminal sessions">
-            {snapshot.terminals.map((item) => (
+            {terminals.map((item) => (
               <li key={item.id}>
                 <button
                   className={item.id === terminal.id ? "is-active" : ""}
@@ -269,7 +219,9 @@ export function TerminalDock({
                   <span>
                     <strong className="mono">{item.title}</strong>
                     <small>
-                      {item.sandboxId} · {item.state}
+                      {sessions[item.id]
+                        ? `${sessions[item.id]} session`
+                        : `${item.sandboxId} · ${item.state}`}
                     </small>
                   </span>
                 </button>

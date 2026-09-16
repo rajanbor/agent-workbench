@@ -36,6 +36,7 @@ the native window, so visual review happens there.
 | Models | Catalogue with per-model identity, pinned version, digest and revision history |
 | Usage | Spend and tokens per model, per agent and per day |
 | Agent studio | Five clicked questions to design one, then an editor for instructions, patterns, skills, servers and tools |
+| Terminal board | As many terminals as the work needs, in windows you place; `claude`, `codex`, `qwen` or `agentctl` opens a session inside one |
 | Bottom panel | `Problems` (what the snapshot says is broken, with its source), `Output` (everything this session reported), `Terminal` (sessions down the side, prompt inside the stream); maximises and restores |
 | Right rail | Workbench API: values, functions, modules, and the inspector policy |
 
@@ -53,6 +54,7 @@ Shortcuts: `⌘K` palette · `⌘B` sidebar · `⌘J` terminals · `⌘I` right 
 | `app/` | Next App Router: root layout, the client page, the error boundary |
 | `src/components/` | Top bar, activity strip, sidebar, editor groups, terminal dock, palette, primitives |
 | `src/lib/layout.ts` | The tab model: groups, splitting, and what is restored |
+| `src/lib/terminal.ts` | What a terminal does with what is typed, for the panel and the board alike |
 | `src/views/` | Chat, canvas, sandboxes, models, usage, agent, settings |
 | `src/lib/` | Engine bridge, identity, theme, shell types, highlighting |
 | `src/styles/tokens.css` | Colour, type and radius tokens for both themes |
