@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Icon } from "../components/Icon";
 import { ModelGlyph } from "../components/Glyph";
 import { Badge, Button, Card, SectionTitle } from "../components/primitives";
-import { accentOf } from "../lib/identity";
+import { accentOf, duration, fineMoney, money, percent } from "../lib/identity";
 import { openExternal } from "../lib/external";
 import type { DesktopSnapshot, ModelCard } from "../lib/engine";
 
@@ -41,6 +41,7 @@ export function ModelsView({
   const [filter, setFilter] = useState<Filter>("all");
   const model = snapshot.models.find((item) => item.id === modelId) ?? snapshot.models[0];
   const usage = snapshot.usage.byModel.find((item) => item.modelId === model.id);
+  const economics = snapshot.usage.local.rows.find((row) => row.modelId === model.id);
   const visible = snapshot.models.filter((item) => matches(item, filter));
 
   const open = async (url: string, label: string) => {
@@ -168,6 +169,79 @@ export function ModelsView({
             </Card>
           </div>
         </div>
+
+        {model.localProfile && economics && (
+          <>
+            <SectionTitle
+              action={
+                <Badge tone="amber" icon="alert">
+                  estimate
+                </Badge>
+              }
+            >
+              On this device
+            </SectionTitle>
+            <Card className="pad">
+              <div className="kv">
+                <span>Throughput</span>
+                <strong className="mono">
+                  {model.localProfile.throughputTps} tok/s · {model.localProfile.accelerator}
+                </strong>
+              </div>
+              <div className="kv">
+                <span>While generating</span>
+                <strong className="mono">
+                  {model.localProfile.powerDrawW} W · {model.localProfile.memoryGb} GB resident
+                </strong>
+              </div>
+              <div className="kv">
+                <span>Efficiency</span>
+                <strong className="mono">{economics.tokensPerWh.toFixed(0)} tokens per Wh</strong>
+              </div>
+              <div className="kv">
+                <span>Today&rsquo;s workload here</span>
+                <strong className="mono">
+                  {duration(economics.seconds)} · {economics.energyWh.toFixed(2)} Wh ·{" "}
+                  {economics.batteryPct.toFixed(1)}% battery
+                </strong>
+              </div>
+              <div className="kv">
+                <span>Electricity vs API</span>
+                <strong className="mono">
+                  {fineMoney(economics.energyCostUsd)} vs {money(economics.apiEquivalentUsd)}
+                </strong>
+              </div>
+              <div className="kv">
+                <span>Saved</span>
+                <strong className="mono saved">
+                  {money(economics.savedUsd)} · {percent(economics.savingsRatio, 1)}
+                </strong>
+              </div>
+              <div className="exploitation">
+                <p className="eyebrow">Exploitation {percent(economics.utilisation.score)}</p>
+                {[
+                  { label: "Power envelope", value: economics.utilisation.powerShare },
+                  { label: "Memory", value: economics.utilisation.memoryShare },
+                  { label: "Duty cycle", value: economics.utilisation.dutyCycle },
+                ].map((part) => (
+                  <div className="exploitation__row" key={part.label}>
+                    <span>{part.label}</span>
+                    <span className="share">
+                      <i style={{ width: `${Math.max(part.value * 100, 2)}%` }} />
+                    </span>
+                    <em className="mono">{percent(part.value, 1)}</em>
+                  </div>
+                ))}
+              </div>
+              <p className="muted-copy formula">
+                Estimated from declared coefficients against{" "}
+                {snapshot.models.find((item) => item.id === snapshot.usage.local.referenceModelId)?.name} at $
+                {snapshot.computer.energy.pricePerKwh.toFixed(2)}/kWh. Measurement arrives with the
+                runtime.
+              </p>
+            </Card>
+          </>
+        )}
 
         <SectionTitle count={model.revisions.length}>Versions</SectionTitle>
         <div className="rows">

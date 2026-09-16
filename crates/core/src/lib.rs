@@ -4,6 +4,7 @@
 //! stay identical on macOS, Windows and Linux. The crate is pure: it reads no
 //! network, spawns no process and holds no credential.
 pub mod domain;
+pub mod economics;
 pub mod inspector;
 pub mod state;
 
@@ -159,6 +160,118 @@ mod tests {
         assert_eq!(current.len(), 1);
         assert_eq!(current[0].name, s.version_control.branch);
         assert_eq!(s.version_control.changes.len() as u32, s.version_control.dirty.min(s.version_control.changes.len() as u32).max(s.version_control.changes.len() as u32));
+    }
+
+    #[test]
+    fn local_energy_is_power_times_time() {
+        let s = snapshot();
+        for row in &s.usage.local.rows {
+            let model = s
+                .models
+                .iter()
+                .find(|model| model.id == row.model_id)
+                .expect("row points at a catalogued model");
+            let profile = model.local_profile.as_ref().expect("row has a local profile");
+
+            let expected_seconds = row.tokens_out as f64 / profile.throughput_tps
+                + row.tokens_in as f64 / (profile.throughput_tps * profile.prefill_factor);
+            assert!((row.seconds - expected_seconds).abs() < 1e-6, "{}", row.model_id);
+
+            let expected_energy = profile.power_draw_w * row.seconds / 3600.0;
+            assert!((row.energy_wh - expected_energy).abs() < 1e-9, "{}", row.model_id);
+
+            let expected_cost = row.energy_wh / 1000.0 * s.computer.energy.price_per_kwh;
+            assert!((row.energy_cost_usd - expected_cost).abs() < 1e-12, "{}", row.model_id);
+        }
+    }
+
+    #[test]
+    fn savings_are_the_api_price_minus_the_energy_and_the_ratio_matches() {
+        let s = snapshot();
+        for row in &s.usage.local.rows {
+            assert!(
+                (row.saved_usd - (row.api_equivalent_usd - row.energy_cost_usd)).abs() < 1e-12
+            );
+            if row.api_equivalent_usd > 0.0 {
+                let ratio = row.saved_usd / row.api_equivalent_usd;
+                assert!((row.savings_ratio - ratio).abs() < 1e-12);
+                assert!(row.savings_ratio <= 1.0);
+            }
+            assert!(row.tokens_per_wh.is_finite());
+            assert!(row.battery_pct >= 0.0);
+        }
+    }
+
+    #[test]
+    fn utilisation_parts_stay_between_zero_and_one() {
+        let s = snapshot();
+        for row in &s.usage.local.rows {
+            let u = row.utilisation;
+            for part in [u.power_share, u.memory_share, u.duty_cycle, u.score] {
+                assert!((0.0..=1.0).contains(&part), "{} has {part}", row.model_id);
+            }
+        }
+    }
+
+    #[test]
+    fn an_empty_workload_produces_no_nan() {
+        let s = snapshot();
+        let empty = economics::local_economics(
+            &s.models,
+            &s.computer.energy,
+            "claude-sonnet",
+            "empty",
+            0,
+            0,
+            8.0 * 3600.0,
+            0,
+        );
+        for row in &empty.rows {
+            for value in [
+                row.seconds,
+                row.energy_wh,
+                row.energy_cost_usd,
+                row.api_equivalent_usd,
+                row.saved_usd,
+                row.savings_ratio,
+                row.tokens_per_wh,
+                row.battery_pct,
+                row.utilisation.score,
+            ] {
+                assert!(value.is_finite());
+            }
+        }
+        assert_eq!(empty.best_saved_usd, 0.0);
+    }
+
+    #[test]
+    fn every_local_model_is_compared_and_the_best_is_named() {
+        let s = snapshot();
+        let local_models = s
+            .models
+            .iter()
+            .filter(|model| model.local_profile.is_some())
+            .count();
+        assert_eq!(s.usage.local.rows.len(), local_models);
+        assert!(local_models > 0);
+
+        let best = s
+            .usage
+            .local
+            .best_model_id
+            .as_ref()
+            .expect("a best model is named");
+        let best_row = s
+            .usage
+            .local
+            .rows
+            .iter()
+            .find(|row| &row.model_id == best)
+            .expect("the best model is one of the rows");
+        for row in &s.usage.local.rows {
+            assert!(best_row.saved_usd >= row.saved_usd);
+        }
+        assert!(s.usage.local.basis.contains("estimate"));
     }
 
     #[test]

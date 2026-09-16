@@ -3,7 +3,14 @@
     "operatingSystem": "macos",
     "architecture": "aarch64",
     "deviceKind": "Mac",
-    "runtimeStatus": "Host runtime ready"
+    "runtimeStatus": "Host runtime ready",
+    "energy": {
+      "powerBudgetW": 45.0,
+      "memoryGb": 36.0,
+      "batteryWh": 72.4,
+      "pricePerKwh": 0.28,
+      "basis": "estimate · declared for this device class"
+    }
   },
   "providers": [
     {
@@ -72,7 +79,8 @@
         "kind": "docs",
         "label": "Inspector spec",
         "url": "https://github.com/rajanbor/open-cube/blob/main/.ai/specs/INSPECTOR_MODEL.md"
-      }
+      },
+      "localProfile": null
     },
     {
       "id": "claude-sonnet",
@@ -118,7 +126,8 @@
         "kind": "api",
         "label": "Anthropic API documentation",
         "url": "https://docs.anthropic.com/en/api/overview"
-      }
+      },
+      "localProfile": null
     },
     {
       "id": "codex",
@@ -160,7 +169,8 @@
         "kind": "api",
         "label": "OpenAI platform documentation",
         "url": "https://platform.openai.com/docs"
-      }
+      },
+      "localProfile": null
     },
     {
       "id": "qwen2.5-7b",
@@ -211,6 +221,13 @@
         "kind": "huggingface",
         "label": "Qwen/Qwen2.5-7B-Instruct",
         "url": "https://huggingface.co/Qwen/Qwen2.5-7B-Instruct"
+      },
+      "localProfile": {
+        "throughputTps": 28.0,
+        "prefillFactor": 8.0,
+        "powerDrawW": 22.0,
+        "memoryGb": 5.5,
+        "accelerator": "Metal"
       }
     },
     {
@@ -254,6 +271,13 @@
         "kind": "huggingface",
         "label": "meta-llama/Llama-3.2-3B-Instruct",
         "url": "https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct"
+      },
+      "localProfile": {
+        "throughputTps": 55.0,
+        "prefillFactor": 10.0,
+        "powerDrawW": 16.0,
+        "memoryGb": 2.8,
+        "accelerator": "Metal"
       }
     },
     {
@@ -296,6 +320,13 @@
         "kind": "huggingface",
         "label": "mistralai/Mistral-7B-Instruct-v0.3",
         "url": "https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.3"
+      },
+      "localProfile": {
+        "throughputTps": 26.0,
+        "prefillFactor": 8.0,
+        "powerDrawW": 21.0,
+        "memoryGb": 5.2,
+        "accelerator": "Metal"
       }
     }
   ],
@@ -1259,7 +1290,86 @@
         "tokens": 56700,
         "costUsd": 1.37
       }
-    ]
+    ],
+    "local": {
+      "basis": "estimate · declared coefficients, not measured",
+      "window": "today",
+      "pricePerKwh": 0.28,
+      "referenceModelId": "claude-sonnet",
+      "workloadTokensIn": 42300,
+      "workloadTokensOut": 14400,
+      "realisedTokens": 0,
+      "bestModelId": "llama3.2-3b",
+      "bestSavedUsd": 0.3424784727272727,
+      "bestSavingsRatio": 0.9987706991171559,
+      "bestEnergyWh": 1.5054545454545456,
+      "bestBatteryPct": 2.0793571069814165,
+      "rows": [
+        {
+          "modelId": "qwen2.5-7b",
+          "name": "Qwen2.5 7B Instruct",
+          "tokensIn": 42300,
+          "tokensOut": 14400,
+          "seconds": 703.125,
+          "energyWh": 4.296875,
+          "energyCostUsd": 0.0012031250000000002,
+          "apiEquivalentUsd": 0.3429,
+          "savedUsd": 0.34169687499999996,
+          "savingsRatio": 0.9964913240011665,
+          "tokensPerWh": 13195.636363636364,
+          "batteryPct": 5.934910220994475,
+          "ready": false,
+          "utilisation": {
+            "powerShare": 0.4888888888888889,
+            "memoryShare": 0.1527777777777778,
+            "dutyCycle": 0.0244140625,
+            "score": 0.29516059027777775
+          }
+        },
+        {
+          "modelId": "llama3.2-3b",
+          "name": "Llama 3.2 3B Instruct",
+          "tokensIn": 42300,
+          "tokensOut": 14400,
+          "seconds": 338.72727272727275,
+          "energyWh": 1.5054545454545456,
+          "energyCostUsd": 0.0004215272727272728,
+          "apiEquivalentUsd": 0.3429,
+          "savedUsd": 0.3424784727272727,
+          "savingsRatio": 0.9987706991171559,
+          "tokensPerWh": 37663.043478260865,
+          "batteryPct": 2.0793571069814165,
+          "ready": false,
+          "utilisation": {
+            "powerShare": 0.35555555555555557,
+            "memoryShare": 0.07777777777777778,
+            "dutyCycle": 0.011761363636363638,
+            "score": 0.20346338383838386
+          }
+        },
+        {
+          "modelId": "mistral-7b",
+          "name": "Mistral 7B Instruct",
+          "tokensIn": 42300,
+          "tokensOut": 14400,
+          "seconds": 757.2115384615385,
+          "energyWh": 4.4170673076923075,
+          "energyCostUsd": 0.0012367788461538462,
+          "apiEquivalentUsd": 0.3429,
+          "savedUsd": 0.3416632211538461,
+          "savingsRatio": 0.9963931792179823,
+          "tokensPerWh": 12836.57142857143,
+          "batteryPct": 6.100921695707607,
+          "ready": false,
+          "utilisation": {
+            "powerShare": 0.4666666666666667,
+            "memoryShare": 0.14444444444444446,
+            "dutyCycle": 0.026292067307692308,
+            "score": 0.2819250801282051
+          }
+        }
+      ]
+    }
   },
   "versionControl": {
     "branch": "main",

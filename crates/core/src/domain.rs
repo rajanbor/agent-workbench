@@ -30,6 +30,19 @@ pub struct ComputerProfile {
     pub architecture: String,
     pub device_kind: String,
     pub runtime_status: String,
+    pub energy: DeviceEnergy,
+}
+
+/// What the machine can give a local model, and what that costs.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DeviceEnergy {
+    /// Sustained package power the machine can spend, in watts.
+    pub power_budget_w: f64,
+    pub memory_gb: f64,
+    pub battery_wh: f64,
+    pub price_per_kwh: f64,
+    pub basis: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -70,6 +83,23 @@ pub struct ModelCard {
     pub requirements: Vec<String>,
     pub license: String,
     pub reference: Reference,
+    /// Present when the model can run on the device. Declared coefficients,
+    /// not measurements — see `.ai/specs/LOCAL_RUN_ECONOMICS.md`.
+    pub local_profile: Option<LocalProfile>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LocalProfile {
+    /// Generated tokens per second on this device class.
+    pub throughput_tps: f64,
+    /// How much faster prompt processing is than generation.
+    pub prefill_factor: f64,
+    /// Additional package power while generating, in watts.
+    pub power_draw_w: f64,
+    /// Resident memory while loaded, in gigabytes.
+    pub memory_gb: f64,
+    pub accelerator: String,
 }
 
 /// Where to read more: the weights on Hugging Face for a local model, the
@@ -347,6 +377,55 @@ pub struct McpServer {
     pub reference: Option<Reference>,
 }
 
+/// How much of the machine one local run takes.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Utilisation {
+    pub power_share: f64,
+    pub memory_share: f64,
+    pub duty_cycle: f64,
+    pub score: f64,
+}
+
+/// One local model measured against the reference API model for one workload.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LocalRunEconomics {
+    pub model_id: String,
+    pub name: String,
+    pub tokens_in: u64,
+    pub tokens_out: u64,
+    pub seconds: f64,
+    pub energy_wh: f64,
+    pub energy_cost_usd: f64,
+    pub api_equivalent_usd: f64,
+    pub saved_usd: f64,
+    pub savings_ratio: f64,
+    pub tokens_per_wh: f64,
+    pub battery_pct: f64,
+    pub ready: bool,
+    pub utilisation: Utilisation,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LocalEconomics {
+    pub basis: String,
+    pub window: String,
+    pub price_per_kwh: f64,
+    pub reference_model_id: String,
+    pub workload_tokens_in: u64,
+    pub workload_tokens_out: u64,
+    /// Tokens that actually ran on the device in this window.
+    pub realised_tokens: u64,
+    pub best_model_id: Option<String>,
+    pub best_saved_usd: f64,
+    pub best_savings_ratio: f64,
+    pub best_energy_wh: f64,
+    pub best_battery_pct: f64,
+    pub rows: Vec<LocalRunEconomics>,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct UsageSummary {
@@ -357,6 +436,7 @@ pub struct UsageSummary {
     pub by_model: Vec<ModelUsage>,
     pub by_agent: Vec<AgentUsage>,
     pub daily: Vec<DailyUsage>,
+    pub local: LocalEconomics,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

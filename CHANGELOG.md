@@ -6,6 +6,11 @@
   (`crates/core`, `crates/app`) with one client in `web/`, driven from root
   `pnpm` scripts, recorded in ADR 008. The Swift app stays until the Rust
   runtime replaces it.
+- Add local run economics: for every model that can run on the device, the
+  workbench estimates the time, energy, battery share and machine exploitation
+  of a workload, and what running it locally saves against a reference API
+  model. Computed in the core with tests, shown in Usage and on a local model's
+  library entry, and labelled as an estimate with its formula.
 - Restyle the client to a neutral design language: monochrome base with ink
   primaries, colour only for status, pill filters, underlined tabs, cards with
   footer strips, switches instead of add buttons, and an agent profile page
