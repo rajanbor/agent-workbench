@@ -1,12 +1,29 @@
 # Spec: agent studio
 
-Acceptance: an agent can be designed, not only read. Basic mode takes a name, a
-role, a project folder, a model and a sandbox, and states what the agent would
-be allowed to do before it exists. The editor exposes the blueprint —
+Acceptance: an agent can be designed, not only read. Designing one is five
+questions — purpose, project, model, sandbox, review — each answered by
+clicking a card rather than filling a field, with the next question unlocked as
+the current one is answered, any answered step revisitable from its own chip,
+and the draft kept when the panel is left and reopened. The review step states
+what the agent would be allowed to do before it exists. The editor exposes the blueprint —
 instructions, patterns, skills, MCP servers and engine tools — with every
 choice made from a library that explains itself. Permissions are derived from
 the choices and shown, including the ones that are blocked. Nothing is claimed
 to persist: edits are a local draft until `workbenchd` owns persistence.
+
+## Purpose
+
+`domain::AgentPurpose` is a prepared starting point: a role, a suggested name,
+instructions, and the patterns, skills, servers and tools that go with them.
+Choosing one fills the blueprint, and the review step shows what it filled,
+each line marked with what it is. Everything a purpose names must exist in the
+library, and a test enforces that — the wizard is a shortcut through the
+editor, never a second source of truth.
+
+A purpose also carries `model_note`: one line about what the work needs of a
+model, shown above the model cards, so the choice is informed rather than
+alphabetical. The cards themselves show where a model runs, whether it is ready
+and what it costs — per token, per month or in electricity.
 
 ## Blueprint
 
@@ -45,4 +62,5 @@ grants anything: it describes what would have to be granted.
 
 Creating an agent, saving a blueprint and choosing a folder from the system
 dialog all need `workbenchd`; each control says so. The studio writes nothing
-outside browser storage.
+outside browser storage. The new-agent draft is restored before it is saved
+back, so reopening the panel continues the design instead of erasing it.

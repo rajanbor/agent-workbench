@@ -158,6 +158,24 @@ export interface ChatRef {
   updatedAt: string;
 }
 
+/** A prepared starting point for a new agent: choosing one fills the
+ *  blueprint. Mirrors `domain::AgentPurpose`. */
+export interface AgentPurpose {
+  id: string;
+  name: string;
+  summary: string;
+  role: string;
+  icon: string;
+  accent: string;
+  suggestedName: string;
+  instructions: string;
+  patterns: string[];
+  skills: string[];
+  mcp: string[];
+  tools: string[];
+  modelNote: string;
+}
+
 export interface AgentBlueprint {
   instructions: string;
   patterns: string[];
@@ -534,6 +552,7 @@ export interface DesktopSnapshot {
   projects: ProjectEntry[];
   editors: EditorApp[];
   templates: ProjectTemplate[];
+  purposes: AgentPurpose[];
   agents: Agent[];
   sandboxes: Sandbox[];
   sessions: Session[];
