@@ -24,8 +24,8 @@ in local storage only. Every blocked control states its reason.
 
 ## Verification
 
-`pnpm --dir desktop test:engine`, `pnpm --dir desktop build`, and
-`pnpm --dir desktop tauri dev` for review in the native window: translucent
+`pnpm --dir web test:engine`, `pnpm --dir web build`, and
+`pnpm --dir web tauri dev` for review in the native window: translucent
 chrome, traffic lights over the top bar, rails and dock toggling with `⌘B`,
 `⌘J`, `⌘I`, an inspector answer reporting model, tokens, cost and refusals, and
 a terminal refusing a command that needs a live pty.

@@ -1,9 +1,9 @@
 [package]
-name = "open-cube-engine"
+name = "open-cube-core"
 version = "0.2.0-alpha.1"
 edition = "2021"
 license = "MIT"
-description = "Portable engine types for Open Cube desktop clients"
+description = "Portable domain, state and inspector policy for Open Cube"
 
 [dependencies]
 serde = { version = "1", features = ["derive"] }

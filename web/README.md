@@ -1,20 +1,19 @@
-# Open Cube desktop client
+# Open Cube client
 
-Cross-platform shell for Open Cube: a Tauri window over a React + TypeScript
-front end and the shared Rust engine in [`engine/`](engine).
-
-Run it as an application, not as a page:
+The interface of the one cross-platform system: React and TypeScript in a Tauri
+window over the Rust core in [`crates/core`](../crates/core). Run it as an
+application, not as a page — commands come from the repository root:
 
 ```sh
 pnpm install
-pnpm tauri dev              # the app — translucent native window, engine state
-pnpm tauri build            # signed-less .app and installer in src-tauri/target
-pnpm test:engine            # cargo test for the engine crate
-pnpm fallback               # regenerate the preview snapshot from Rust
-pnpm dev                    # browser preview, for quick iteration only
+pnpm app          # the window, against the dev server
+pnpm app:build    # bundle for this platform
+pnpm test         # cargo test --workspace
+pnpm fallback     # regenerate the preview snapshot from Rust
+pnpm dev          # browser preview, for quick iteration only
 ```
 
-The engine owns the state. In the browser preview the Tauri IPC is absent, so
+The core owns the state. In the browser preview the Tauri IPC is absent, so
 the shell reads `src/data/prototype-snapshot.json` — generated from the same
 Rust code by `pnpm fallback` — and the status bar says `preview snapshot`
 instead of `rust engine`. Translucency and the overlay title bar exist only in
@@ -40,10 +39,10 @@ Shortcuts: `⌘K` palette · `⌘B` left rail · `⌘J` terminals · `⌘I` righ
 
 | Path | Contents |
 | --- | --- |
-| `engine/src/domain.rs` | Object model shared by every client |
-| `engine/src/state.rs` | Deterministic prototype snapshot |
-| `engine/src/inspector.rs` | Scoped, redacting summariser |
-| `src-tauri/src/lib.rs` | `desktop_snapshot` and `inspector_ask` commands |
+| `../crates/core/src/domain.rs` | Object model shared by every client |
+| `../crates/core/src/state.rs` | Deterministic prototype snapshot |
+| `../crates/core/src/inspector.rs` | Scoped, redacting summariser |
+| `../crates/app/src/lib.rs` | `desktop_snapshot` and `inspector_ask` commands |
 | `src/components/` | Top bar, rails, terminal dock, palette, primitives |
 | `src/views/` | Chat, canvas, sandboxes, models, usage, agent, settings |
 | `src/lib/` | Engine bridge, identity, theme, shell types, highlighting |
@@ -58,7 +57,7 @@ Shortcuts: `⌘K` palette · `⌘B` left rail · `⌘J` terminals · `⌘I` righ
 - Chrome is drawn from the layer tokens with a backdrop blur; in the native
   window the page is transparent and the macOS material is the ground.
 - State lives in Rust. A view renders the snapshot; it never invents an object.
-  New state starts in `engine/`, then `pnpm fallback` regenerates the preview.
+  New state starts in `crates/core`, then `pnpm fallback` regenerates the preview.
 - The in-app model reads only what `InspectorPolicy` grants, and every answer
   reports its model, version, tokens, cost, sources and refusals.
 - Controls for capabilities that do not exist yet say why instead of failing

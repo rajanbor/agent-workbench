@@ -20,7 +20,7 @@ did not expect.
 
 ## Decision
 
-**State lives in Rust.** `desktop/engine` owns the domain, the prototype state,
+**State lives in Rust.** `crates/core` owns the domain, the prototype state,
 the inspector and the accounting. The front end renders and never invents an
 object. Tauri exposes `desktop_snapshot` and `inspector_ask`. The browser
 preview reads `src/data/prototype-snapshot.json`, generated from the same Rust

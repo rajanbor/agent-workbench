@@ -1,18 +1,22 @@
-name: Cross-platform desktop
+name: Client
 
 on:
   push:
     paths:
-      - "desktop/**"
-      - ".github/workflows/desktop.yml"
+      - "crates/**"
+      - "web/**"
+      - "Cargo.toml"
+      - ".github/workflows/client.yml"
   pull_request:
     paths:
-      - "desktop/**"
-      - ".github/workflows/desktop.yml"
+      - "crates/**"
+      - "web/**"
+      - "Cargo.toml"
+      - ".github/workflows/client.yml"
 
 jobs:
-  engine:
-    name: Engine (${{ matrix.os }})
+  core:
+    name: Core (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -21,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
-      - run: cargo test --manifest-path desktop/engine/Cargo.toml
+      - run: cargo test -p open-cube-core
 
   frontend:
     name: Frontend
@@ -35,8 +39,6 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-          cache-dependency-path: desktop/pnpm-lock.yaml
+          cache-dependency-path: pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
-        working-directory: desktop
       - run: pnpm build
-        working-directory: desktop

@@ -1,0 +1,20 @@
+# One system: the core owns the domain and the policy, the app is the window,
+# and platform adapters live inside the workspace rather than in a second
+# client. See .ai/adr/008-one-cross-platform-system.md.
+[workspace]
+resolver = "2"
+members = ["crates/core", "crates/app"]
+
+[workspace.package]
+version = "0.2.0-alpha.1"
+edition = "2021"
+license = "Apache-2.0"
+repository = "https://github.com/rajanbor/open-cube"
+
+# Bundle size guidance: https://tauri.app/concept/size/#cargo-configuration
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = 3
+panic = "abort"
+strip = true

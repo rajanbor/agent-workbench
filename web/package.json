@@ -1,15 +1,12 @@
 {
-  "name": "open-cube-desktop",
+  "name": "open-cube-web",
   "private": true,
   "version": "0.2.0-alpha.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview",
-    "tauri": "tauri",
-    "fallback": "cargo run --offline --manifest-path engine/Cargo.toml --example dump > src/data/prototype-snapshot.json",
-    "test:engine": "cargo test --offline --manifest-path engine/Cargo.toml"
+    "preview": "vite preview"
   },
   "dependencies": {
     "react": "^19.1.0",
@@ -22,7 +19,6 @@
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^6.0.2",
     "typescript": "~6.0.3",
-    "vite": "^8.0.16",
-    "@tauri-apps/cli": "^2"
+    "vite": "^8.0.16"
   }
 }

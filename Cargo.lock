@@ -2379,10 +2379,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "open-cube-desktop"
+name = "open-cube-app"
 version = "0.2.0-alpha.1"
 dependencies = [
- "open-cube-engine",
+ "open-cube-core",
  "serde",
  "serde_json",
  "tauri",
@@ -2391,10 +2391,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "open-cube-engine"
+name = "open-cube-core"
 version = "0.2.0-alpha.1"
 dependencies = [
  "serde",
+ "serde_json",
 ]
 
 [[package]]

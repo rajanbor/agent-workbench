@@ -9,7 +9,7 @@ guess; redacted terms never appear in an answer; no request leaves the machine.
 
 ## Policy
 
-`InspectorPolicy` in `desktop/engine/src/domain.rs` is the contract:
+`InspectorPolicy` in `crates/core/src/domain.rs` is the contract:
 
 - `mode` — `read-only` while no write capability exists.
 - `egress` — `none`; the shipped inspector performs no network call.

@@ -1,10 +1,23 @@
 # Current state
 
-Open Cube has two clients during migration:
+Open Cube is one cross-platform system, described in
+`.ai/adr/008-one-cross-platform-system.md`:
 
-- The Swift macOS app is the current supported execution path. It launches Codex and Claude through a dedicated standard macOS `agent` account and uses `agentctl`.
-- `desktop/` is the cross-platform Tauri + React client. It ships the workbench shell in light and dark themes: a chat-first main window backed by the in-app inspector, collapsible agent/sandbox/terminal/workflow/model rails, a workbench-API rail, a terminal dock, a canvas workflow editor, a sandbox boundary view, a model catalogue with pinned versions, and usage accounting. All of that state is owned by the Rust engine in `desktop/engine` and read through `desktop_snapshot` / `inspector_ask`; a browser preview reads a snapshot generated from the same Rust code. The client runs as a native, translucent macOS window (`pnpm tauri dev`); the browser preview is for iteration and labels itself. It still does not launch providers, ptys, Docker or workflows, and every such control says so.
+- `crates/core` owns the domain, the prototype workbench state and the
+  inspector policy. It is platform neutral and carries the tests.
+- `crates/app` is the Tauri window for macOS, Windows and Linux. It exposes
+  `desktop_snapshot` and `inspector_ask`.
+- `web/` is the client: React and TypeScript, in light and dark themes, with a
+  chat-first main window backed by the in-app inspector, object rails, a
+  terminal dock, a canvas workflow editor, a sandbox boundary view, a model
+  library, usage accounting and the agent studio.
+- The Swift macOS app and `agentctl` remain the only working execution path
+  until `crates/runtime` and `crates/cli` replace them (#32), after which the
+  Swift client is retired (#33).
 
-The product is alpha software. No account is required for local use. Docker, remote machines, Canvas, delegation, encrypted sync and mobile are planned work, not implemented features.
+The product is alpha software. No account is required for local use. Launching
+providers, live ptys, Docker, running workflows, remote machines, delegation,
+encrypted sync and mobile are planned work, not implemented features, and every
+control for them says so.
 
-The active implementation backlog is `.ai/roadmap/ROADMAP.md` and GitHub issues #4–#21.
+The active backlog is `.ai/roadmap/ROADMAP.md` and GitHub issues #4-#33.

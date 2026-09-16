@@ -1,10 +1,10 @@
 # Cross-platform desktop migration
 
-`desktop/` is the new desktop client. It uses Tauri 2, React and TypeScript for the interface, with Rust behind the command boundary. Tauri produces native bundles for macOS, Windows and Linux from the same project.
+`web/` and `crates/` is the new desktop client. It uses Tauri 2, React and TypeScript for the interface, with Rust behind the command boundary. Tauri produces native bundles for macOS, Windows and Linux from the same project.
 
 ## Shared engine
 
-`desktop/engine` contains the portable domain model: provider state, sessions, local-model catalogue and a read-only host profile. It has no shell commands, elevated privileges or macOS APIs. The Tauri client calls it through `desktop_snapshot`.
+`crates/core` contains the portable domain model: provider state, sessions, local-model catalogue and a read-only host profile. It has no shell commands, elevated privileges or macOS APIs. The Tauri client calls it through `desktop_snapshot`.
 
 ## Platform adapters
 
