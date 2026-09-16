@@ -1,10 +1,9 @@
 import { Icon } from "./Icon";
 import { Menu } from "./Menu";
 import { ModelGlyph } from "./Glyph";
-import { Badge, IconButton, KeyHint } from "./primitives";
+import { Badge, IconButton } from "./primitives";
 import { accentOf, compactTokens } from "../lib/identity";
 import type { DesktopSnapshot, ModelCard } from "../lib/engine";
-import type { ThemeChoice } from "../lib/theme";
 
 export function TopBar({
   snapshot,
@@ -13,8 +12,6 @@ export function TopBar({
   onChatModel,
   panels,
   onTogglePanel,
-  theme,
-  onTheme,
   onPalette,
   onUsage,
   onAction,
@@ -25,8 +22,6 @@ export function TopBar({
   onChatModel: (id: string) => void;
   panels: { left: boolean; right: boolean; terminal: boolean };
   onTogglePanel: (panel: "left" | "right" | "terminal") => void;
-  theme: ThemeChoice;
-  onTheme: (theme: ThemeChoice) => void;
   onPalette: () => void;
   onUsage: () => void;
   onAction: (message: string) => void;
@@ -218,31 +213,6 @@ export function TopBar({
             className={panels.right ? "is-on" : ""}
             onClick={() => onTogglePanel("right")}
           />
-          <Menu className="menu--theme" align="right" label={<Icon name={theme === "light" ? "sun" : theme === "dark" ? "moon" : "monitor"} size={15} />}>
-            {(close) => (
-              <>
-                <p className="menu__label">Appearance</p>
-                {(["light", "dark", "system"] as ThemeChoice[]).map((option) => (
-                  <button
-                    key={option}
-                    className={`menu__item ${theme === option ? "is-checked" : ""}`}
-                    onClick={() => {
-                      onTheme(option);
-                      close();
-                    }}
-                  >
-                    <Icon name={option === "light" ? "sun" : option === "dark" ? "moon" : "monitor"} size={14} />
-                    <span style={{ textTransform: "capitalize" }}>{option}</span>
-                    {theme === option && <Icon name="check" size={13} />}
-                  </button>
-                ))}
-                <div className="menu__note">
-                  <KeyHint>⌘K</KeyHint> palette · <KeyHint>⌘B</KeyHint> agents ·{" "}
-                  <KeyHint>⌘J</KeyHint> terminals · <KeyHint>⌘I</KeyHint> API
-                </div>
-              </>
-            )}
-          </Menu>
         </div>
       </div>
     </header>

@@ -1,24 +1,16 @@
 import { Icon } from "./Icon";
 import { Menu } from "./Menu";
-import { Badge, IconButton } from "./primitives";
-import type { Agent, ChatRef, DesktopSnapshot } from "../lib/engine";
+import { Badge } from "./primitives";
+import type { Agent, DesktopSnapshot } from "../lib/engine";
 
 /** What an open agent is working on: its project, its branch and its chats. */
 export function AgentWorkspaceBar({
   snapshot,
   agent,
-  chats,
-  activeChat,
-  onChat,
-  onNewChat,
   onAction,
 }: {
   snapshot: DesktopSnapshot;
   agent: Agent;
-  chats: ChatRef[];
-  activeChat: string;
-  onChat: (id: string) => void;
-  onNewChat: () => void;
   onAction: (message: string) => void;
 }) {
   const vcs = snapshot.versionControl;
@@ -109,19 +101,6 @@ export function AgentWorkspaceBar({
         )}
       </Menu>
 
-      <div className="workbar__chats">
-        {chats.map((chat) => (
-          <button
-            key={chat.id}
-            className={`workbar__chat ${chat.id === activeChat ? "is-active" : ""}`}
-            onClick={() => onChat(chat.id)}
-          >
-            {chat.title}
-            <em>{chat.updatedAt}</em>
-          </button>
-        ))}
-        <IconButton icon="plus" label="New chat with this agent" onClick={onNewChat} />
-      </div>
     </div>
   );
 }
