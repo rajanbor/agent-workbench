@@ -4154,6 +4154,39 @@ p {
 .rail-chat span {
   overflow: hidden;
   flex: 1;
+/* ------------------------------------------------------------ schema canvas */
+
+.schema-table {
+  position: absolute;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  user-select: none;
+}
+
+.schema-table.is-selected {
+  border-color: var(--accent-border);
+  box-shadow: 0 0 0 2px var(--accent-bg), var(--shadow-md);
+}
+
+.schema-table__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  height: 34px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-active);
+}
+
+.schema-table__head strong {
+  overflow: hidden;
+  font-size: var(--text-sm);
+  font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -4168,4 +4201,221 @@ p {
 .rail-chat:hover em,
 .rail-chat.is-active em {
   opacity: 1;
+.schema-table__head em {
+  color: var(--text-faint);
+  font-size: 10px;
+  font-style: normal;
+}
+
+.schema-table__head--green {
+  background: var(--green-bg);
+}
+
+.schema-table__head--violet {
+  background: var(--violet-bg);
+}
+
+.schema-table__head--blue {
+  background: var(--blue-bg);
+}
+
+.schema-table__head--amber {
+  background: var(--amber-bg);
+}
+
+.schema-table__head--red {
+  background: var(--red-bg);
+}
+
+.schema-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 22px;
+  padding: 0 10px;
+  font-size: 11px;
+}
+
+.schema-field__key {
+  display: grid;
+  width: 13px;
+  color: var(--text-faint);
+  place-items: center;
+}
+
+.schema-field--pk .schema-field__key,
+.schema-field--fk .schema-field__key {
+  color: var(--accent-text);
+}
+
+.schema-field__name {
+  flex: 1;
+  color: var(--text-secondary);
+}
+
+.schema-field--pk .schema-field__name {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.schema-field__type {
+  overflow: hidden;
+  max-width: 48%;
+  color: var(--text-faint);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.schema-group {
+  position: absolute;
+  border: 1px dashed var(--border-dashed);
+  border-radius: var(--radius-lg);
+  background: var(--bg-subtle);
+  pointer-events: none;
+}
+
+.schema-group__label {
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.schema-group__label em {
+  color: var(--text-faint);
+  font-size: 10px;
+  font-style: normal;
+}
+
+.canvas__edges g.is-active path {
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.canvas__edges circle {
+  fill: var(--border-strong);
+}
+
+.canvas__edges g.is-active circle {
+  fill: var(--accent);
+}
+
+.schema-inspector__name {
+  margin-bottom: 10px;
+  font-size: var(--text-md);
+/* -------------------------------------------------------- activity calendar */
+
+.menu--usage .menu__trigger em {
+  color: var(--text-faint);
+  font-size: var(--text-xs);
+  font-style: normal;
+}
+
+.menu__item em {
+  margin-left: auto;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  font-style: normal;
+}
+
+.calendar-card {
+  overflow-x: auto;
+}
+
+.calendar-summary {
+  margin-bottom: 14px;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+}
+
+.calendar {
+  min-width: 760px;
+}
+
+.calendar__months {
+  display: grid;
+  grid-template-columns: repeat(52, 13px);
+  margin-left: 34px;
+  margin-bottom: 4px;
+  color: var(--text-faint);
+  font-size: 10px;
+}
+
+.calendar__grid {
+  display: flex;
+  gap: 6px;
+}
+
+.calendar__days {
+  display: flex;
+  width: 28px;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 13px 0 4px;
+  color: var(--text-faint);
+  font-size: 10px;
+}
+
+.calendar__weeks {
+  display: flex;
+  gap: 3px;
+}
+
+.calendar__week {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.calendar__day {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background: var(--bg-active);
+}
+
+.calendar__day--1 {
+  background: color-mix(in srgb, var(--green) 30%, transparent);
+}
+
+.calendar__day--2 {
+  background: color-mix(in srgb, var(--green) 50%, transparent);
+}
+
+.calendar__day--3 {
+  background: color-mix(in srgb, var(--green) 75%, transparent);
+}
+
+.calendar__day--4 {
+  background: var(--green);
+}
+
+.calendar__legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 10px;
+  color: var(--text-faint);
+  font-size: 10px;
+}
+
+.activity-bar {
+  width: 140px;
+  height: 6px;
+  flex: 0 0 auto;
+  border-radius: var(--radius-pill);
+  background: var(--bg-hover);
+}
+
+.activity-bar i {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: var(--green);
 }

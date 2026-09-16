@@ -14,6 +14,8 @@ export function TopBar({
   onTogglePanel,
   onPalette,
   onUsage,
+  period,
+  onPeriod,
   onAction,
 }: {
   snapshot: DesktopSnapshot;
@@ -24,10 +26,13 @@ export function TopBar({
   onTogglePanel: (panel: "left" | "right" | "terminal") => void;
   onPalette: () => void;
   onUsage: () => void;
+  period: string;
+  onPeriod: (id: string) => void;
   onAction: (message: string) => void;
 }) {
   const vcs = snapshot.versionControl;
   const usage = snapshot.usage;
+  const active = usage.periods.find((item) => item.id === period);
 
   return (
     <header className="topbar" data-tauri-drag-region>
@@ -182,16 +187,56 @@ export function TopBar({
           )}
         </Menu>
 
-        <button
-          className="usage-chip"
-          title={`${compactTokens(usage.tokensIn + usage.tokensOut)} tokens ${usage.window} · state from the ${
-            source === "engine" ? "Rust engine" : "preview snapshot"
-          }`}
-          onClick={onUsage}
+        <Menu
+          className="menu--usage"
+          align="right"
+          title="Spend over a period"
+          label={
+            <>
+              <Icon name="bolt" size={13} />
+              <span className="mono">${(active?.costUsd ?? usage.costUsd).toFixed(2)}</span>
+              <em>{active?.label ?? usage.window}</em>
+            </>
+          }
         >
-          <Icon name="bolt" size={13} />
-          <span className="mono">${usage.costUsd.toFixed(2)}</span>
-        </button>
+          {(close) => (
+            <>
+              <p className="menu__label">Period</p>
+              {usage.periods.map((item) => (
+                <button
+                  key={item.id}
+                  className={`menu__item ${item.id === period ? "is-checked" : ""}`}
+                  onClick={() => {
+                    onPeriod(item.id);
+                    close();
+                  }}
+                >
+                  <Icon name="clock" size={14} />
+                  <span>
+                    <strong>{item.label}</strong>
+                    <small className="mono">
+                      {compactTokens(item.tokensIn + item.tokensOut)} tokens · {item.calls} calls
+                    </small>
+                  </span>
+                  <em className="mono">${item.costUsd.toFixed(2)}</em>
+                </button>
+              ))}
+              <button
+                className="menu__item"
+                onClick={() => {
+                  onUsage();
+                  close();
+                }}
+              >
+                <Icon name="run" size={14} />
+                <span>Open the usage panel</span>
+              </button>
+              <div className="menu__note">
+                State from the {source === "engine" ? "Rust engine" : "preview snapshot"}.
+              </div>
+            </>
+          )}
+        </Menu>
 
         <div className="topbar__tools">
           <IconButton icon="search" label="Command palette (⌘K)" onClick={onPalette} />

@@ -3,15 +3,37 @@ import { Badge, Card, SectionTitle } from "../components/primitives";
 import { accentOf, compactTokens, duration, fineMoney, money, percent } from "../lib/identity";
 import type { DesktopSnapshot } from "../lib/engine";
 
-export function UsageView({ snapshot }: { snapshot: DesktopSnapshot }) {
+export function UsageView({
+  snapshot,
+  period,
+  onPeriod,
+}: {
+  snapshot: DesktopSnapshot;
+  period: string;
+  onPeriod: (id: string) => void;
+}) {
   const usage = snapshot.usage;
-  const total = usage.tokensIn + usage.tokensOut;
+  const active = usage.periods.find((item) => item.id === period) ?? usage.periods[1];
+  const byModel = active.byModel;
+  const total = active.tokensIn + active.tokensOut;
   const peak = Math.max(...usage.daily.map((day) => day.costUsd), 0.01);
 
   return (
     <div className="stack stack--wide">
       <SectionTitle
-        action={<Badge tone="neutral" icon="clock">{usage.window}</Badge>}
+        action={
+          <div className="filter-row">
+            {usage.periods.map((item) => (
+              <button
+                key={item.id}
+                className={`filter-row__item ${item.id === active.id ? "is-active" : ""}`}
+                onClick={() => onPeriod(item.id)}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        }
       >
         Usage and cost
       </SectionTitle>
@@ -19,21 +41,23 @@ export function UsageView({ snapshot }: { snapshot: DesktopSnapshot }) {
       <div className="metrics">
         <Card className="metric">
           <p className="metric__label">Cost</p>
-          <p className="metric__value">{money(usage.costUsd)}</p>
-          <p className="metric__hint">metered API calls only</p>
+          <p className="metric__value">{money(active.costUsd)}</p>
+          <p className="metric__hint">
+            {active.label.toLowerCase()} · metered API calls only
+          </p>
         </Card>
         <Card className="metric">
           <p className="metric__label">Tokens</p>
           <p className="metric__value">{compactTokens(total)}</p>
           <p className="metric__hint">
-            {compactTokens(usage.tokensIn)} in · {compactTokens(usage.tokensOut)} out
+            {compactTokens(active.tokensIn)} in · {compactTokens(active.tokensOut)} out
           </p>
         </Card>
         <Card className="metric">
-          <p className="metric__label">Models used</p>
-          <p className="metric__value">{usage.byModel.length}</p>
+          <p className="metric__label">Calls</p>
+          <p className="metric__value">{active.calls}</p>
           <p className="metric__hint">
-            {usage.byModel.filter((model) => model.costUsd === 0).length} free of charge
+            across {byModel.filter((model) => model.calls > 0).length} models
           </p>
         </Card>
         <Card className="metric">
@@ -43,7 +67,7 @@ export function UsageView({ snapshot }: { snapshot: DesktopSnapshot }) {
         </Card>
       </div>
 
-      <SectionTitle count={usage.byModel.length}>By model</SectionTitle>
+      <SectionTitle count={byModel.length}>By model</SectionTitle>
       <Card className="table table--usage">
         <div className="table__head">
           <span>Model</span>
@@ -53,9 +77,9 @@ export function UsageView({ snapshot }: { snapshot: DesktopSnapshot }) {
           <span>Cost</span>
           <span>Share</span>
         </div>
-        {usage.byModel.map((row) => {
+        {byModel.map((row) => {
           const model = snapshot.models.find((item) => item.id === row.modelId);
-          const share = usage.costUsd > 0 ? (row.costUsd / usage.costUsd) * 100 : 0;
+          const share = active.costUsd > 0 ? (row.costUsd / active.costUsd) * 100 : 0;
           return (
             <div className="table__row is-static" key={row.modelId}>
               <span className="table__main">
@@ -81,6 +105,8 @@ export function UsageView({ snapshot }: { snapshot: DesktopSnapshot }) {
           );
         })}
       </Card>
+
+      <ActivityCalendarView snapshot={snapshot} />
 
       <LocalExecution snapshot={snapshot} />
 
@@ -234,4 +260,111 @@ function LocalExecution({ snapshot }: { snapshot: DesktopSnapshot }) {
       </p>
     </>
   );
+}
+
+/** A year of days, the way a contribution calendar reads, and the same
+ *  activity split per model — which model did how much, and when. */
+function ActivityCalendarView({ snapshot }: { snapshot: DesktopSnapshot }) {
+  const activity = snapshot.usage.activity;
+  const months = monthLabels(activity.weeks);
+
+  return (
+    <>
+      <SectionTitle
+        action={
+          <Badge tone="neutral" icon="clock">
+            {activity.from} → {activity.to}
+          </Badge>
+        }
+      >
+        Activity
+      </SectionTitle>
+
+      <Card className="pad calendar-card">
+        <p className="calendar-summary">
+          <strong>{activity.totalRuns}</strong> runs in the last year ·{" "}
+          {compactTokens(activity.totalTokens)} tokens · busiest day {activity.busiestDay}
+        </p>
+
+        <div className="calendar">
+          <div className="calendar__months">
+            {months.map((month) => (
+              <span key={`${month.label}-${month.index}`} style={{ gridColumn: month.index + 1 }}>
+                {month.label}
+              </span>
+            ))}
+          </div>
+          <div className="calendar__grid">
+            <div className="calendar__days">
+              <span>Mon</span>
+              <span>Wed</span>
+              <span>Fri</span>
+            </div>
+            <div className="calendar__weeks">
+              {activity.weeks.map((week) => (
+                <div className="calendar__week" key={week.startDate}>
+                  {week.days.map((day) => (
+                    <i
+                      key={day.date}
+                      className={`calendar__day calendar__day--${day.level}`}
+                      title={`${day.date}: ${day.runs} runs · ${compactTokens(day.tokens)} tokens`}
+                    />
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="calendar__legend">
+            <span>Less</span>
+            {[0, 1, 2, 3, 4].map((level) => (
+              <i key={level} className={`calendar__day calendar__day--${level}`} />
+            ))}
+            <span>More</span>
+          </div>
+        </div>
+
+        <p className="formula">{activity.basis}</p>
+      </Card>
+
+      <SectionTitle count={activity.byModel.length}>Activity per model</SectionTitle>
+      <div className="rows">
+        {activity.byModel.map((row) => {
+          const model = snapshot.models.find((item) => item.id === row.modelId);
+          return (
+            <div className="row row--static" key={row.modelId}>
+              <ModelGlyph icon={model?.icon ?? "model"} accent={accentOf(model?.accent)} size={24} />
+              <span className="row__main">
+                <strong>{row.name}</strong>
+                <small>
+                  {row.runs} runs · {row.daysActive} active days · {compactTokens(row.tokens)} tokens
+                </small>
+              </span>
+              <span className="activity-bar" title={`${percent(row.share, 1)} of all runs`}>
+                <i style={{ width: `${Math.max(row.share * 100, 2)}%` }} />
+              </span>
+              <span className="row__tail">
+                <span className="mono row__meta">{percent(row.share)}</span>
+                <Badge tone={row.costUsd > 0 ? "amber" : "green"}>{money(row.costUsd)}</Badge>
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </>
+  );
+}
+
+/** Month names above the first week column that starts in each month. */
+function monthLabels(weeks: DesktopSnapshot["usage"]["activity"]["weeks"]) {
+  const names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const labels: { label: string; index: number }[] = [];
+  let previous = "";
+  weeks.forEach((week, index) => {
+    const month = week.startDate.slice(5, 7);
+    if (month !== previous) {
+      labels.push({ label: names[Number(month) - 1], index });
+      previous = month;
+    }
+  });
+  return labels;
 }

@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Icon } from "../components/Icon";
 import { Badge, Button, IconButton } from "../components/primitives";
+import { SchemaGraph } from "../components/SchemaGraph";
 import { toneOf } from "../lib/identity";
+import { buildSchema } from "../lib/schema";
 import type { DesktopSnapshot, Workflow, WorkflowEdge, WorkflowNode } from "../lib/engine";
 
 const NODE_WIDTH = 176;
@@ -51,6 +53,8 @@ export function CanvasView({
   const [adopted, setAdopted] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
   const [linkFrom, setLinkFrom] = useState<string | null>(null);
+  const [mode, setMode] = useState<"workflow" | "schema">("workflow");
+  const [table, setTable] = useState<string | null>(null);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const surface = useRef<HTMLDivElement>(null);
@@ -174,40 +178,64 @@ export function CanvasView({
     <section className="canvas">
       <header className="canvas__bar">
         <div className="canvas__title">
-          <Icon name="canvas" size={16} />
-          <strong>{workflow.name}</strong>
-          <Badge tone="neutral">
-            {workflow.nodes.length} nodes · {workflow.edges.length} links
-          </Badge>
+          <Icon name={mode === "workflow" ? "canvas" : "layers"} size={16} />
+          <strong>{mode === "workflow" ? workflow.name : "Workbench schema"}</strong>
+          <div className="filter-row">
+            <button
+              className={`filter-row__item ${mode === "workflow" ? "is-active" : ""}`}
+              onClick={() => setMode("workflow")}
+            >
+              Workflow
+            </button>
+            <button
+              className={`filter-row__item ${mode === "schema" ? "is-active" : ""}`}
+              onClick={() => setMode("schema")}
+            >
+              Schema
+            </button>
+          </div>
         </div>
         <div className="canvas__tools">
-          {kinds.map((kind) => (
-            <Button key={kind.id} size="sm" icon={kind.icon} onClick={() => addNode(kind.id)}>
-              {kind.label}
-            </Button>
-          ))}
-          <span className="canvas__divider" />
-          <Button
-            size="sm"
-            icon="link"
-            variant={linkFrom ? "primary" : "secondary"}
-            onClick={() => setLinkFrom(linkFrom ? null : (selected ?? null))}
-          >
-            {linkFrom ? "Pick target" : "Link"}
-          </Button>
-          <IconButton icon="trash" label="Delete node" onClick={removeSelected} />
+          {mode === "workflow" &&
+            kinds.map((kind) => (
+              <Button key={kind.id} size="sm" icon={kind.icon} onClick={() => addNode(kind.id)}>
+                {kind.label}
+              </Button>
+            ))}
+          {mode === "workflow" && (
+            <>
+              <span className="canvas__divider" />
+              <Button
+                size="sm"
+                icon="link"
+                variant={linkFrom ? "primary" : "secondary"}
+                onClick={() => setLinkFrom(linkFrom ? null : (selected ?? null))}
+              >
+                {linkFrom ? "Pick target" : "Link"}
+              </Button>
+              <IconButton icon="trash" label="Delete node" onClick={removeSelected} />
+            </>
+          )}
+          {mode === "schema" && (
+            <Badge tone="neutral">
+              {snapshot.agents.length} agents · {snapshot.sandboxes.length} sandboxes ·{" "}
+              {snapshot.models.length} models
+            </Badge>
+          )}
           <span className="canvas__divider" />
           <IconButton icon="zoomOut" label="Zoom out" onClick={() => setZoom((z) => Math.max(0.5, z - 0.1))} />
           <span className="canvas__zoom mono">{Math.round(zoom * 100)}%</span>
           <IconButton icon="zoomIn" label="Zoom in" onClick={() => setZoom((z) => Math.min(1.6, z + 0.1))} />
           <IconButton
             icon="refresh"
-            label="Reset to the engine layout"
+            label={mode === "workflow" ? "Reset to the engine layout" : "Recentre"}
             onClick={() => {
-              setWorkflow(snapshot.workflow);
+              if (mode === "workflow") {
+                setWorkflow(snapshot.workflow);
+                onAction("Canvas reset to the layout the engine ships.");
+              }
               setPan({ x: 0, y: 0 });
               setZoom(1);
-              onAction("Canvas reset to the layout the engine ships.");
             }}
           />
         </div>
@@ -219,7 +247,12 @@ export function CanvasView({
             className="canvas__space"
             style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})` }}
           >
-            <svg className="canvas__edges">
+            {mode === "schema" && (
+              <SchemaGraph snapshot={snapshot} selected={table} onSelect={setTable} />
+            )}
+
+            {mode === "workflow" && (
+              <svg className="canvas__edges">
               {workflow.edges.map((edge) => {
                 const from = workflow.nodes.find((item) => item.id === edge.from);
                 const to = workflow.nodes.find((item) => item.id === edge.to);
@@ -233,9 +266,11 @@ export function CanvasView({
                   </g>
                 );
               })}
-            </svg>
+              </svg>
+            )}
 
-            {workflow.nodes.map((item) => (
+            {mode === "workflow" &&
+              workflow.nodes.map((item) => (
               <article
                 key={item.id}
                 className={`wf-node wf-node--${item.kind} ${selected === item.id ? "is-selected" : ""} ${
@@ -261,13 +296,15 @@ export function CanvasView({
                 >
                   <Icon name="link" size={11} />
                 </button>
-              </article>
-            ))}
+                </article>
+              ))}
           </div>
         </div>
 
         <aside className="canvas__inspector">
-          {node ? (
+          {mode === "schema" ? (
+            <SchemaInspector snapshot={snapshot} selected={table} />
+          ) : node ? (
             <>
               <p className="eyebrow">{node.kind}</p>
               <input
@@ -312,5 +349,74 @@ export function CanvasView({
         </aside>
       </div>
     </section>
+  );
+}
+
+/** What the selected table is, and how the schema hangs together. */
+function SchemaInspector({
+  snapshot,
+  selected,
+}: {
+  snapshot: DesktopSnapshot;
+  selected: string | null;
+}) {
+  const schema = buildSchema(snapshot);
+  const table = schema.tables.find((item) => item.id === selected);
+
+  if (!table) {
+    return (
+      <>
+        <p className="eyebrow">Schema</p>
+        <p className="muted-copy">
+          Each agent is an object: its own key, foreign keys to the model and sandbox it runs on,
+          and join rows for the skills, patterns and MCP servers it was given. Agents that share a
+          sandbox are framed together. Pick a table to see what points at it.
+        </p>
+        <div className="kv">
+          <span>Tables</span>
+          <strong className="mono">{schema.tables.length}</strong>
+        </div>
+        <div className="kv">
+          <span>Relations</span>
+          <strong className="mono">{schema.edges.length}</strong>
+        </div>
+        <div className="kv">
+          <span>Groups</span>
+          <strong className="mono">{schema.groups.length}</strong>
+        </div>
+      </>
+    );
+  }
+
+  const incoming = schema.edges.filter((edge) => edge.to === table.id);
+  const outgoing = schema.edges.filter((edge) => edge.from === table.id);
+
+  return (
+    <>
+      <p className="eyebrow">{table.subtitle}</p>
+      <h3 className="schema-inspector__name">{table.name}</h3>
+      <div className="kv">
+        <span>Fields</span>
+        <strong className="mono">{table.fields.length}</strong>
+      </div>
+      <div className="kv">
+        <span>Points at</span>
+        <strong className="mono">{outgoing.length}</strong>
+      </div>
+      <div className="kv">
+        <span>Referenced by</span>
+        <strong className="mono">{incoming.length}</strong>
+      </div>
+      {incoming.length > 0 && (
+        <>
+          <p className="eyebrow">References</p>
+          {incoming.map((edge) => (
+            <p className="muted-copy mono" key={edge.id}>
+              {edge.id}
+            </p>
+          ))}
+        </>
+      )}
+    </>
   );
 }
