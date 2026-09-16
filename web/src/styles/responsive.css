@@ -55,7 +55,7 @@
 }
 
 @media (max-width: 860px) {
-  .rail--left {
+  .sidebar-slot {
     display: none;
   }
 

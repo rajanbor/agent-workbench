@@ -26,7 +26,9 @@ the native window, so visual review happens there.
 | Surface | What it does |
 | --- | --- |
 | Top bar | Workspace menu, version control (branch, head, commits, pinned model versions), chat model picker, tokens and cost, panel toggles, appearance |
-| Left rail | Collapsible sections: workbench chat, agents, sandboxes, terminals, workflows, models |
+| Activity strip | One icon per area — agents, search, source control, sandboxes, models, workflows — with settings and the account at its foot |
+| Sidebar | The lit area, in collapsible sections: workbench chat and agents with their chats, search, branch and working tree, sandboxes and terminals, the catalogue, workflows |
+| Work area | Tabs in groups. Any tab splits to the right, drags between groups, and the whole arrangement is restored on the next start |
 | Chat | Main window. The in-app inspector answers from the engine snapshot and reports model, version, tokens, cost, sources and refusals |
 | Canvas | Workflow editor: drag, rename, link, delete, pan, zoom, reset to the engine layout |
 | Sandboxes | Isolation drawn as nested boundaries with mounts, network policy, processes and attached agents |
@@ -35,7 +37,8 @@ the native window, so visual review happens there.
 | Terminal dock | One tab per sandbox terminal; engine-backed commands answer, everything else is refused with its reason |
 | Right rail | Workbench API: values, functions, modules, and the inspector policy |
 
-Shortcuts: `⌘K` palette · `⌘B` left rail · `⌘J` terminals · `⌘I` right rail.
+Shortcuts: `⌘K` palette · `⌘B` sidebar · `⌘J` terminals · `⌘I` right rail ·
+`⌘\` split · `⌘W` close the tab · `⌘1`–`⌘6` the areas of the strip.
 
 ## Structure
 
@@ -46,12 +49,13 @@ Shortcuts: `⌘K` palette · `⌘B` left rail · `⌘J` terminals · `⌘I` righ
 | `../crates/core/src/inspector.rs` | Scoped, redacting summariser |
 | `../crates/app/src/lib.rs` | `desktop_snapshot` and `inspector_ask` commands |
 | `app/` | Next App Router: root layout, the client page, the error boundary |
-| `src/components/` | Top bar, rails, terminal dock, palette, primitives |
+| `src/components/` | Top bar, activity strip, sidebar, editor groups, terminal dock, palette, primitives |
+| `src/lib/layout.ts` | The tab model: groups, splitting, and what is restored |
 | `src/views/` | Chat, canvas, sandboxes, models, usage, agent, settings |
 | `src/lib/` | Engine bridge, identity, theme, shell types, highlighting |
 | `src/styles/tokens.css` | Colour, type and radius tokens for both themes |
 | `src/styles/app.css` | The import list; rules live in the files below |
-| `src/styles/{base,chrome,chat,canvas,panels,responsive}.css` | One file per surface, so parallel branches do not collide |
+| `src/styles/{base,chrome,shell,chat,canvas,panels,responsive}.css` | One file per surface, so parallel branches do not collide |
 
 ## Rules
 

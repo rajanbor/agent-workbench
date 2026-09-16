@@ -38,10 +38,13 @@ pnpm build      # build the client
 The window opens on a chat with an in-app inspector that answers from the
 engine snapshot — what each agent is doing, what runs in each sandbox, which
 model version was used and what it cost — under a read-only policy that refuses
-file contents and credentials and never reaches the network. Around it sit
-collapsible agent, sandbox, terminal, workflow and model rails, a workbench-API
-rail, a terminal dock, a canvas workflow editor, a sandbox boundary view, a
-model library and the agent studio.
+file contents and credentials and never reaches the network. Around it sits a
+VS Code arrangement: an activity strip, a sidebar that shows one area at a time
+— agents and their chats, search, source control, sandboxes and terminals,
+models, workflows — and a work area of tabs that split side by side. In those
+tabs: the chat, a terminal dock, a canvas workflow editor, a sandbox boundary
+view, a model library, usage and the agent studio, with the workbench-API rail
+beside them.
 
 It does not launch agents, providers, ptys or Docker yet: that is the Swift app
 above, until `crates/runtime` and `crates/cli` take it over.
