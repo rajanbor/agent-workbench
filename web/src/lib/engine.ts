@@ -10,11 +10,20 @@ import fallbackSnapshot from "../data/prototype-snapshot.json";
 
 export type ModelLocation = "local" | "api";
 
+export interface DeviceEnergy {
+  powerBudgetW: number;
+  memoryGb: number;
+  batteryWh: number;
+  pricePerKwh: number;
+  basis: string;
+}
+
 export interface ComputerProfile {
   operatingSystem: string;
   architecture: string;
   deviceKind: string;
   runtimeStatus: string;
+  energy: DeviceEnergy;
 }
 
 export interface Provider {
@@ -43,6 +52,14 @@ export interface Reference {
   url: string;
 }
 
+export interface LocalProfile {
+  throughputTps: number;
+  prefillFactor: number;
+  powerDrawW: number;
+  memoryGb: number;
+  accelerator: string;
+}
+
 export interface ModelCard {
   id: string;
   name: string;
@@ -66,6 +83,7 @@ export interface ModelCard {
   requirements: string[];
   license: string;
   reference: Reference;
+  localProfile: LocalProfile | null;
 }
 
 export interface Permission {
@@ -282,6 +300,46 @@ export interface DailyUsage {
   costUsd: number;
 }
 
+export interface Utilisation {
+  powerShare: number;
+  memoryShare: number;
+  dutyCycle: number;
+  score: number;
+}
+
+export interface LocalRunEconomics {
+  modelId: string;
+  name: string;
+  tokensIn: number;
+  tokensOut: number;
+  seconds: number;
+  energyWh: number;
+  energyCostUsd: number;
+  apiEquivalentUsd: number;
+  savedUsd: number;
+  savingsRatio: number;
+  tokensPerWh: number;
+  batteryPct: number;
+  ready: boolean;
+  utilisation: Utilisation;
+}
+
+export interface LocalEconomics {
+  basis: string;
+  window: string;
+  pricePerKwh: number;
+  referenceModelId: string;
+  workloadTokensIn: number;
+  workloadTokensOut: number;
+  realisedTokens: number;
+  bestModelId: string | null;
+  bestSavedUsd: number;
+  bestSavingsRatio: number;
+  bestEnergyWh: number;
+  bestBatteryPct: number;
+  rows: LocalRunEconomics[];
+}
+
 export interface UsageSummary {
   window: string;
   tokensIn: number;
@@ -290,6 +348,7 @@ export interface UsageSummary {
   byModel: ModelUsage[];
   byAgent: AgentUsage[];
   daily: DailyUsage[];
+  local: LocalEconomics;
 }
 
 export interface Commit {

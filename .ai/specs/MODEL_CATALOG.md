@@ -23,6 +23,10 @@ app window, which holds the workbench state. An engine test enforces that every
 model has a summary, requirements, a licence and an `https` reference of the
 right kind.
 
+A model that can run on the device also declares a `LocalProfile` — throughput,
+prefill factor, power draw, resident memory and accelerator — which feeds the
+economics in `LOCAL_RUN_ECONOMICS.md`. A hosted model has none.
+
 ## Version control
 
 A model is versioned state. `ModelCard.version` and `ModelCard.digest` are the

@@ -1,6 +1,6 @@
 import { ModelGlyph, AgentFace } from "../components/Glyph";
 import { Badge, Card, SectionTitle } from "../components/primitives";
-import { accentOf, compactTokens, money } from "../lib/identity";
+import { accentOf, compactTokens, duration, fineMoney, money, percent } from "../lib/identity";
 import type { DesktopSnapshot } from "../lib/engine";
 
 export function UsageView({ snapshot }: { snapshot: DesktopSnapshot }) {
@@ -82,6 +82,8 @@ export function UsageView({ snapshot }: { snapshot: DesktopSnapshot }) {
         })}
       </Card>
 
+      <LocalExecution snapshot={snapshot} />
+
       <div className="columns">
         <div>
           <SectionTitle count={usage.byAgent.length}>By agent</SectionTitle>
@@ -127,5 +129,109 @@ export function UsageView({ snapshot }: { snapshot: DesktopSnapshot }) {
         </div>
       </div>
     </div>
+  );
+}
+
+/** What the same workload would cost on the device instead of the API:
+ *  time, energy, battery, and what it saves. Estimated from declared
+ *  coefficients — see .ai/specs/LOCAL_RUN_ECONOMICS.md. */
+function LocalExecution({ snapshot }: { snapshot: DesktopSnapshot }) {
+  const local = snapshot.usage.local;
+  const reference = snapshot.models.find((model) => model.id === local.referenceModelId);
+  const best = local.rows.find((row) => row.modelId === local.bestModelId);
+  const device = snapshot.computer.energy;
+
+  if (local.rows.length === 0) return null;
+
+  return (
+    <>
+      <SectionTitle
+        action={
+          <Badge tone="amber" icon="alert">
+            estimate
+          </Badge>
+        }
+      >
+        Local execution
+      </SectionTitle>
+
+      <p className="muted-copy local-note">
+        Today&rsquo;s {compactTokens(local.workloadTokensIn + local.workloadTokensOut)} tokens ran on
+        the API. Had they run on this {snapshot.computer.deviceKind}, against{" "}
+        {reference?.name ?? local.referenceModelId} at ${device.pricePerKwh.toFixed(2)}/kWh:
+        {local.realisedTokens === 0 && " nothing ran locally in this window."}
+      </p>
+
+      <div className="metrics">
+        <Card className="metric">
+          <p className="metric__label">Saved</p>
+          <p className="metric__value">{money(local.bestSavedUsd)}</p>
+          <p className="metric__hint">
+            {percent(local.bestSavingsRatio, 1)} of the API price · {best?.name}
+          </p>
+        </Card>
+        <Card className="metric">
+          <p className="metric__label">Energy</p>
+          <p className="metric__value">{local.bestEnergyWh.toFixed(2)} Wh</p>
+          <p className="metric__hint">{fineMoney(best?.energyCostUsd ?? 0)} of electricity</p>
+        </Card>
+        <Card className="metric">
+          <p className="metric__label">Battery</p>
+          <p className="metric__value">{local.bestBatteryPct.toFixed(1)}%</p>
+          <p className="metric__hint">of {device.batteryWh} Wh capacity</p>
+        </Card>
+        <Card className="metric">
+          <p className="metric__label">Exploitation</p>
+          <p className="metric__value">{percent(best?.utilisation.score ?? 0)}</p>
+          <p className="metric__hint">power, memory and duty cycle</p>
+        </Card>
+      </div>
+
+      <Card className="table table--local">
+        <div className="table__head">
+          <span>Model</span>
+          <span>Time</span>
+          <span>Energy</span>
+          <span>Battery</span>
+          <span>Electricity</span>
+          <span>API price</span>
+          <span>Saved</span>
+          <span>Exploitation</span>
+        </div>
+        {local.rows.map((row) => {
+          const model = snapshot.models.find((item) => item.id === row.modelId);
+          return (
+            <div className="table__row is-static" key={row.modelId}>
+              <span className="table__main">
+                <ModelGlyph icon={model?.icon ?? "model"} accent={accentOf(model?.accent)} size={22} />
+                <span>
+                  <strong>{row.name}</strong>
+                  <small>
+                    {model?.localProfile?.throughputTps} tok/s · {model?.localProfile?.powerDrawW} W ·{" "}
+                    {row.tokensPerWh.toFixed(0)} tok/Wh
+                  </small>
+                </span>
+              </span>
+              <span className="mono">{duration(row.seconds)}</span>
+              <span className="mono">{row.energyWh.toFixed(2)} Wh</span>
+              <span className="mono">{row.batteryPct.toFixed(1)}%</span>
+              <span className="mono">{fineMoney(row.energyCostUsd)}</span>
+              <span className="mono">{money(row.apiEquivalentUsd)}</span>
+              <span className="mono saved">{money(row.savedUsd)}</span>
+              <span className="share" title={`power ${percent(row.utilisation.powerShare)} · memory ${percent(row.utilisation.memoryShare)} · duty ${percent(row.utilisation.dutyCycle, 1)}`}>
+                <i style={{ width: `${Math.max(row.utilisation.score * 100, 2)}%` }} />
+                <em className="mono">{percent(row.utilisation.score)}</em>
+              </span>
+            </div>
+          );
+        })}
+      </Card>
+
+      <p className="muted-copy formula">
+        time = out ÷ tok/s + in ÷ (tok/s × prefill) · energy = watts × time ÷ 3600 · saved = API
+        price − energy price · exploitation = 0.5 power + 0.3 memory + 0.2 duty cycle. Declared
+        coefficients, not measurements: {device.basis}.
+      </p>
+    </>
   );
 }

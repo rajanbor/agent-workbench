@@ -66,3 +66,22 @@ export function compactTokens(value: number): string {
   if (value >= 1_000) return `${(value / 1_000).toFixed(1)}k`;
   return `${value}`;
 }
+
+/** Minutes and seconds, the way a person reads a duration. */
+export function duration(seconds: number): string {
+  if (seconds < 60) return `${Math.round(seconds)}s`;
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ${Math.round(seconds % 60)}s`;
+  return `${Math.floor(minutes / 60)}h ${minutes % 60}m`;
+}
+
+export function percent(ratio: number, digits = 0): string {
+  return `${(ratio * 100).toFixed(digits)}%`;
+}
+
+/** Cents when the amount is too small to read in dollars. */
+export function fineMoney(value: number): string {
+  if (value === 0) return "$0";
+  if (Math.abs(value) < 0.01) return `${(value * 100).toFixed(2)}¢`;
+  return `$${value.toFixed(2)}`;
+}

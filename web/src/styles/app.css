@@ -3876,3 +3876,63 @@ p {
 .table--usage .table__row {
   grid-template-columns: minmax(0, 2fr) 1.1fr 0.6fr 0.8fr 0.7fr 1.2fr;
 }
+
+/* --------------------------------------------------- local run economics */
+
+.local-note {
+  margin-bottom: 14px;
+}
+
+.table--local .table__head,
+.table--local .table__row {
+  grid-template-columns: minmax(0, 1.9fr) 0.7fr 0.8fr 0.7fr 0.8fr 0.8fr 0.8fr 1.1fr;
+}
+
+.saved {
+  color: var(--green-text);
+}
+
+.formula {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-subtle);
+  color: var(--text-faint);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+}
+
+.exploitation {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.exploitation__row {
+  display: grid;
+  align-items: center;
+  gap: 10px;
+  grid-template-columns: 110px 1fr 46px;
+  padding: 4px 0;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+.exploitation__row .share {
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-hover);
+}
+
+.exploitation__row .share i {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: var(--text-secondary);
+}
+
+.exploitation__row em {
+  color: var(--text-faint);
+  font-size: var(--text-xs);
+  font-style: normal;
+  text-align: right;
+}

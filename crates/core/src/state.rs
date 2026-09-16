@@ -30,6 +30,13 @@ fn computer() -> ComputerProfile {
         architecture: std::env::consts::ARCH.into(),
         device_kind: device_kind().into(),
         runtime_status: "Host runtime ready".into(),
+        energy: DeviceEnergy {
+            power_budget_w: 45.0,
+            memory_gb: 36.0,
+            battery_wh: 72.4,
+            price_per_kwh: 0.28,
+            basis: "estimate · declared for this device class".into(),
+        },
     }
 }
 
@@ -124,6 +131,7 @@ fn models() -> Vec<ModelCard> {
             requirements: vec!["None — ships with the app".into()],
             license: "Apache-2.0 (part of Open Cube)".into(),
             reference: reference("docs", "Inspector spec", "https://github.com/rajanbor/open-cube/blob/main/.ai/specs/INSPECTOR_MODEL.md"),
+            local_profile: None,
         },
         ModelCard {
             id: "claude-sonnet".into(),
@@ -164,6 +172,7 @@ fn models() -> Vec<ModelCard> {
             ],
             license: "Commercial API terms".into(),
             reference: reference("api", "Anthropic API documentation", "https://docs.anthropic.com/en/api/overview"),
+            local_profile: None,
         },
         ModelCard {
             id: "codex".into(),
@@ -200,6 +209,7 @@ fn models() -> Vec<ModelCard> {
             ],
             license: "Commercial API terms".into(),
             reference: reference("api", "OpenAI platform documentation", "https://platform.openai.com/docs"),
+            local_profile: None,
         },
         ModelCard {
             id: "qwen2.5-7b".into(),
@@ -247,6 +257,13 @@ fn models() -> Vec<ModelCard> {
             ],
             license: "Apache-2.0".into(),
             reference: reference("huggingface", "Qwen/Qwen2.5-7B-Instruct", "https://huggingface.co/Qwen/Qwen2.5-7B-Instruct"),
+            local_profile: Some(LocalProfile {
+                throughput_tps: 28.0,
+                prefill_factor: 8.0,
+                power_draw_w: 22.0,
+                memory_gb: 5.5,
+                accelerator: "Metal".into(),
+            }),
         },
         ModelCard {
             id: "llama3.2-3b".into(),
@@ -284,6 +301,13 @@ fn models() -> Vec<ModelCard> {
             ],
             license: "Llama 3.2 Community License".into(),
             reference: reference("huggingface", "meta-llama/Llama-3.2-3B-Instruct", "https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct"),
+            local_profile: Some(LocalProfile {
+                throughput_tps: 55.0,
+                prefill_factor: 10.0,
+                power_draw_w: 16.0,
+                memory_gb: 2.8,
+                accelerator: "Metal".into(),
+            }),
         },
         ModelCard {
             id: "mistral-7b".into(),
@@ -320,6 +344,13 @@ fn models() -> Vec<ModelCard> {
             ],
             license: "Apache-2.0".into(),
             reference: reference("huggingface", "mistralai/Mistral-7B-Instruct-v0.3", "https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.3"),
+            local_profile: Some(LocalProfile {
+                throughput_tps: 26.0,
+                prefill_factor: 8.0,
+                power_draw_w: 21.0,
+                memory_gb: 5.2,
+                accelerator: "Metal".into(),
+            }),
         },
     ]
 }
@@ -896,6 +927,19 @@ fn usage() -> UsageSummary {
     let tokens_out = by_model.iter().map(|m| m.tokens_out).sum();
     let cost_usd = by_model.iter().map(|m| m.cost_usd).sum::<f64>();
 
+    // One working day of wall clock, for the duty-cycle part of utilisation.
+    let window_seconds = 8.0 * 3600.0;
+    let local = crate::economics::local_economics(
+        &models(),
+        &computer().energy,
+        "claude-sonnet",
+        "today",
+        tokens_in,
+        tokens_out,
+        window_seconds,
+        0,
+    );
+
     UsageSummary {
         window: "today".into(),
         tokens_in,
@@ -903,6 +947,7 @@ fn usage() -> UsageSummary {
         cost_usd,
         by_model,
         by_agent,
+        local,
         daily: vec![
             daily("Mon", 21_400, 0.52),
             daily("Tue", 38_900, 0.88),
