@@ -20,6 +20,10 @@
   refuses anything needing a live pty, a canvas workflow editor with drag, link,
   zoom and pan, a sandbox boundary visualisation, a model catalogue with version
   control, and a usage and cost view.
+- Add the agent studio: create an agent from a project, model and sandbox, then
+  edit its blueprint — instructions, patterns, skills, MCP servers and engine
+  tools — from a library that explains each entry and what it requires, with the
+  resulting sandbox requirements derived and blocked ones named.
 - Turn the model catalogue into a library: each model carries a summary, what
   it is good at, its requirements, its licence and one reference — Hugging Face
   for open weights, the provider's API documentation for hosted models — opened

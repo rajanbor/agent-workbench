@@ -10,6 +10,7 @@ export function AgentView({
   onChat,
   onSandbox,
   onModel,
+  onStudio,
   onAction,
 }: {
   snapshot: DesktopSnapshot;
@@ -17,6 +18,7 @@ export function AgentView({
   onChat: (id: string) => void;
   onSandbox: (id: string) => void;
   onModel: (id: string) => void;
+  onStudio: (id: string) => void;
   onAction: (message: string) => void;
 }) {
   const agent = snapshot.agents.find((item) => item.id === agentId) ?? snapshot.agents[0];
@@ -38,8 +40,8 @@ export function AgentView({
           <Button size="sm" icon="session" onClick={() => onChat(agent.id)}>
             Open chat
           </Button>
-          <Button size="sm" icon="fork" onClick={() => onAction("Forking an agent needs the workbench daemon.")}>
-            Fork
+          <Button size="sm" icon="sliders" onClick={() => onStudio(agent.id)}>
+            Edit blueprint
           </Button>
           <Button
             size="sm"

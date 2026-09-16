@@ -36,6 +36,7 @@ export function CommandPalette({
       { id: "v:sandboxes", label: "Sandboxes", hint: "Go to", icon: "sandbox", run: () => onSelect("sandboxes") },
       { id: "v:models", label: "Models", hint: "Go to", icon: "model", run: () => onSelect("models") },
       { id: "v:usage", label: "Usage and cost", hint: "Go to", icon: "bolt", run: () => onSelect("usage") },
+      { id: "v:studio", label: "Agent studio", hint: "Go to", icon: "sliders", run: () => onSelect("studio") },
       { id: "v:settings", label: "Settings", hint: "Go to", icon: "settings", run: () => onSelect("settings") },
       ...snapshot.agents.map((agent) => ({
         id: `a:${agent.id}`,
@@ -58,6 +59,13 @@ export function CommandPalette({
         icon: model.icon,
         run: () => onSelect("models", { model: model.id }),
       })),
+      {
+        id: "x:new-agent",
+        label: "Design a new agent",
+        hint: "Action",
+        icon: "plus",
+        run: () => onSelect("studio", { agent: null }),
+      },
       {
         id: "x:run",
         label: "Run an agent",

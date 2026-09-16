@@ -16,6 +16,7 @@ import { SandboxView } from "./views/SandboxView";
 import { ModelsView } from "./views/ModelsView";
 import { UsageView } from "./views/UsageView";
 import { AgentView } from "./views/AgentView";
+import { AgentStudioView } from "./views/AgentStudioView";
 import { SettingsView } from "./views/SettingsView";
 
 import {
@@ -291,6 +292,19 @@ export default function App() {
                 onChat={(id) => select("chat", { chat: id, agent: id })}
                 onSandbox={(id) => select("sandboxes", { sandbox: id })}
                 onModel={(id) => select("models", { model: id })}
+                onStudio={(id) => select("studio", { agent: id })}
+                onAction={notify}
+              />
+            )}
+            {view === "studio" && (
+              <AgentStudioView
+                snapshot={snapshot}
+                agentId={selection.agent}
+                onSelectAgent={(id) => select("studio", { agent: id })}
+                onOpenChat={(id) => {
+                  const target = snapshot.agents.find((item) => item.id === id);
+                  select("chat", { chat: target?.chats[0]?.id ?? id, agent: id });
+                }}
                 onAction={notify}
               />
             )}
