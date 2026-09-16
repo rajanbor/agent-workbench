@@ -28,7 +28,7 @@ import {
 } from "./lib/engine";
 import { useTheme } from "./lib/theme";
 import type { ChatRef } from "./lib/engine";
-import type { ChatMessage } from "./lib/shell";
+import type { AppEvent, ChatMessage } from "./lib/shell";
 import {
   activities,
   activeTab,
@@ -106,8 +106,20 @@ export default function App() {
   const [period, setPeriod] = useState("today");
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [toast, setToast] = useState("");
+  const [events, setEvents] = useState<AppEvent[]>([]);
 
-  const notify = useCallback((message: string) => setToast(message), []);
+  // A toast is gone in four seconds; the panel keeps what it said.
+  const notify = useCallback((message: string) => {
+    setToast(message);
+    setEvents((current) => [
+      ...current,
+      {
+        id: `${Date.now()}-${current.length}`,
+        at: new Date().toLocaleTimeString([], { hour12: false }),
+        text: message,
+      },
+    ]);
+  }, []);
 
   useEffect(() => {
     // The head script sets this before first paint; repeat it here in case the
@@ -545,6 +557,7 @@ export default function App() {
               onHeight={setTerminalHeight}
               onClose={() => setTerminalOpen(false)}
               onAction={notify}
+              events={events}
             />
           )}
         </main>

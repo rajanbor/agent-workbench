@@ -40,3 +40,11 @@ export interface ChatMessage {
   refused?: string[];
   redacted?: string[];
 }
+
+/** One line of what the app told the person, kept for the Output tab. */
+export interface AppEvent {
+  id: string;
+  /** Wall clock, as the person would read it. */
+  at: string;
+  text: string;
+}

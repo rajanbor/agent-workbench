@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- Make the bottom dock a panel: `Problems`, `Output` and `Terminal` tabs, the
+  sessions listed down the side instead of in a strip, a prompt that sits at
+  the end of the stream, and a panel that maximises and restores. `Problems`
+  gathers what the snapshot already says is broken — a model that is not
+  connected, a skill whose permission is missing, a blocked server, a sandbox
+  with no account, a module that is planned — each row naming where it was read
+  from. `Output` keeps every refusal and reason the window reported, after the
+  toast that carried it has gone.
+
 - Rearrange the window the way VS Code arranges one: an activity strip of areas
   on the far left, a sidebar that shows whichever area is lit, and a work area
   of tabs that can be split so two surfaces sit side by side. Tabs drag between
