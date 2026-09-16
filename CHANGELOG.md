@@ -6,6 +6,10 @@
   (`crates/core`, `crates/app`) with one client in `web/`, driven from root
   `pnpm` scripts, recorded in ADR 008. The Swift app stays until the Rust
   runtime replaces it.
+- Restyle the client to a neutral design language: monochrome base with ink
+  primaries, colour only for status, pill filters, underlined tabs, cards with
+  footer strips, switches instead of add buttons, and an agent profile page
+  with a display-size name and time-first activity rows.
 - Move the client from Vite to Next.js with a static export, so the same
   interface builds for every platform and ships without a server.
 
