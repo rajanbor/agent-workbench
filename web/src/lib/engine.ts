@@ -376,6 +376,12 @@ export interface ModelActivity {
   daysActive: number;
 }
 
+export interface ActivityKind {
+  name: string;
+  count: number;
+  share: number;
+}
+
 export interface ActivityCalendar {
   basis: string;
   from: string;
@@ -386,6 +392,7 @@ export interface ActivityCalendar {
   totalTokens: number;
   busiestDay: string;
   byModel: ModelActivity[];
+  byKind: ActivityKind[];
 }
 
 export interface UsageSummary {

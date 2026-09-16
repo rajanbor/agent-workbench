@@ -4760,6 +4760,28 @@
           "share": 0.07228915662650603,
           "daysActive": 22
         }
+      ],
+      "byKind": [
+        {
+          "name": "Chat answers",
+          "count": 6,
+          "share": 0.25
+        },
+        {
+          "name": "Agent runs",
+          "count": 9,
+          "share": 0.375
+        },
+        {
+          "name": "Terminal commands",
+          "count": 3,
+          "share": 0.125
+        },
+        {
+          "name": "Workflow steps",
+          "count": 6,
+          "share": 0.25
+        }
       ]
     }
   },

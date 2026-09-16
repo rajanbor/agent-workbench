@@ -61,8 +61,36 @@ fn level_for(runs: u32, max: u32) -> u8 {
     }
 }
 
+/// What the work was. Every number is counted from an object that exists:
+/// inspector calls, agent runs, replayed terminal commands and workflow steps.
+pub fn kinds(
+    inspector_calls: u32,
+    agent_runs: u32,
+    terminal_commands: u32,
+    workflow_steps: u32,
+) -> Vec<ActivityKind> {
+    let raw = [
+        ("Chat answers", inspector_calls),
+        ("Agent runs", agent_runs),
+        ("Terminal commands", terminal_commands),
+        ("Workflow steps", workflow_steps),
+    ];
+    let total: u32 = raw.iter().map(|(_, count)| count).sum();
+    raw.iter()
+        .map(|(name, count)| ActivityKind {
+            name: (*name).into(),
+            count: *count,
+            share: if total > 0 {
+                *count as f64 / total as f64
+            } else {
+                0.0
+            },
+        })
+        .collect()
+}
+
 /// A year of days, grouped into week columns like a contribution calendar.
-pub fn calendar(models: &[ModelCard], weeks_back: i64) -> ActivityCalendar {
+pub fn calendar(models: &[ModelCard], weeks_back: i64, by_kind: Vec<ActivityKind>) -> ActivityCalendar {
     let now = today();
     // Whole week columns: end on the Sunday of the current week and go back a
     // round number of weeks, so every column has seven cells. Days after today
@@ -166,6 +194,7 @@ pub fn calendar(models: &[ModelCard], weeks_back: i64) -> ActivityCalendar {
         total_tokens,
         busiest_day: busiest,
         by_model,
+        by_kind,
     }
 }
 

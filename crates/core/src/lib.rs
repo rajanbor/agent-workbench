@@ -241,6 +241,33 @@ mod tests {
     }
 
     #[test]
+    fn activity_kinds_are_counted_and_add_up() {
+        let s = snapshot();
+        let kinds = &s.usage.activity.by_kind;
+        assert_eq!(kinds.len(), 4);
+        let total: u32 = kinds.iter().map(|kind| kind.count).sum();
+        assert!(total > 0);
+        let shares: f64 = kinds.iter().map(|kind| kind.share).sum();
+        assert!((shares - 1.0).abs() < 1e-9);
+
+        // Terminal commands are counted from the panes, not invented.
+        let typed = s
+            .terminals
+            .iter()
+            .flat_map(|terminal| terminal.lines.iter())
+            .filter(|line| line.stream == "input")
+            .count() as u32;
+        assert_eq!(
+            kinds.iter().find(|kind| kind.name == "Terminal commands").unwrap().count,
+            typed
+        );
+        assert_eq!(
+            kinds.iter().find(|kind| kind.name == "Workflow steps").unwrap().count,
+            s.workflow.nodes.len() as u32
+        );
+    }
+
+    #[test]
     fn local_energy_is_power_times_time() {
         let s = snapshot();
         for row in &s.usage.local.rows {

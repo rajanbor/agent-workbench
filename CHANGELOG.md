@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+- Make the cost chip a small usage view: picking a period changes what it shows
+  and keeps it open, while the panel presents every period at once with a model
+  table carrying a column per window.
+- Add an activity overview beside the calendar: the models the work ran on, and
+  the split by kind of work — chat answers, agent runs, terminal commands and
+  workflow steps — counted from the objects that hold them.
+- Repair the stylesheet: a merge conflict resolved by concatenating both sides
+  had truncated three rules, which silently killed every rule after them —
+  including the whole activity calendar and part of the schema canvas.
+  `pnpm build` now refuses to run on an unbalanced stylesheet.
+
 - Restructure the repository into one cross-platform system: a Rust workspace
   (`crates/core`, `crates/app`) with one client in `web/`, driven from root
   `pnpm` scripts, recorded in ADR 008. The Swift app stays until the Rust
