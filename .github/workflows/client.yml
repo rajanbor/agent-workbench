@@ -25,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
-      - run: cargo test -p open-cube-core
+      - run: cargo test -p open-cube-core -p open-cube-runtime
 
   frontend:
     name: Frontend

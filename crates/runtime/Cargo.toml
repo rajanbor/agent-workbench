@@ -1,0 +1,11 @@
+[package]
+name = "open-cube-runtime"
+description = "Launch contract and platform adapters for Open Cube agents"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+open-cube-core = { path = "../core" }
+serde = { version = "1", features = ["derive"] }
