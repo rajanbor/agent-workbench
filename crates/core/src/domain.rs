@@ -14,6 +14,7 @@ pub struct DesktopSnapshot {
     pub projects: Vec<ProjectEntry>,
     pub editors: Vec<EditorApp>,
     pub templates: Vec<ProjectTemplate>,
+    pub purposes: Vec<AgentPurpose>,
     pub agents: Vec<Agent>,
     pub sandboxes: Vec<Sandbox>,
     pub sessions: Vec<Session>,
@@ -267,6 +268,32 @@ pub struct ChatRef {
     pub id: String,
     pub title: String,
     pub updated_at: String,
+}
+
+/// A prepared starting point for a new agent. Choosing one fills the
+/// blueprint — instructions, patterns, skills, servers and tools — so the
+/// common case is a click rather than an empty form. Everything it names must
+/// exist in the library; a test asserts that.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AgentPurpose {
+    pub id: String,
+    pub name: String,
+    pub summary: String,
+    /// The role the agent takes, in the same words the agent list shows.
+    pub role: String,
+    pub icon: String,
+    pub accent: String,
+    /// A name to suggest, which the person may overwrite.
+    pub suggested_name: String,
+    pub instructions: String,
+    pub patterns: Vec<String>,
+    pub skills: Vec<String>,
+    pub mcp: Vec<String>,
+    pub tools: Vec<String>,
+    /// What the work needs of a model, in one line, so the model step can say
+    /// why one is a better fit than another.
+    pub model_note: String,
 }
 
 /// The editable definition of an agent: what it is told, what it may reach for

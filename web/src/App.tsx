@@ -18,6 +18,7 @@ import { AgentView } from "./views/AgentView";
 import { AgentStudioView } from "./views/AgentStudioView";
 import { ProjectView } from "./views/ProjectView";
 import { NewProjectView } from "./views/NewProjectView";
+import { NewAgentView } from "./views/NewAgentView";
 import { SettingsView } from "./views/SettingsView";
 
 import {
@@ -453,6 +454,19 @@ export default function App() {
             />
           );
         case "studio":
+          // No target means "design one"; a target means "refine this one".
+          if (!tab.target) {
+            return (
+              <NewAgentView
+                snapshot={snapshot}
+                onOpenEditor={(id) => {
+                  const agent = snapshot.agents.find((item) => item.id === id);
+                  if (agent) open(studioTab(agent));
+                }}
+                onAction={notify}
+              />
+            );
+          }
           return (
             <AgentStudioView
               snapshot={snapshot}
@@ -462,6 +476,7 @@ export default function App() {
                 if (agent) open(studioTab(agent));
               }}
               onOpenChat={openAgentChat}
+              onNewAgent={() => open(studioTab(null))}
               onAction={notify}
             />
           );

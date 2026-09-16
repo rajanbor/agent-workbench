@@ -548,6 +548,163 @@
       ]
     }
   ],
+  "purposes": [
+    {
+      "id": "review",
+      "name": "Review changes",
+      "summary": "Reads a diff, reports findings with file and line, and never writes.",
+      "role": "Review",
+      "icon": "shield",
+      "accent": "blue",
+      "suggestedName": "reviewer",
+      "instructions": "Read the change and report what is wrong with it. Name the file and the line. Never write to the workspace, and never run a command that changes it.",
+      "patterns": [
+        "read-only",
+        "report-findings"
+      ],
+      "skills": [
+        "diff-review",
+        "repo-map"
+      ],
+      "mcp": [
+        "git"
+      ],
+      "tools": [
+        "snapshot",
+        "inspect"
+      ],
+      "modelNote": "Reads a lot and writes little: context size matters more than speed."
+    },
+    {
+      "id": "implement",
+      "name": "Implement a change",
+      "summary": "Proposes a diff for one module at a time and waits for approval.",
+      "role": "Implementation",
+      "icon": "code",
+      "accent": "green",
+      "suggestedName": "builder",
+      "instructions": "Read the specification before proposing a change. Touch one module per run. Open a diff for review; never write outside the workspace root.",
+      "patterns": [
+        "review-before-write",
+        "one-change-per-run"
+      ],
+      "skills": [
+        "repo-map",
+        "diff-review"
+      ],
+      "mcp": [
+        "filesystem",
+        "git"
+      ],
+      "tools": [
+        "snapshot",
+        "inspect",
+        "agents_in"
+      ],
+      "modelNote": "Writes code and holds a plan: the strongest model earns its price here."
+    },
+    {
+      "id": "verify",
+      "name": "Run the tests",
+      "summary": "Runs the suite, waits for approval on every command, and reports what failed.",
+      "role": "Verification",
+      "icon": "check",
+      "accent": "amber",
+      "suggestedName": "tests",
+      "instructions": "Run the test suite and report failures with the command that produced them. Ask before every shell command. Change nothing.",
+      "patterns": [
+        "test-before-propose",
+        "approval-for-shell"
+      ],
+      "skills": [
+        "cargo-tests"
+      ],
+      "mcp": [
+        "filesystem"
+      ],
+      "tools": [
+        "snapshot",
+        "open_terminal"
+      ],
+      "modelNote": "Mostly waiting on a process: a local model is enough and costs only power."
+    },
+    {
+      "id": "design",
+      "name": "Audit the interface",
+      "summary": "Checks contrast, focus order and hit targets against the token file.",
+      "role": "Review",
+      "icon": "sun",
+      "accent": "violet",
+      "suggestedName": "auditor",
+      "instructions": "Check changed screens for contrast, focus order and hit target size. Read the token file and refuse a colour literal. Report findings; never write.",
+      "patterns": [
+        "read-only",
+        "report-findings"
+      ],
+      "skills": [
+        "design-tokens",
+        "accessibility-audit"
+      ],
+      "mcp": [
+        "filesystem"
+      ],
+      "tools": [
+        "snapshot",
+        "inspect"
+      ],
+      "modelNote": "Judgement on small inputs: a mid-sized model is enough."
+    },
+    {
+      "id": "write",
+      "name": "Write the release notes",
+      "summary": "Turns commits into prose a person can read, and stops at the diff.",
+      "role": "Writing",
+      "icon": "logs",
+      "accent": "amber",
+      "suggestedName": "release-notes",
+      "instructions": "Read the commits since the last tag and write what changed, in plain sentences, for someone who did not write the code. Propose the file as a diff.",
+      "patterns": [
+        "review-before-write"
+      ],
+      "skills": [
+        "changelog-writer"
+      ],
+      "mcp": [
+        "git"
+      ],
+      "tools": [
+        "snapshot",
+        "inspect"
+      ],
+      "modelNote": "Prose quality is the whole job: the better model reads better."
+    },
+    {
+      "id": "explore",
+      "name": "Answer questions about the code",
+      "summary": "Maps the repository and answers without touching anything.",
+      "role": "Orientation",
+      "icon": "search",
+      "accent": "neutral",
+      "suggestedName": "guide",
+      "instructions": "Answer questions about this workspace from what you can read. Quote the file and line you read it from. Write nothing.",
+      "patterns": [
+        "read-only"
+      ],
+      "skills": [
+        "repo-map"
+      ],
+      "mcp": [
+        "filesystem",
+        "git"
+      ],
+      "tools": [
+        "snapshot",
+        "inspect",
+        "agents_in"
+      ],
+      "modelNote": "Reads widely, answers briefly: a local model keeps this free."
+    }
+  ],
   "agents": [
     {
       "id": "chief",

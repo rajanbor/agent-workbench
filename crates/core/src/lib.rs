@@ -92,6 +92,51 @@ mod tests {
     }
 
     #[test]
+    fn every_purpose_names_things_the_library_actually_has() {
+        let s = snapshot();
+        assert!(!s.purposes.is_empty(), "a new agent needs somewhere to start");
+        for purpose in &s.purposes {
+            for id in &purpose.patterns {
+                assert!(
+                    s.library.patterns.iter().any(|item| &item.id == id),
+                    "purpose {} names unknown pattern {}",
+                    purpose.id,
+                    id
+                );
+            }
+            for id in &purpose.skills {
+                assert!(
+                    s.library.skills.iter().any(|item| &item.id == id),
+                    "purpose {} names unknown skill {}",
+                    purpose.id,
+                    id
+                );
+            }
+            for id in &purpose.mcp {
+                assert!(
+                    s.library.mcp.iter().any(|item| &item.id == id),
+                    "purpose {} names unknown server {}",
+                    purpose.id,
+                    id
+                );
+            }
+            for name in &purpose.tools {
+                assert!(
+                    s.capabilities.functions.iter().any(|item| &item.name == name),
+                    "purpose {} names unknown tool {}",
+                    purpose.id,
+                    name
+                );
+            }
+            assert!(
+                !purpose.instructions.trim().is_empty(),
+                "purpose {} would hand an agent no instructions",
+                purpose.id
+            );
+        }
+    }
+
+    #[test]
     fn no_editor_claims_to_be_installed_without_a_check() {
         let s = snapshot();
         assert!(!s.editors.is_empty(), "a folder must have somewhere to go");

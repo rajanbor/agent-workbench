@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Design an agent by clicking: purpose, project, model, sandbox, review — one
+  question per step, every answer a card. A purpose is an object in the engine
+  now, and choosing one fills the instructions, patterns, skills, servers and
+  tools; the review step shows what it filled and what the agent would be
+  allowed to do. The old column of text fields is gone, and a test asserts no
+  purpose names a pattern, skill, server or tool the library does not have.
+
 - Make a project a first-class object in the engine and a tab in the window: a
   folder with its path, branch, working tree, first level of files and the
   agents pointed at it. Agents and projects are now checked against each other

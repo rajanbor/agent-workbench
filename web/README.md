@@ -35,6 +35,7 @@ the native window, so visual review happens there.
 | Sandboxes | Isolation drawn as nested boundaries with mounts, network policy, processes and attached agents |
 | Models | Catalogue with per-model identity, pinned version, digest and revision history |
 | Usage | Spend and tokens per model, per agent and per day |
+| Agent studio | Five clicked questions to design one, then an editor for instructions, patterns, skills, servers and tools |
 | Bottom panel | `Problems` (what the snapshot says is broken, with its source), `Output` (everything this session reported), `Terminal` (sessions down the side, prompt inside the stream); maximises and restores |
 | Right rail | Workbench API: values, functions, modules, and the inspector policy |
 

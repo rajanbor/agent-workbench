@@ -47,12 +47,14 @@ export function AgentStudioView({
   agentId,
   onSelectAgent,
   onOpenChat,
+  onNewAgent,
   onAction,
 }: {
   snapshot: DesktopSnapshot;
   agentId: string | null;
   onSelectAgent: (id: string) => void;
   onOpenChat: (id: string) => void;
+  onNewAgent: () => void;
   onAction: (message: string) => void;
 }) {
   // Drafts live in browser storage; adopting them after mount keeps the first
@@ -60,14 +62,6 @@ export function AgentStudioView({
   const [drafts, setDrafts] = useState<Drafts>({});
   const [adopted, setAdopted] = useState(false);
   const [tab, setTab] = useState<Tab>("patterns");
-  const [creating, setCreating] = useState(agentId === null);
-  const [newAgent, setNewAgent] = useState({
-    name: "",
-    role: "Implementation",
-    project: "~/Projects/open-cube",
-    modelId: snapshot.models[0].id,
-    sandboxId: snapshot.sandboxes[0].id,
-  });
 
   const agent = snapshot.agents.find((item) => item.id === agentId) ?? null;
   const blueprint: AgentBlueprint = agent
@@ -93,130 +87,18 @@ export function AgentStudioView({
     setDrafts((current) => ({ ...current, [agent.id]: { ...blueprint, ...patch } }));
   };
 
-  /* ------------------------------------------------------------ basic mode */
-  if (creating) {
-    const model = snapshot.models.find((item) => item.id === newAgent.modelId);
-    const sandbox = snapshot.sandboxes.find((item) => item.id === newAgent.sandboxId);
-    return (
-      <div className="stack">
-        <header className="studio-head">
-          <div>
-            <p className="eyebrow">Agent studio</p>
-            <h1>New agent</h1>
-            <p className="muted-copy">
-              Name it, point it at a project and give it a model. Everything else — instructions,
-              patterns, skills, MCP servers — is added in the editor afterwards.
-            </p>
-          </div>
-          {snapshot.agents.length > 0 && (
-            <Button icon="close" onClick={() => setCreating(false)}>
-              Cancel
-            </Button>
-          )}
-        </header>
-
-        <Card className="pad form">
-          <label className="field">
-            <span>Name</span>
-            <input
-              value={newAgent.name}
-              placeholder="release_notes"
-              onChange={(event) => setNewAgent({ ...newAgent, name: event.target.value })}
-            />
-          </label>
-          <label className="field">
-            <span>Role</span>
-            <input
-              value={newAgent.role}
-              onChange={(event) => setNewAgent({ ...newAgent, role: event.target.value })}
-            />
-          </label>
-          <label className="field">
-            <span>Project folder</span>
-            <span className="field__row">
-              <input
-                className="mono"
-                value={newAgent.project}
-                onChange={(event) => setNewAgent({ ...newAgent, project: event.target.value })}
-              />
-              <Button
-                size="sm"
-                icon="folder"
-                onClick={() => onAction("Choosing a folder needs the workbench daemon.")}
-              >
-                Choose…
-              </Button>
-            </span>
-          </label>
-          <label className="field">
-            <span>Model</span>
-            <select
-              value={newAgent.modelId}
-              onChange={(event) => setNewAgent({ ...newAgent, modelId: event.target.value })}
-            >
-              {snapshot.models.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name} · {item.location} · {item.version}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="field">
-            <span>Sandbox</span>
-            <select
-              value={newAgent.sandboxId}
-              onChange={(event) => setNewAgent({ ...newAgent, sandboxId: event.target.value })}
-            >
-              {snapshot.sandboxes.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name} · {item.isolation}
-                </option>
-              ))}
-            </select>
-          </label>
-        </Card>
-
-        <SectionTitle>What this agent would be allowed to do</SectionTitle>
-        <Card className="pad list-card">
-          <p>
-            <Icon name="folder" size={13} /> Read and write inside {newAgent.project}, nothing above
-            it.
-          </p>
-          <p>
-            <Icon name="network" size={13} /> Network {sandbox?.network.mode ?? "off"}
-            {sandbox && sandbox.network.allowlist.length > 0
-              ? ` · ${sandbox.network.allowlist.join(", ")}`
-              : ""}
-          </p>
-          <p>
-            <Icon name="terminal" size={13} /> Shell commands wait for approval until the runtime
-            lands.
-          </p>
-          <p>
-            <Icon name="model" size={13} /> Runs on {model?.name}
-            {model?.ready ? "" : " — which is not connected yet"}.
-          </p>
-        </Card>
-
-        <div className="studio-actions">
-          <Button
-            variant="primary"
-            icon="plus"
-            onClick={() => onAction("Creating an agent needs the workbench daemon; the form is a draft.")}
-          >
-            Create agent
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
   if (!agent) {
     return (
       <div className="stack">
-        <Button icon="plus" variant="primary" onClick={() => setCreating(true)}>
-          Design an agent
-        </Button>
+        <Card className="pad list-card">
+          <p className="muted-copy">
+            This editor refines an agent that already exists. To design a new one, answer the
+            five questions in the new-agent panel first.
+          </p>
+          <Button icon="plus" variant="primary" onClick={onNewAgent}>
+            Design an agent
+          </Button>
+        </Card>
       </div>
     );
   }
@@ -250,7 +132,7 @@ export function AgentStudioView({
               </option>
             ))}
           </select>
-          <Button icon="plus" onClick={() => setCreating(true)}>
+          <Button icon="plus" onClick={onNewAgent}>
             New
           </Button>
           <Button icon="session" onClick={() => onOpenChat(agent.id)}>
