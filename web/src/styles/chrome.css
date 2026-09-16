@@ -17,6 +17,7 @@
 }
 
 .workspace {
+  position: relative;
   display: flex;
   min-width: 0;
   min-height: 0;
@@ -456,6 +457,19 @@
   -webkit-backdrop-filter: var(--blur);
 }
 
+/* Maximised, the panel takes the work area and the tabs above it stay put. It
+   turns opaque here: a panel you can read the view through is not a panel. */
+.dock.is-maximised {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 20;
+  height: auto;
+  background: var(--bg-sidebar);
+}
+
 .dock__grip {
   position: absolute;
   top: -3px;
@@ -465,73 +479,180 @@
   cursor: ns-resize;
 }
 
+.dock__grip:hover {
+  background: var(--accent-border);
+}
+
+.dock.is-maximised .dock__grip {
+  cursor: default;
+}
+
 .dock__bar {
   display: flex;
-  align-items: center;
+  height: 34px;
+  flex: 0 0 auto;
+  align-items: stretch;
   justify-content: space-between;
   gap: 10px;
-  padding: 4px 8px;
   border-bottom: 1px solid var(--border-subtle);
   background: transparent;
 }
 
-.dock__tabs,
+.dock__tabs {
+  display: flex;
+  min-width: 0;
+  align-items: stretch;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
 .dock__tools {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
+  padding: 0 6px;
 }
 
+/* Panel tabs are underlined, not boxed: they name a view, they are not files. */
 .dock__tab {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 5px 10px;
-  border: 1px solid transparent;
-  border-radius: var(--radius-sm);
+  gap: 7px;
+  padding: 0 12px;
+  border: 0;
   background: transparent;
-  color: var(--text-muted);
+  color: var(--text-faint);
   font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .dock__tab:hover {
-  background: var(--bg-hover);
-  color: var(--text);
+  color: var(--text-secondary);
 }
 
 .dock__tab.is-active {
-  border-color: var(--border);
-  background: var(--bg-surface);
   color: var(--text);
 }
 
-.dock__cwd {
-  color: var(--text-faint);
-  font-size: var(--text-xs);
+.dock__tab.is-active::after {
+  position: absolute;
+  right: 10px;
+  bottom: 0;
+  left: 10px;
+  height: 2px;
+  background: var(--accent);
+  content: "";
 }
 
-.dock__body {
+.dock__tally {
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-style: normal;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* Terminal: the stream on the left, the sessions down the side. */
+
+.dock__split {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+}
+
+.dock__stream {
+  min-width: 0;
   min-height: 0;
   flex: 1;
   overflow: auto;
-  padding: 10px 14px;
+  padding: 10px 14px 14px;
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   line-height: 1.6;
+  cursor: text;
+}
+
+.dock__sessions {
+  width: 190px;
+  flex: 0 0 190px;
+  overflow: auto;
+  padding: 6px;
+  border-left: 1px solid var(--border-subtle);
+  margin: 0;
+  list-style: none;
+}
+
+.dock__sessions button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 0;
+  border-left: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  text-align: left;
+}
+
+.dock__sessions button:hover {
+  background: var(--bg-hover);
+}
+
+.dock__sessions button.is-active {
+  border-left-color: var(--accent);
+  background: var(--bg-active);
+  color: var(--text);
+}
+
+.dock__sessions span {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.dock__sessions strong {
+  overflow: hidden;
+  font-size: var(--text-xs);
+  font-weight: 550;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dock__sessions small {
+  color: var(--text-faint);
+  font-size: 10px;
 }
 
 .dock__policy {
   display: flex;
-  align-items: center;
-  gap: 7px;
-  margin-bottom: 8px;
-  padding: 6px 9px;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding: 7px 9px;
   border: 1px solid var(--amber-border);
   border-radius: var(--radius-sm);
   background: var(--amber-bg);
   color: var(--amber-text);
   font-family: var(--font-ui);
   font-size: var(--text-xs);
+  line-height: 1.55;
+}
+
+.dock__policy span {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dock__policy strong {
+  color: var(--text-secondary);
+  font-weight: 500;
 }
 
 .dock__line {
@@ -563,32 +684,121 @@
   color: var(--text-faint);
 }
 
-.dock__input {
+/* The prompt is the last line of the stream, not a bar under it. */
+.dock__entry {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 8px;
-  padding: 8px 14px;
-  border-top: 1px solid var(--border);
-  background: var(--bg-surface);
+  padding-top: 2px;
 }
 
 .dock__prompt {
   color: var(--text-faint);
-  font-size: var(--text-xs);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
   white-space: nowrap;
 }
 
-.dock__input input {
-  flex: 1;
+.dock__entry input {
   min-width: 0;
+  flex: 1;
   border: 0;
   background: transparent;
+  color: var(--text);
   font-family: var(--font-mono);
   font-size: var(--text-sm);
 }
 
-.dock__input input:focus {
+.dock__entry input:focus {
   outline: none;
+}
+
+/* Problems and Output */
+
+.dock__list {
+  min-height: 0;
+  flex: 1;
+  overflow: auto;
+  padding: 8px 12px 14px;
+}
+
+.dock__note {
+  padding: 6px 2px 10px;
+  color: var(--text-faint);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+}
+
+.problem {
+  display: grid;
+  align-items: start;
+  gap: 4px 10px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  padding: 8px 2px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.problem strong {
+  color: var(--text);
+  font-size: var(--text-sm);
+  font-weight: 550;
+}
+
+.problem p {
+  margin-top: 2px;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+}
+
+.problem em {
+  color: var(--text-faint);
+  font-size: 10px;
+  font-style: normal;
+}
+
+.problem__mark {
+  margin-top: 2px;
+}
+
+.problem--error .problem__mark {
+  color: var(--red-text);
+}
+
+.problem--warning .problem__mark {
+  color: var(--amber-text);
+}
+
+.problem--info .problem__mark {
+  color: var(--text-faint);
+}
+
+.dock__event {
+  display: flex;
+  gap: 10px;
+  padding: 5px 2px;
+  border-top: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+}
+
+.dock__event .mono {
+  flex: 0 0 auto;
+  color: var(--text-faint);
+}
+
+.dock__foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+  overflow: hidden;
+  padding: 7px 12px;
+  border-top: 1px solid var(--border-subtle);
+  color: var(--text-faint);
+  font-size: var(--text-xs);
+  white-space: nowrap;
 }
 
 .statusbar {
