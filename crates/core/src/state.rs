@@ -122,6 +122,7 @@ fn models() -> Vec<ModelCard> {
                 pinned: true,
             }],
             pricing: None,
+            subscription: None,
             summary: "Answers questions about this workbench from the engine snapshot. Rule based, not a language model: it cannot improvise, and it cannot read anything its policy does not grant.".into(),
             strengths: vec![
                 "Explains agents, sandboxes, spend and policy".into(),
@@ -134,8 +135,8 @@ fn models() -> Vec<ModelCard> {
             local_profile: None,
         },
         ModelCard {
-            id: "claude-sonnet".into(),
-            name: "Claude Sonnet".into(),
+            id: "claude-opus".into(),
+            name: "Claude Opus".into(),
             vendor: "Anthropic".into(),
             task: "Text · tools".into(),
             icon: "agent".into(),
@@ -157,9 +158,10 @@ fn models() -> Vec<ModelCard> {
                 pinned: false,
             }],
             pricing: Some(Pricing {
-                input_per_mtok: 3.0,
-                output_per_mtok: 15.0,
+                input_per_mtok: 15.0,
+                output_per_mtok: 75.0,
             }),
+            subscription: None,
             summary: "Hosted general model with tool use and a long context. In Open Cube it runs through the Claude Code tool inside the agent account, so the subscription and the credentials stay with that tool.".into(),
             strengths: vec![
                 "Long-context reading of a whole workspace".into(),
@@ -198,7 +200,11 @@ fn models() -> Vec<ModelCard> {
                 pinned: false,
             }],
             pricing: None,
-            summary: "Hosted coding agent driven by the Codex CLI. Cost is carried by the subscription rather than metered per token, so spend shows as zero here.".into(),
+            subscription: Some(Subscription {
+                plan: "Pro, per seat".into(),
+                monthly_usd: 200.0,
+            }),
+            summary: "Hosted coding agent driven by the Codex CLI. Paid for by the month rather than metered per token, so its cost is the plan spread over the window you are looking at.".into(),
             strengths: vec![
                 "Repository-scale code changes".into(),
                 "Runs as its own CLI inside the sandbox".into(),
@@ -224,14 +230,14 @@ fn models() -> Vec<ModelCard> {
             downloads: Some("4.7 GB".into()),
             likes: None,
             location: ModelLocation::Local,
-            ready: false,
+            ready: true,
             version: "q4_k_m".into(),
             digest: "sha256:6d1e08b7".into(),
             revisions: vec![
                 ModelRevision {
                     version: "q4_k_m".into(),
                     digest: "sha256:6d1e08b7".into(),
-                    published: "not downloaded".into(),
+                    published: "downloaded".into(),
                     note: "4-bit build, 8 GB unified memory".into(),
                     pinned: true,
                 },
@@ -244,6 +250,7 @@ fn models() -> Vec<ModelCard> {
                 },
             ],
             pricing: None,
+            subscription: None,
             summary: "Open-weight instruct model that runs on the machine. Good default for review and summarisation work that should never leave the device.".into(),
             strengths: vec![
                 "Runs offline, no account".into(),
@@ -289,6 +296,7 @@ fn models() -> Vec<ModelCard> {
                 pinned: true,
             }],
             pricing: None,
+            subscription: None,
             summary: "Small open-weight model for fast local passes: classification, triage and short summaries where latency matters more than depth.".into(),
             strengths: vec![
                 "Fast on modest hardware".into(),
@@ -333,6 +341,7 @@ fn models() -> Vec<ModelCard> {
                 pinned: true,
             }],
             pricing: None,
+            subscription: None,
             summary: "Open-weight instruct model with a permissive licence, often used as a local fallback when a hosted provider is unavailable.".into(),
             strengths: vec![
                 "Permissive licence, no account".into(),
@@ -361,7 +370,7 @@ fn agents() -> Vec<Agent> {
             name: "Chief".into(),
             role: "Orchestrator".into(),
             status: "running".into(),
-            model_id: "claude-sonnet".into(),
+            model_id: "claude-opus".into(),
             sandbox_id: "product-dev".into(),
             machine: "MacBook Pro".into(),
             task: "Rebuild the workbench shell".into(),
@@ -476,7 +485,7 @@ fn agents() -> Vec<Agent> {
             name: "Release Notes".into(),
             role: "Writing".into(),
             status: "approval".into(),
-            model_id: "claude-sonnet".into(),
+            model_id: "claude-opus".into(),
             sandbox_id: "review".into(),
             machine: "MacBook Pro".into(),
             task: "Draft the alpha release note".into(),
@@ -886,14 +895,15 @@ fn mcp_server(id: &str, name: &str, transport: &str, status: &str, summary: &str
 fn usage_rows() -> Vec<ModelUsage> {
     vec![
         ModelUsage {
-            model_id: "claude-sonnet".into(),
-            name: "Claude Sonnet".into(),
+            model_id: "claude-opus".into(),
+            name: "Claude Opus".into(),
             version: "provider default".into(),
             calls: 312,
             tokens_in: 2_420_000,
             tokens_out: 684_000,
-            // 2.42M in at $3/M plus 684k out at $15/M.
-            cost_usd: 17.52,
+            cost_usd: 0.0,
+            cost_kind: CostKind::Metered,
+            energy_wh: 0.0,
         },
         ModelUsage {
             model_id: "codex".into(),
@@ -902,8 +912,9 @@ fn usage_rows() -> Vec<ModelUsage> {
             calls: 196,
             tokens_in: 5_180_000,
             tokens_out: 1_240_000,
-            // Carried by the subscription, so nothing is metered here.
             cost_usd: 0.0,
+            cost_kind: CostKind::Subscription,
+            energy_wh: 0.0,
         },
         ModelUsage {
             model_id: "inspector-local".into(),
@@ -913,6 +924,20 @@ fn usage_rows() -> Vec<ModelUsage> {
             tokens_in: 0,
             tokens_out: 0,
             cost_usd: 0.0,
+            cost_kind: CostKind::None,
+            energy_wh: 0.0,
+        },
+        // The review agent runs on the device, so its cost is electricity.
+        ModelUsage {
+            model_id: "qwen2.5-7b".into(),
+            name: "Qwen2.5 7B Instruct".into(),
+            version: "q4_k_m".into(),
+            calls: 88,
+            tokens_in: 1_260_000,
+            tokens_out: 320_000,
+            cost_usd: 0.0,
+            cost_kind: CostKind::Electricity,
+            energy_wh: 0.0,
         },
     ]
 }
@@ -932,22 +957,6 @@ fn usage() -> UsageSummary {
 
     let by_model = usage_rows();
 
-    let tokens_in = by_model.iter().map(|m| m.tokens_in).sum();
-    let tokens_out = by_model.iter().map(|m| m.tokens_out).sum();
-    let cost_usd = by_model.iter().map(|m| m.cost_usd).sum::<f64>();
-
-    // One working day of wall clock, for the duty-cycle part of utilisation.
-    let window_seconds = 8.0 * 3600.0;
-    let local = crate::economics::local_economics(
-        &models(),
-        &computer().energy,
-        "claude-sonnet",
-        "today",
-        tokens_in,
-        tokens_out,
-        window_seconds,
-        0,
-    );
 
     let daily = vec![
         daily("Mon", 4_120_000, 6.84),
@@ -957,13 +966,50 @@ fn usage() -> UsageSummary {
         daily("Fri", 9_524_000, 17.520),
     ];
 
-    let periods = crate::activity::periods(&by_model, &daily);
+    let periods = crate::activity::periods(&by_model, &daily, &models(), &computer().energy);
+
+    // One working day of wall clock, for the duty-cycle part of utilisation.
+    let window_seconds = 8.0 * 3600.0;
+    let today_rows = periods
+        .iter()
+        .find(|period| period.id == "today")
+        .map(|period| period.by_model.clone())
+        .unwrap_or_default();
+    let realised_tokens: u64 = today_rows
+        .iter()
+        .filter(|row| row.cost_kind == CostKind::Electricity)
+        .map(|row| row.tokens_in + row.tokens_out)
+        .sum();
+    let workload_in: u64 = today_rows.iter().map(|row| row.tokens_in).sum();
+    let workload_out: u64 = today_rows.iter().map(|row| row.tokens_out).sum();
+
+    let local = crate::economics::local_economics(
+        &models(),
+        &computer().energy,
+        "claude-opus",
+        "today",
+        workload_in,
+        workload_out,
+        window_seconds,
+        realised_tokens,
+    );
+
+
+    let today = periods
+        .iter()
+        .find(|period| period.id == "today")
+        .cloned()
+        .expect("today is one of the periods");
 
     UsageSummary {
         window: "today".into(),
-        tokens_in,
-        tokens_out,
-        cost_usd,
+        tokens_in: today.tokens_in,
+        tokens_out: today.tokens_out,
+        cost_usd: today.cost_usd,
+        metered_usd: today.metered_usd,
+        subscription_usd: today.subscription_usd,
+        electricity_usd: today.electricity_usd,
+        energy_wh: today.energy_wh,
         by_model,
         by_agent,
         local,

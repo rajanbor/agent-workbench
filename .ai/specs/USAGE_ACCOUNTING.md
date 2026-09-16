@@ -40,9 +40,16 @@ so; recorded runs arrive with the event log (#15).
 ## Rules
 
 - Totals are derived from the rows, and a test asserts they match.
-- Local models and the built-in inspector are billed at zero, not omitted.
-- An API model's price per million tokens is shown on its catalogue entry when
-  the provider publishes one; otherwise the entry says the cost is carried by
-  the subscription.
+- Three kinds of money are reported, and every row says which it is:
+  **metered** (billed per token), **subscription** (a plan spread over the
+  window) and **electricity** (what a local run costs this machine at the
+  declared price per kWh). A row that costs nothing says so rather than being
+  omitted.
+  - A month of a plan equals the plan; a day is a thirtieth of it. The fee is
+    owed whether the model ran or not, so it is amortised by time, not by use.
+  - A local model's cost is its energy times the price per kWh, from the same
+    formula the local comparison uses.
+  - Tests assert that the parts add up to the total, that a month of a
+    subscription is the plan, and that electricity matches the energy.
 - Accounting lives in `core::state` and `core::economics`, never in a view.
 - Estimated numbers say so, and carry the formula that produced them.

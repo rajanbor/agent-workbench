@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Replace Claude Sonnet with Claude Opus in the catalogue, at its own price per
+  million tokens.
+- Report three kinds of cost instead of one: metered per token, a subscription
+  spread over the window, and the electricity a local run spends. Every row
+  says which kind it is, the totals split the same way, and one local model is
+  downloaded and working so its figure is real rather than hypothetical.
+
 - Make the cost chip a small usage view: picking a period changes what it shows
   and keeps it open, while the panel presents every period at once with a model
   table carrying a column per window.

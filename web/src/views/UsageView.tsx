@@ -46,6 +46,13 @@ export function UsageView({
             <p className="metric__hint">
               {compactTokens(item.tokensIn + item.tokensOut)} tokens · {item.calls} calls
             </p>
+            <p className="metric__split">
+              <span title="Billed per token">{money(item.meteredUsd)} metered</span>
+              <span title="A share of the monthly plan">{money(item.subscriptionUsd)} plan</span>
+              <span title={`${item.energyWh.toFixed(0)} Wh of electricity`}>
+                {fineMoney(item.electricityUsd)} power
+              </span>
+            </p>
           </Card>
         ))}
       </div>
@@ -75,7 +82,14 @@ export function UsageView({
                 />
                 <span>
                   <strong>{row.name}</strong>
-                  <small>{model?.pricing ? row.version : "no metered cost"}</small>
+                  <small>
+                    {row.costKind === "metered" && "metered per token"}
+                    {row.costKind === "subscription" &&
+                      `${model?.subscription?.plan ?? "plan"} · $${model?.subscription?.monthlyUsd.toFixed(0)}/month`}
+                    {row.costKind === "electricity" &&
+                      `on this device · ${model?.localProfile?.powerDrawW ?? 0} W while generating`}
+                    {row.costKind === "none" && "costs nothing to run"}
+                  </small>
                 </span>
               </span>
               {periods.map((item) => {

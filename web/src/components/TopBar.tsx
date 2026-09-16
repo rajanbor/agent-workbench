@@ -222,6 +222,10 @@ export function TopBar({
                 <span>
                   <em>Cost</em>
                   <strong className="mono">${(active?.costUsd ?? 0).toFixed(2)}</strong>
+                  <small className="usage-pop__split">
+                    ${(active?.meteredUsd ?? 0).toFixed(2)} metered ·{" "}
+                    ${(active?.subscriptionUsd ?? 0).toFixed(2)} plan
+                  </small>
                 </span>
                 <span>
                   <em>Tokens</em>
