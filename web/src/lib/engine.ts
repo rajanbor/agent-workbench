@@ -155,6 +155,8 @@ export interface Sandbox {
   id: string;
   name: string;
   isolation: string;
+  /** The OS account this sandbox runs as — the boundary itself. */
+  account: string | null;
   state: string;
   machine: string;
   disk: string;

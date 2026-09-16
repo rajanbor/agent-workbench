@@ -3,7 +3,7 @@
 # client. See .ai/adr/008-one-cross-platform-system.md.
 [workspace]
 resolver = "2"
-members = ["crates/core", "crates/app"]
+members = ["crates/core", "crates/runtime", "crates/cli", "crates/app"]
 
 [workspace.package]
 version = "0.2.0-alpha.1"

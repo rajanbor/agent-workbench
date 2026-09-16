@@ -1,0 +1,15 @@
+[package]
+name = "open-cube-cli"
+description = "The open-cube command: read the workbench, plan a launch"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[[bin]]
+name = "open-cube"
+path = "src/main.rs"
+
+[dependencies]
+open-cube-core = { path = "../core" }
+open-cube-runtime = { path = "../runtime" }

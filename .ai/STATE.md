@@ -11,9 +11,13 @@ Open Cube is one cross-platform system, described in
   chat-first main window backed by the in-app inspector, object rails, a
   terminal dock, a canvas workflow editor, a sandbox boundary view, a model
   library, usage accounting and the agent studio.
+- `crates/runtime` owns the launch contract and the account boundary, with the
+  macOS adapter building plans and refusing anything that breaks a rule;
+  `crates/cli` is the `open-cube` command that reads the workbench and shows
+  what a launch would do. Neither executes yet: switching account needs the
+  privileged helper in `workbenchd` (#9).
 - The Swift macOS app and `agentctl` remain the only working execution path
-  until `crates/runtime` and `crates/cli` replace them (#32), after which the
-  Swift client is retired (#33).
+  until that helper exists, after which the Swift client is retired (#33).
 
 The product is alpha software. No account is required for local use. Launching
 providers, live ptys, Docker, running workflows, remote machines, delegation,

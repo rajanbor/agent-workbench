@@ -22,6 +22,8 @@ The product is a Rust workspace with one web client, described in
 | Path | What it is |
 | --- | --- |
 | `crates/core` | Domain, workbench state and the inspector policy. Platform neutral, carries the tests. |
+| `crates/runtime` | The launch contract and the account boundary, with platform adapters. |
+| `crates/cli` | `open-cube`: read the workbench, and see what a launch would do. |
 | `crates/app` | The Tauri window for macOS, Windows and Linux. |
 | `web/` | The client: React and TypeScript, light and dark themes. |
 | `Sources/`, `scripts/` | The Swift macOS app and its installer, retired once the Rust runtime lands (#32, #33). |

@@ -2391,11 +2391,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "open-cube-cli"
+version = "0.2.0-alpha.1"
+dependencies = [
+ "open-cube-core",
+ "open-cube-runtime",
+]
+
+[[package]]
 name = "open-cube-core"
 version = "0.2.0-alpha.1"
 dependencies = [
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "open-cube-runtime"
+version = "0.2.0-alpha.1"
+dependencies = [
+ "open-cube-core",
+ "serde",
 ]
 
 [[package]]

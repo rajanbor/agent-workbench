@@ -203,6 +203,9 @@ pub struct Sandbox {
     pub id: String,
     pub name: String,
     pub isolation: String,
+    /// The operating-system account this sandbox runs as, when it has one.
+    /// This is the boundary; the name of the sandbox is not.
+    pub account: Option<String>,
     pub state: String,
     pub machine: String,
     pub disk: String,
