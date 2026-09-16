@@ -6,3 +6,6 @@ out
 *.local
 *.log
 .DS_Store
+
+# TypeScript build cache
+tsconfig.tsbuildinfo
