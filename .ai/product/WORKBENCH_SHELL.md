@@ -47,6 +47,9 @@ layout is the one a developer already knows how to drive.
 - Edit a workflow on the canvas: drag, rename, link, delete, pan, zoom, reset.
 - Run engine-backed commands in a terminal pane; be refused, with a reason, for
   anything that needs a live pty.
+- Open several terminals at once on a board, each in a chosen sandbox, and
+  start an agent session inside one by typing the program's name — with the
+  standing-in model, its tokens and its cost stated on every answer.
 - Read the workbench API — values, functions, modules — and the scopes the
   in-app model is granted or refused.
 - Design an agent: project, model and sandbox in basic mode; instructions,

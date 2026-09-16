@@ -252,6 +252,21 @@ export interface TerminalLine {
   text: string;
 }
 
+/** A program a terminal can start. Mirrors `domain::TerminalProgram`;
+ *  `available` is false for all of them today, and `blockedBy` says why. */
+export interface TerminalProgram {
+  id: string;
+  command: string;
+  name: string;
+  summary: string;
+  modelId: string | null;
+  providerId: string | null;
+  available: boolean;
+  blockedBy: string | null;
+  banner: string[];
+  examples: string[];
+}
+
 export interface TerminalSession {
   id: string;
   title: string;
@@ -553,6 +568,7 @@ export interface DesktopSnapshot {
   editors: EditorApp[];
   templates: ProjectTemplate[];
   purposes: AgentPurpose[];
+  programs: TerminalProgram[];
   agents: Agent[];
   sandboxes: Sandbox[];
   sessions: Session[];

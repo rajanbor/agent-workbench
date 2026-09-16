@@ -15,6 +15,7 @@ pub fn snapshot() -> DesktopSnapshot {
         editors: editors(),
         templates: templates(),
         purposes: purposes(),
+        programs: programs(),
         agents: agents(),
         sandboxes: sandboxes(),
         sessions: sessions(),
@@ -614,6 +615,95 @@ fn purposes() -> Vec<AgentPurpose> {
             mcp: vec!["filesystem".into(), "git".into()],
             tools: vec!["snapshot".into(), "inspect".into(), "agents_in".into()],
             model_note: "Reads widely, answers briefly: a local model keeps this free.".into(),
+        },
+    ]
+}
+
+/// Programs a terminal can start. Each names the model it would run on and the
+/// reason the real binary cannot be launched from this window yet; the session
+/// that opens is the in-app inspector under the read-only policy, and says so.
+fn programs() -> Vec<TerminalProgram> {
+    vec![
+        TerminalProgram {
+            id: "claude".into(),
+            command: "claude".into(),
+            name: "Claude Code".into(),
+            summary: "An agent session against the workspace this terminal is opened in.".into(),
+            model_id: Some("claude-opus".into()),
+            provider_id: Some("claude".into()),
+            available: false,
+            blocked_by: Some(
+                "The real CLI runs as the sandbox user and signs in with your subscription; both need workbenchd."
+                    .into(),
+            ),
+            banner: vec![
+                "Claude Code — session opened by Open Cube".into(),
+                "Standing in: the built-in inspector answers under the read-only policy.".into(),
+                "It reads the workbench snapshot. It cannot read file contents, credentials or the network.".into(),
+                "Type a task. `exit` closes the session, `help` lists what this shell answers.".into(),
+            ],
+            examples: vec![
+                "What is each agent doing right now?".into(),
+                "Where did today's spend go?".into(),
+                "What can you not read?".into(),
+            ],
+        },
+        TerminalProgram {
+            id: "codex".into(),
+            command: "codex".into(),
+            name: "Codex".into(),
+            summary: "A session on the subscription seat, for the same workspace.".into(),
+            model_id: Some("codex".into()),
+            provider_id: Some("codex".into()),
+            available: false,
+            blocked_by: Some(
+                "The provider is not connected, and launching its CLI in a sandbox needs workbenchd."
+                    .into(),
+            ),
+            banner: vec![
+                "Codex — session opened by Open Cube".into(),
+                "Standing in: the built-in inspector answers under the read-only policy.".into(),
+                "Type a task. `exit` closes the session.".into(),
+            ],
+            examples: vec!["Summarise the sandboxes.".into(), "Which models are ready?".into()],
+        },
+        TerminalProgram {
+            id: "qwen".into(),
+            command: "qwen".into(),
+            name: "Qwen2.5 7B Instruct".into(),
+            summary: "A session on the model already downloaded to this machine.".into(),
+            model_id: Some("qwen2.5-7b".into()),
+            provider_id: Some("local".into()),
+            available: false,
+            blocked_by: Some(
+                "The weights are here, but a run still belongs to the sandbox user: workbenchd owns the process."
+                    .into(),
+            ),
+            banner: vec![
+                "Qwen2.5 7B Instruct — local session opened by Open Cube".into(),
+                "Standing in: the built-in inspector answers under the read-only policy.".into(),
+                "A real run would cost electricity, not tokens. Type a task; `exit` closes the session.".into(),
+            ],
+            examples: vec!["What does this workspace contain?".into()],
+        },
+        TerminalProgram {
+            id: "agentctl".into(),
+            command: "agentctl".into(),
+            name: "agentctl".into(),
+            summary: "The workbench's own tool: status, sessions, and starting an agent.".into(),
+            model_id: None,
+            provider_id: None,
+            available: false,
+            blocked_by: Some(
+                "Reading state works here; starting or stopping an agent needs workbenchd."
+                    .into(),
+            ),
+            banner: vec![
+                "agentctl — answering from the engine snapshot".into(),
+                "`status`, `agents`, `sandboxes`, `models`, `cost` answer. Anything that starts or stops an agent is refused with its reason.".into(),
+                "`exit` closes the session.".into(),
+            ],
+            examples: vec!["status".into(), "agents".into(), "cost".into()],
         },
     ]
 }

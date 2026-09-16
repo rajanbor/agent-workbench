@@ -19,6 +19,7 @@ import { AgentStudioView } from "./views/AgentStudioView";
 import { ProjectView } from "./views/ProjectView";
 import { NewProjectView } from "./views/NewProjectView";
 import { NewAgentView } from "./views/NewAgentView";
+import { TerminalCanvasView } from "./views/TerminalCanvasView";
 import { SettingsView } from "./views/SettingsView";
 
 import {
@@ -32,6 +33,16 @@ import {
 import { useTheme } from "./lib/theme";
 import type { ChatRef } from "./lib/engine";
 import type { AppEvent, ChatMessage } from "./lib/shell";
+import { run as runTerminal, terminalForSandbox } from "./lib/terminal";
+import {
+  focus as focusWindow,
+  loadBoard,
+  place,
+  saveBoard,
+  tidy,
+  type TerminalWindow,
+} from "./lib/board";
+import type { TerminalLine, TerminalSession } from "./lib/engine";
 import {
   activities,
   activeTab,
@@ -52,6 +63,7 @@ import {
   saveShell,
   settingsTab,
   splitRight,
+  terminalsTab,
   studioTab,
   usageTab,
   workbenchChatTab,
@@ -101,6 +113,16 @@ export default function App() {
   const [terminalOpen, setTerminalOpen] = useState(false);
   const [terminalHeight, setTerminalHeight] = useState(240);
   const [activeTerminal, setActiveTerminal] = useState(prototypeSnapshot.terminals[0].id);
+
+  /* Terminals are shared state: the bottom panel and every window on the board
+     read the same buffer for the same terminal id, so one terminal has one
+     history wherever it is shown. */
+  const [buffers, setBuffers] = useState<Record<string, TerminalLine[]>>({});
+  const [sessions, setSessions] = useState<Record<string, string | null>>({});
+  const [running, setRunning] = useState<Record<string, boolean>>({});
+  const [opened, setOpened] = useState<TerminalSession[]>([]);
+  const [windows, setWindows] = useState<TerminalWindow[]>([]);
+  const [boardRestored, setBoardRestored] = useState(false);
 
   const [threads, setThreads] = useState<Record<string, ChatMessage[]>>(() =>
     seedThreads(prototypeSnapshot),
@@ -196,6 +218,103 @@ export default function App() {
     },
     [activity],
   );
+
+  /* ------------------------------------------------------------ terminals */
+
+  const terminals = useMemo(
+    () => [...snapshot.terminals, ...opened],
+    [opened, snapshot.terminals],
+  );
+
+  /** One place where a terminal command is run, so the panel and the board
+   *  behave identically and write to the same buffer. */
+  const runInTerminal = useCallback(
+    async (terminalId: string, input: string) => {
+      const terminal = terminals.find((item) => item.id === terminalId);
+      if (!terminal || !input.trim()) return;
+
+      setRunning((current) => ({ ...current, [terminalId]: true }));
+      const result = await runTerminal(input, {
+        snapshot,
+        terminal,
+        session: sessions[terminalId] ?? null,
+      });
+      setBuffers((current) => ({
+        ...current,
+        [terminalId]: result.reset ? [] : [...(current[terminalId] ?? []), ...result.lines],
+      }));
+      setSessions((current) => ({ ...current, [terminalId]: result.session }));
+      setRunning((current) => ({ ...current, [terminalId]: false }));
+      if (result.notice) notify(result.notice);
+    },
+    [notify, sessions, snapshot, terminals],
+  );
+
+  // A terminal opened on the board is built from its sandbox and lives in this
+  // session; the board remembers which sandbox, so it can be rebuilt on the
+  // next start.
+  const openTerminalWindow = useCallback(
+    (sandboxId: string, existingId?: string, index?: number) => {
+      const sandbox = snapshot.sandboxes.find((item) => item.id === sandboxId);
+      if (!sandbox) return;
+      const count = index ?? opened.filter((item) => item.sandboxId === sandboxId).length + 1;
+      const terminal = existingId
+        ? { ...terminalForSandbox(sandbox, count), id: existingId }
+        : terminalForSandbox(sandbox, count);
+
+      setOpened((current) =>
+        current.some((item) => item.id === terminal.id) ? current : [...current, terminal],
+      );
+      setWindows((current) =>
+        current.some((item) => item.terminalId === terminal.id)
+          ? focusWindow(current, current.find((item) => item.terminalId === terminal.id)!.id)
+          : [...current.map((item) => ({ ...item, focused: false })), place(current, terminal.id)],
+      );
+      return terminal.id;
+    },
+    [opened, snapshot.sandboxes],
+  );
+
+  /** Put a terminal the engine already ships on the board. */
+  const showOnBoard = useCallback((terminalId: string) => {
+    setWindows((current) => {
+      const existing = current.find((item) => item.terminalId === terminalId);
+      if (existing) return focusWindow(current, existing.id);
+      return [...current.map((item) => ({ ...item, focused: false })), place(current, terminalId)];
+    });
+  }, []);
+
+  useEffect(() => {
+    if (boardRestored) return;
+    const stored = loadBoard();
+    if (stored) {
+      // Rebuild the terminals this board opened before trusting its windows.
+      const rebuilt = stored.opened
+        .map((entry) => {
+          const sandbox = snapshot.sandboxes.find((item) => item.id === entry.sandboxId);
+          return sandbox
+            ? { ...terminalForSandbox(sandbox, entry.index), id: entry.terminalId }
+            : null;
+        })
+        .filter((item): item is TerminalSession => item !== null);
+      const known = new Set([...snapshot.terminals.map((item) => item.id), ...rebuilt.map((item) => item.id)]);
+      setOpened(rebuilt);
+      setWindows(stored.windows.filter((item) => known.has(item.terminalId)));
+    }
+    setBoardRestored(true);
+  }, [boardRestored, snapshot.sandboxes, snapshot.terminals]);
+
+  useEffect(() => {
+    if (!boardRestored) return;
+    saveBoard({
+      windows,
+      opened: opened.map((item) => ({
+        terminalId: item.id,
+        sandboxId: item.sandboxId,
+        index: Number(item.title.split(" ").pop()) || 1,
+      })),
+    });
+  }, [boardRestored, opened, windows]);
 
   /* ---------------------------------------------------------- shortcuts */
 
@@ -400,6 +519,34 @@ export default function App() {
               onAction={notify}
             />
           );
+        case "terminals":
+          return (
+            <TerminalCanvasView
+              snapshot={snapshot}
+              windows={windows}
+              terminals={terminals}
+              buffers={buffers}
+              sessions={sessions}
+              busy={running}
+              onMove={(id, patch) =>
+                setWindows((current) =>
+                  current.map((item) => (item.id === id ? { ...item, ...patch } : item)),
+                )
+              }
+              onFocus={(id) => setWindows((current) => focusWindow(current, id))}
+              onClose={(id) => setWindows((current) => current.filter((item) => item.id !== id))}
+              onOpen={(sandboxId) => openTerminalWindow(sandboxId)}
+              onTidy={() =>
+                setWindows((current) => {
+                  const surface = document.querySelector(".board__surface");
+                  const box = surface?.getBoundingClientRect();
+                  return tidy(current, box?.width ?? 1200, box?.height ?? 700);
+                })
+              }
+              onRun={runInTerminal}
+              onAction={notify}
+            />
+          );
         case "canvas":
           return <CanvasView snapshot={snapshot} onAction={notify} />;
         case "sandboxes":
@@ -495,8 +642,15 @@ export default function App() {
       }
     },
     [
+      buffers,
       busyThreads,
       chatModel,
+      openTerminalWindow,
+      running,
+      runInTerminal,
+      sessions,
+      terminals,
+      windows,
       notify,
       open,
       openAgentChat,
@@ -564,6 +718,10 @@ export default function App() {
               focusedKey={focusedKey}
               onOpen={open}
               onOpenTerminal={(id) => {
+                if (id === "board") {
+                  open(terminalsTab());
+                  return;
+                }
                 setActiveTerminal(id);
                 setTerminalOpen(true);
               }}
@@ -599,8 +757,17 @@ export default function App() {
           {terminalOpen && (
             <TerminalDock
               snapshot={snapshot}
+              terminals={terminals}
               activeId={activeTerminal}
               onActive={setActiveTerminal}
+              buffers={buffers}
+              sessions={sessions}
+              busy={running}
+              onRun={runInTerminal}
+              onBoard={(id) => {
+                showOnBoard(id);
+                open(terminalsTab());
+              }}
               height={terminalHeight}
               onHeight={setTerminalHeight}
               onClose={() => setTerminalOpen(false)}

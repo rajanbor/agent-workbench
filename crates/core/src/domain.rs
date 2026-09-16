@@ -15,6 +15,7 @@ pub struct DesktopSnapshot {
     pub editors: Vec<EditorApp>,
     pub templates: Vec<ProjectTemplate>,
     pub purposes: Vec<AgentPurpose>,
+    pub programs: Vec<TerminalProgram>,
     pub agents: Vec<Agent>,
     pub sandboxes: Vec<Sandbox>,
     pub sessions: Vec<Session>,
@@ -380,6 +381,33 @@ pub struct TerminalSession {
     /// Why this terminal is not attached to a live pty yet.
     pub policy: String,
     pub lines: Vec<TerminalLine>,
+}
+
+/// A program a terminal can start: an agent CLI, or the workbench's own tool.
+///
+/// `available` says whether the real binary can be launched today. None of
+/// them can, because a program in a sandbox runs as the sandbox user and that
+/// is `workbenchd`'s work — so each one carries `blocked_by`, the reason, and
+/// the session that opens instead is the in-app inspector standing in, which
+/// the banner states on every start rather than once.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TerminalProgram {
+    pub id: String,
+    /// What is typed to start it.
+    pub command: String,
+    pub name: String,
+    pub summary: String,
+    /// The model the session would run on, if it names one.
+    pub model_id: Option<String>,
+    /// The provider whose account it would use.
+    pub provider_id: Option<String>,
+    pub available: bool,
+    pub blocked_by: Option<String>,
+    /// What the program prints when it starts.
+    pub banner: Vec<String>,
+    /// Example tasks, offered in the session's first prompt.
+    pub examples: Vec<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
