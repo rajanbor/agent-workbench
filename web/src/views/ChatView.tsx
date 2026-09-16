@@ -4,24 +4,43 @@ import { AgentFace, ModelGlyph } from "../components/Glyph";
 import { Badge, Button, IconButton, StatusDot } from "../components/primitives";
 import { accentOf, compactTokens, toneOf } from "../lib/identity";
 import { AgentWorkspaceBar } from "../components/AgentWorkspaceBar";
-import type { Agent, ChatRef, DesktopSnapshot, ModelCard } from "../lib/engine";
+import type { Agent, DesktopSnapshot, ModelCard } from "../lib/engine";
 import type { ChatMessage } from "../lib/shell";
 
-const suggestions = [
-  "What is each agent doing right now?",
-  "What is running in each sandbox?",
-  "How much did I spend today, and on which model?",
-  "What can you not read?",
+const suggestions: { icon: string; tone: string; label: string; ask: string }[] = [
+  {
+    icon: "agent",
+    tone: "blue",
+    label: "Look at what the agents are doing",
+    ask: "What is each agent doing right now?",
+  },
+  {
+    icon: "sandbox",
+    tone: "violet",
+    label: "Inspect a sandbox and its policy",
+    ask: "What is running in each sandbox?",
+  },
+  {
+    icon: "bolt",
+    tone: "green",
+    label: "See where the spend went",
+    ask: "How much did I spend today, and on which model?",
+  },
+  {
+    icon: "shield",
+    tone: "amber",
+    label: "Check what stays out of reach",
+    ask: "What can you not read?",
+  },
 ];
 
 export function ChatView({
   snapshot,
   agent,
   model,
-  chats,
-  activeChat,
-  onChat,
-  onNewChat,
+  workspace,
+  source,
+  branch,
   messages,
   busy,
   onSend,
@@ -31,10 +50,9 @@ export function ChatView({
   snapshot: DesktopSnapshot;
   agent: Agent | null;
   model: ModelCard;
-  chats: ChatRef[];
-  activeChat: string;
-  onChat: (id: string) => void;
-  onNewChat: () => void;
+  workspace: string;
+  source: "engine" | "preview";
+  branch: string;
   messages: ChatMessage[];
   busy: boolean;
   onSend: (text: string) => void;
@@ -110,32 +128,26 @@ export function ChatView({
       </header>
 
       {agent && (
-        <AgentWorkspaceBar
-          snapshot={snapshot}
-          agent={agent}
-          chats={chats}
-          activeChat={activeChat}
-          onChat={onChat}
-          onNewChat={onNewChat}
-          onAction={onAction}
-        />
+        <AgentWorkspaceBar snapshot={snapshot} agent={agent} onAction={onAction} />
       )}
 
       <div className="chat__scroll" ref={scroller}>
         <div className="chat__thread">
           {messages.length === 0 && (
             <div className="chat__intro">
-              <ModelGlyph icon={model.icon} accent={accentOf(model.accent)} size={40} />
-              <h2>Ask about this workbench</h2>
-              <p>
-                {model.name} answers from the engine snapshot: agents, sandboxes, models, spend and
-                policy. It cannot read files, credentials or anything outside the granted scopes,
-                and nothing leaves this machine.
-              </p>
-              <div className="chat__suggestions">
+              <span className="chat__mark">
+                <Icon name="terminal" size={26} />
+              </span>
+              <h2>
+                What should we look at in <u>{workspace}</u>?
+              </h2>
+              <div className="start-cards">
                 {suggestions.map((suggestion) => (
-                  <button key={suggestion} onClick={() => send(suggestion)}>
-                    {suggestion}
+                  <button key={suggestion.ask} onClick={() => send(suggestion.ask)}>
+                    <span className={`start-cards__icon start-cards__icon--${suggestion.tone}`}>
+                      <Icon name={suggestion.icon} size={17} />
+                    </span>
+                    {suggestion.label}
                   </button>
                 ))}
               </div>
@@ -202,32 +214,68 @@ export function ChatView({
         </div>
       </div>
 
-      <form
-        className="composer"
-        onSubmit={(event) => {
-          event.preventDefault();
-          send(draft);
-        }}
-      >
-        <IconButton
-          icon="plus"
-          label="Attach context"
-          onClick={() => onAction("Attachments arrive with the workbench daemon.")}
-        />
-        <input
-          value={draft}
-          onChange={(event) => setDraft(event.target.value)}
-          placeholder={agent ? `Message ${agent.name}` : "Ask about agents, sandboxes, cost or policy"}
-          aria-label="Message"
-        />
-        <span className="composer__model">
-          <ModelGlyph icon={model.icon} accent={accentOf(model.accent)} size={18} />
-          <span className="mono">{model.version}</span>
-        </span>
-        <button className="composer__send" type="submit" aria-label="Send">
-          <Icon name="send" size={15} />
-        </button>
-      </form>
+      <div className="composer-shell">
+        {/* What a message will run against, above the field that sends it. */}
+        <div className="composer-context">
+          <span>
+            <Icon name="folder" size={13} /> {workspace}
+          </span>
+          <span>
+            <Icon name="machine" size={13} /> {source === "engine" ? "Engine" : "Preview"}
+          </span>
+          <span className="mono">
+            <Icon name="git" size={13} /> {branch}
+          </span>
+        </div>
+
+        <form
+          className="composer"
+          onSubmit={(event) => {
+            event.preventDefault();
+            send(draft);
+          }}
+        >
+          <input
+            value={draft}
+            onChange={(event) => setDraft(event.target.value)}
+            placeholder={
+              agent ? `Message ${agent.name}` : "Ask about agents, sandboxes, cost or policy"
+            }
+            aria-label="Message"
+          />
+          <div className="composer__row">
+            <IconButton
+              icon="plus"
+              label="Attach context"
+              onClick={() => onAction("Attachments arrive with the workbench daemon.")}
+            />
+            <button
+              type="button"
+              className="composer__scope"
+              onClick={() =>
+                onAction(
+                  `Readable: ${snapshot.inspector.scopes
+                    .filter((scope) => scope.granted)
+                    .map((scope) => scope.name)
+                    .join(", ")}.`,
+                )
+              }
+            >
+              <Icon name="shield" size={13} />
+              {snapshot.inspector.mode} · no egress
+            </button>
+            <span className="composer__spacer" />
+            <span className="composer__model">
+              <ModelGlyph icon={model.icon} accent={accentOf(model.accent)} size={16} />
+              {model.name}
+              <em className="mono">{model.version}</em>
+            </span>
+            <button className="composer__send" type="submit" aria-label="Send">
+              <Icon name="send" size={15} />
+            </button>
+          </div>
+        </form>
+      </div>
     </section>
   );
 }

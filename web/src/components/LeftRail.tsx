@@ -4,8 +4,7 @@ import { RailSection } from "./RailSection";
 import { AgentFace, ModelGlyph } from "./Glyph";
 import { Avatar, StatusDot } from "./primitives";
 import { accentOf, modelOf, toneOf } from "../lib/identity";
-import type { DesktopSnapshot } from "../lib/engine";
-import type { ThemeChoice } from "../lib/theme";
+import type { ChatRef, DesktopSnapshot } from "../lib/engine";
 import type { Selection, ViewId } from "../lib/shell";
 
 type Props = {
@@ -15,8 +14,9 @@ type Props = {
   onSelect: (view: ViewId, selection?: Partial<Selection>) => void;
   onOpenTerminal: (terminalId: string) => void;
   onAction: (message: string) => void;
-  theme: ThemeChoice;
-  onTheme: (theme: ThemeChoice) => void;
+  /** Chats held against the open agent, engine ones plus this session's. */
+  agentChats: ChatRef[];
+  onNewChat: () => void;
 };
 
 export function LeftRail({
@@ -26,8 +26,8 @@ export function LeftRail({
   onSelect,
   onOpenTerminal,
   onAction,
-  theme,
-  onTheme,
+  agentChats,
+  onNewChat,
 }: Props) {
   const isChat = (id: string) => view === "chat" && selection.chat === id;
   const isAgent = (id: string) => view === "chat" && selection.agent === id;
@@ -56,27 +56,51 @@ export function LeftRail({
           }}
         >
           {snapshot.agents.map((agent) => (
-            <button
-              key={agent.id}
-              className={`rail-row rail-row--agent ${isAgent(agent.id) ? "is-active" : ""}`}
-              onClick={() =>
-                onSelect("chat", { chat: agent.chats[0]?.id ?? agent.id, agent: agent.id })
-              }
-              title={agent.task}
-            >
-              <AgentFace accent={accentOf(agent.accent)} size={24} />
-              <span className="rail-row__main">
-                <strong>{agent.name}</strong>
-                <small>
-                  {modelOf(snapshot, agent.modelId)?.name ?? "no model"} · {agent.status} ·{" "}
-                  {agent.project.branch}
-                </small>
-              </span>
-              <span className="rail-row__tail">
-                <StatusDot tone={toneOf(agent.status)} pulse={agent.status === "running"} />
-                <em>{agent.updatedAt}</em>
-              </span>
-            </button>
+            <div key={agent.id} className="rail-agent">
+              <button
+                className={`rail-row rail-row--agent ${isAgent(agent.id) ? "is-active" : ""}`}
+                onClick={() =>
+                  onSelect("chat", { chat: agent.chats[0]?.id ?? agent.id, agent: agent.id })
+                }
+                title={agent.task}
+              >
+                <AgentFace accent={accentOf(agent.accent)} size={24} />
+                <span className="rail-row__main">
+                  <strong>{agent.name}</strong>
+                  <small>
+                    {modelOf(snapshot, agent.modelId)?.name ?? "no model"} · {agent.status} ·{" "}
+                    {agent.project.branch}
+                  </small>
+                </span>
+                <span className="rail-row__tail">
+                  <StatusDot tone={toneOf(agent.status)} pulse={agent.status === "running"} />
+                  <em>{agent.updatedAt}</em>
+                </span>
+              </button>
+
+              {/* The open agent shows its chats here, not in a tab strip. */}
+              {isAgent(agent.id) && (
+                <div className="rail-chats">
+                  <div className="rail-chats__head">
+                    <span>Chats</span>
+                    <button title="New chat with this agent" aria-label="New chat" onClick={onNewChat}>
+                      <Icon name="plus" size={13} />
+                    </button>
+                  </div>
+                  {agentChats.map((chat) => (
+                    <button
+                      key={chat.id}
+                      className={`rail-chat ${isChat(chat.id) ? "is-active" : ""}`}
+                      onClick={() => onSelect("chat", { chat: chat.id, agent: agent.id })}
+                    >
+                      <Icon name={isChat(chat.id) ? "git" : "dot"} size={13} />
+                      <span>{chat.title}</span>
+                      <em>{chat.updatedAt}</em>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           ))}
         </RailSection>
 
@@ -207,24 +231,16 @@ export function LeftRail({
                 <Icon name="code" size={14} />
                 <span>Keyboard shortcuts</span>
               </button>
-              <p className="menu__label">Appearance</p>
-              {(["light", "dark", "system"] as ThemeChoice[]).map((option) => (
-                <button
-                  key={option}
-                  className={`menu__item ${theme === option ? "is-checked" : ""}`}
-                  onClick={() => {
-                    onTheme(option);
-                    close();
-                  }}
-                >
-                  <Icon
-                    name={option === "light" ? "sun" : option === "dark" ? "moon" : "monitor"}
-                    size={14}
-                  />
-                  <span className="capitalize">{option}</span>
-                  {theme === option && <Icon name="check" size={13} />}
-                </button>
-              ))}
+              <button
+                className="menu__item"
+                onClick={() => {
+                  onSelect("settings");
+                  close();
+                }}
+              >
+                <Icon name="sun" size={14} />
+                <span>Appearance</span>
+              </button>
             </>
           )}
         </Menu>

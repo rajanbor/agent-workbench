@@ -222,8 +222,6 @@ export default function App() {
         onChatModel={setChatModelId}
         panels={panels}
         onTogglePanel={togglePanel}
-        theme={theme.choice}
-        onTheme={theme.setChoice}
         onPalette={() => setPaletteOpen(true)}
         onUsage={() => select("usage")}
         period={period}
@@ -246,8 +244,8 @@ export default function App() {
               setPanels((current) => ({ ...current, terminal: true }));
             }}
             onAction={notify}
-            theme={theme.choice}
-            onTheme={theme.setChoice}
+            agentChats={agentChats}
+            onNewChat={newChat}
           />
         )}
 
@@ -258,10 +256,9 @@ export default function App() {
                 snapshot={snapshot}
                 agent={activeAgent}
                 model={chatModel}
-                chats={agentChats}
-                activeChat={selection.chat}
-                onChat={(id) => setSelection((current) => ({ ...current, chat: id }))}
-                onNewChat={newChat}
+                workspace={activeAgent?.project.name ?? "Open Cube"}
+                source={source}
+                branch={activeAgent?.project.branch ?? snapshot.versionControl.branch}
                 messages={threads[selection.chat] ?? []}
                 busy={busy}
                 onSend={send}

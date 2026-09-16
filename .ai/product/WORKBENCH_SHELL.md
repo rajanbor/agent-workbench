@@ -4,15 +4,17 @@
 
 1. Top bar: brand and workspace menu, version control menu (branch, head,
    recent commits, pinned model versions), chat model picker, a cost chip that
-   carries tokens and the state source in its tooltip, panel toggles and
-   appearance. In the native window it is also the drag region and leaves room
+   is also the period picker, and the panel toggles. Appearance is not here: it
+   lives in Settings, and the account menu links to it. In the native window it is also the drag region and leaves room
    for the traffic lights.
 2. Left rail: the workbench chat pinned on top, then collapsible sections —
    Agents, Sandboxes, Terminals, Workflows, Models — each row showing live
-   state, and the account menu pinned at the bottom.
+   state, and the account menu pinned at the bottom. The open agent lists its
+   chats under it, with a control to start another; chats never move into a tab
+   strip beside the chrome.
 3. Workspace: the active surface. An open agent adds a workspace bar with its
-   project, branch, working tree and chats, and the agent studio designs the
-   agent itself. Chat is the default; canvas, sandbox
+   project, branch and working tree, and the agent studio designs the agent
+   itself. Chat is the default; canvas, sandbox
    visualisation, model catalogue, usage, agent detail and settings share it.
 4. Terminal dock: bottom panel with one tab per sandbox terminal, resizable and
    dismissible without losing its buffer.
@@ -39,6 +41,14 @@
 - Design an agent: project, model and sandbox in basic mode; instructions,
   patterns, skills, MCP servers and tools in the editor, each chosen from a
   library that explains what it does and what it requires.
+
+## Starting
+
+An empty chat is one mark, one question naming the workspace, and four cards.
+The composer carries its context above the field — workspace, state source,
+branch — and beside the send control it shows the scope it runs under and the
+model that will answer. Explanation belongs in those four cards, not in a
+paragraph.
 
 ## Disclosure
 
