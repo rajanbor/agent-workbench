@@ -3,6 +3,7 @@
 //! Platform adapters live outside this crate so the UI and the policy layer
 //! stay identical on macOS, Windows and Linux. The crate is pure: it reads no
 //! network, spawns no process and holds no credential.
+pub mod activity;
 pub mod domain;
 pub mod economics;
 pub mod inspector;
@@ -160,6 +161,83 @@ mod tests {
         assert_eq!(current.len(), 1);
         assert_eq!(current[0].name, s.version_control.branch);
         assert_eq!(s.version_control.changes.len() as u32, s.version_control.dirty.min(s.version_control.changes.len() as u32).max(s.version_control.changes.len() as u32));
+    }
+
+    #[test]
+    fn every_period_total_matches_its_rows() {
+        let s = snapshot();
+        assert_eq!(s.usage.periods.len(), 4);
+        for period in &s.usage.periods {
+            let tokens_in: u64 = period.by_model.iter().map(|row| row.tokens_in).sum();
+            let tokens_out: u64 = period.by_model.iter().map(|row| row.tokens_out).sum();
+            let cost: f64 = period.by_model.iter().map(|row| row.cost_usd).sum();
+            assert_eq!(period.tokens_in, tokens_in, "{}", period.id);
+            assert_eq!(period.tokens_out, tokens_out, "{}", period.id);
+            assert!((period.cost_usd - cost).abs() < 1e-9, "{}", period.id);
+        }
+
+        let today = s
+            .usage
+            .periods
+            .iter()
+            .find(|period| period.id == "today")
+            .expect("today is one of the periods");
+        assert_eq!(today.tokens_in, s.usage.tokens_in);
+        assert_eq!(today.tokens_out, s.usage.tokens_out);
+    }
+
+    #[test]
+    fn periods_grow_with_their_span() {
+        let s = snapshot();
+        let cost = |id: &str| {
+            s.usage
+                .periods
+                .iter()
+                .find(|period| period.id == id)
+                .map(|period| period.cost_usd)
+                .unwrap_or_default()
+        };
+        assert!(cost("hour") <= cost("today"));
+        assert!(cost("today") <= cost("week"));
+        assert!(cost("week") <= cost("month"));
+    }
+
+    #[test]
+    fn the_calendar_is_whole_weeks_of_readable_days() {
+        let s = snapshot();
+        let calendar = &s.usage.activity;
+        assert_eq!(calendar.weeks.len(), 52);
+        for week in &calendar.weeks {
+            assert_eq!(week.days.len(), 7, "week {} is short", week.start_date);
+            assert_eq!(week.days[0].weekday, 0, "weeks start on Monday");
+            for day in &week.days {
+                assert!(day.level <= 4);
+                assert_eq!(day.date.len(), 10);
+                assert!(day.runs == 0 || day.level > 0);
+            }
+        }
+
+        let counted: u32 = calendar
+            .weeks
+            .iter()
+            .flat_map(|week| week.days.iter())
+            .map(|day| day.runs)
+            .sum();
+        assert_eq!(counted, calendar.total_runs);
+        assert!(calendar.basis.contains("prototype"));
+    }
+
+    #[test]
+    fn activity_is_attributed_to_every_model() {
+        let s = snapshot();
+        let calendar = &s.usage.activity;
+        assert_eq!(calendar.by_model.len(), s.models.len());
+        let shares: f64 = calendar.by_model.iter().map(|row| row.share).sum();
+        assert!((shares - 1.0).abs() < 1e-9, "shares add up to one");
+        for row in &calendar.by_model {
+            assert!(s.models.iter().any(|model| model.id == row.model_id));
+            assert!(row.runs <= calendar.total_runs);
+        }
     }
 
     #[test]

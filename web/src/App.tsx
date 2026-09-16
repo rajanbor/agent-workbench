@@ -73,6 +73,7 @@ export default function App() {
   const [extraChats, setExtraChats] = useState<Record<string, ChatRef[]>>({});
   const [busy, setBusy] = useState(false);
   const [chatModelId, setChatModelId] = useState(prototypeSnapshot.inspector.modelId);
+  const [period, setPeriod] = useState("today");
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [toast, setToast] = useState("");
 
@@ -225,6 +226,11 @@ export default function App() {
         onTheme={theme.setChoice}
         onPalette={() => setPaletteOpen(true)}
         onUsage={() => select("usage")}
+        period={period}
+        onPeriod={(id) => {
+          setPeriod(id);
+          select("usage");
+        }}
         onAction={notify}
       />
 
@@ -281,7 +287,9 @@ export default function App() {
                 onAction={notify}
               />
             )}
-            {view === "usage" && <UsageView snapshot={snapshot} />}
+            {view === "usage" && (
+              <UsageView snapshot={snapshot} period={period} onPeriod={setPeriod} />
+            )}
             {view === "agent" && (
               <AgentView
                 snapshot={snapshot}

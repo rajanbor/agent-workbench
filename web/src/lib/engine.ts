@@ -340,6 +340,52 @@ export interface LocalEconomics {
   rows: LocalRunEconomics[];
 }
 
+export interface UsagePeriod {
+  id: string;
+  label: string;
+  tokensIn: number;
+  tokensOut: number;
+  costUsd: number;
+  calls: number;
+  byModel: ModelUsage[];
+}
+
+export interface ActivityDay {
+  date: string;
+  weekday: number;
+  runs: number;
+  tokens: number;
+  costUsd: number;
+  level: number;
+}
+
+export interface ActivityWeek {
+  startDate: string;
+  days: ActivityDay[];
+}
+
+export interface ModelActivity {
+  modelId: string;
+  name: string;
+  runs: number;
+  tokens: number;
+  costUsd: number;
+  share: number;
+  daysActive: number;
+}
+
+export interface ActivityCalendar {
+  basis: string;
+  from: string;
+  to: string;
+  weeks: ActivityWeek[];
+  maxRuns: number;
+  totalRuns: number;
+  totalTokens: number;
+  busiestDay: string;
+  byModel: ModelActivity[];
+}
+
 export interface UsageSummary {
   window: string;
   tokensIn: number;
@@ -349,6 +395,8 @@ export interface UsageSummary {
   byAgent: AgentUsage[];
   daily: DailyUsage[];
   local: LocalEconomics;
+  periods: UsagePeriod[];
+  activity: ActivityCalendar;
 }
 
 export interface Commit {
