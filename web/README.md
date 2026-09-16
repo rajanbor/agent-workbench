@@ -29,6 +29,7 @@ the native window, so visual review happens there.
 | Activity strip | One icon per area — agents, search, source control, sandboxes, models, workflows — with settings and the account at its foot |
 | Sidebar | The lit area, in collapsible sections: workbench chat and agents with their chats, search, branch and working tree, sandboxes and terminals, the catalogue, workflows |
 | Work area | Tabs in groups. Any tab splits to the right, drags between groups, and the whole arrangement is restored on the next start |
+| Projects | A folder as a tab: path, branch, working tree, files and agents; "Open in editor" names the command it would run; new projects come from a template, a folder or a repository |
 | Chat | Main window. The in-app inspector answers from the engine snapshot and reports model, version, tokens, cost, sources and refusals |
 | Canvas | Workflow editor: drag, rename, link, delete, pan, zoom, reset to the engine layout |
 | Sandboxes | Isolation drawn as nested boundaries with mounts, network policy, processes and attached agents |

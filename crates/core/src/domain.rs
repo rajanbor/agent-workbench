@@ -11,6 +11,9 @@ pub struct DesktopSnapshot {
     pub computer: ComputerProfile,
     pub providers: Vec<Provider>,
     pub models: Vec<ModelCard>,
+    pub projects: Vec<ProjectEntry>,
+    pub editors: Vec<EditorApp>,
+    pub templates: Vec<ProjectTemplate>,
     pub agents: Vec<Agent>,
     pub sandboxes: Vec<Sandbox>,
     pub sessions: Vec<Session>,
@@ -192,6 +195,70 @@ pub struct ProjectRef {
     pub name: String,
     pub path: String,
     pub branch: String,
+}
+
+/// A folder this workbench works in. An agent points at one of these; the
+/// project is what the person opens, and the editor on this machine is handed
+/// the same path.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ProjectEntry {
+    pub id: String,
+    pub name: String,
+    pub path: String,
+    pub branch: String,
+    /// What this project is, in one line the person wrote or the engine read.
+    pub summary: String,
+    /// `git` or `folder`: whether version control governs it at all.
+    pub kind: String,
+    pub ahead: u32,
+    pub behind: u32,
+    /// Files with uncommitted change, counted rather than listed.
+    pub dirty: u32,
+    /// Whether `version_control` in this snapshot describes this project. The
+    /// engine reports one working tree today; a project that is not the tracked
+    /// one says so instead of borrowing another project's changes.
+    pub tracked: bool,
+    pub last_opened: String,
+    /// The top of the tree, one level deep. The daemon reads the rest.
+    pub entries: Vec<ProjectFile>,
+    /// Agent ids pointed at this project.
+    pub agents: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ProjectFile {
+    pub name: String,
+    /// `dir` or `file`.
+    pub kind: String,
+    pub detail: String,
+}
+
+/// An editor this machine may hand a folder to. `installed` is what the engine
+/// could confirm; `None` means nothing has looked yet, which is the honest
+/// answer until the daemon can.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct EditorApp {
+    pub id: String,
+    pub name: String,
+    /// Exactly what would be run, shown before anything is run.
+    pub command: String,
+    pub installed: Option<bool>,
+    pub detail: String,
+}
+
+/// A shape a new project can start from.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ProjectTemplate {
+    pub id: String,
+    pub name: String,
+    pub summary: String,
+    pub stack: Vec<String>,
+    /// The files it would write, named before it writes any of them.
+    pub creates: Vec<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

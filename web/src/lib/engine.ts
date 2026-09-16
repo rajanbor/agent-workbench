@@ -107,6 +107,51 @@ export interface ProjectRef {
   branch: string;
 }
 
+/** A folder this workbench works in: what an agent points at, and what is
+ *  handed to an editor. Mirrors `domain::ProjectEntry`. */
+export interface ProjectEntry {
+  id: string;
+  name: string;
+  path: string;
+  branch: string;
+  summary: string;
+  /** `git` or `folder`. */
+  kind: string;
+  ahead: number;
+  behind: number;
+  dirty: number;
+  /** Whether `versionControl` in this snapshot describes this project. */
+  tracked: boolean;
+  lastOpened: string;
+  entries: ProjectFile[];
+  agents: string[];
+}
+
+export interface ProjectFile {
+  name: string;
+  /** `dir` or `file`. */
+  kind: string;
+  detail: string;
+}
+
+/** `installed: null` means nothing has looked yet — the honest answer until
+ *  the daemon can read this machine. */
+export interface EditorApp {
+  id: string;
+  name: string;
+  command: string;
+  installed: boolean | null;
+  detail: string;
+}
+
+export interface ProjectTemplate {
+  id: string;
+  name: string;
+  summary: string;
+  stack: string[];
+  creates: string[];
+}
+
 export interface ChatRef {
   id: string;
   title: string;
@@ -486,6 +531,9 @@ export interface DesktopSnapshot {
   computer: ComputerProfile;
   providers: Provider[];
   models: ModelCard[];
+  projects: ProjectEntry[];
+  editors: EditorApp[];
+  templates: ProjectTemplate[];
   agents: Agent[];
   sandboxes: Sandbox[];
   sessions: Session[];

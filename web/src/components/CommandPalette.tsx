@@ -7,6 +7,8 @@ import {
   canvasTab,
   chatTab,
   modelTab,
+  newProjectTab,
+  projectTab,
   sandboxTab,
   settingsTab,
   studioTab,
@@ -60,6 +62,8 @@ export function CommandPalette({
       tab(canvasTab(snapshot.workflow.name), "Open"),
       tab(usageTab(), "Open"),
       tab(studioTab(null), "Open", "plus"),
+      tab(newProjectTab(), "Open", "plus"),
+      ...snapshot.projects.map((project) => tab(projectTab(project), `Project · ${project.path}`)),
       tab(settingsTab(), "Open"),
       ...snapshot.agents.flatMap((agent) => [
         tab(agentTab(agent), `Agent · ${agent.status}`),

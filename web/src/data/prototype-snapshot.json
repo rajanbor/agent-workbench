@@ -339,6 +339,215 @@
       }
     }
   ],
+  "projects": [
+    {
+      "id": "open-cube",
+      "name": "Open Cube",
+      "path": "~/Projects/open-cube",
+      "branch": "main",
+      "summary": "The workbench itself: a Rust engine, one client, one system for every platform.",
+      "kind": "git",
+      "ahead": 0,
+      "behind": 0,
+      "dirty": 4,
+      "tracked": true,
+      "lastOpened": "now",
+      "entries": [
+        {
+          "name": "crates",
+          "kind": "dir",
+          "detail": "engine, app, runtime, cli"
+        },
+        {
+          "name": "web",
+          "kind": "dir",
+          "detail": "the client: Next, React, TypeScript"
+        },
+        {
+          "name": ".ai",
+          "kind": "dir",
+          "detail": "product, architecture, specs, decisions"
+        },
+        {
+          "name": "docs",
+          "kind": "dir",
+          "detail": "installation, security, release"
+        },
+        {
+          "name": "scripts",
+          "kind": "dir",
+          "detail": "build, package, install"
+        },
+        {
+          "name": "Cargo.toml",
+          "kind": "file",
+          "detail": "workspace manifest"
+        },
+        {
+          "name": "package.json",
+          "kind": "file",
+          "detail": "root scripts for the client"
+        },
+        {
+          "name": "README.md",
+          "kind": "file",
+          "detail": "what this is and how to run it"
+        }
+      ],
+      "agents": [
+        "chief",
+        "backend",
+        "release"
+      ]
+    },
+    {
+      "id": "design-system",
+      "name": "Design system",
+      "path": "~/Projects/design-system",
+      "branch": "main",
+      "summary": "Tokens, components and the contrast rules the auditor checks against.",
+      "kind": "git",
+      "ahead": 1,
+      "behind": 0,
+      "dirty": 2,
+      "tracked": false,
+      "lastOpened": "yesterday",
+      "entries": [
+        {
+          "name": "tokens",
+          "kind": "dir",
+          "detail": "colour, type, spacing"
+        },
+        {
+          "name": "components",
+          "kind": "dir",
+          "detail": "the shared set"
+        },
+        {
+          "name": "audits",
+          "kind": "dir",
+          "detail": "what the auditor wrote"
+        },
+        {
+          "name": "README.md",
+          "kind": "file",
+          "detail": "how the tokens are meant to be used"
+        }
+      ],
+      "agents": [
+        "auditor"
+      ]
+    },
+    {
+      "id": "notes",
+      "name": "Notes",
+      "path": "~/Documents/notes",
+      "branch": "",
+      "summary": "A plain folder, under no version control. Nothing here is committed.",
+      "kind": "folder",
+      "ahead": 0,
+      "behind": 0,
+      "dirty": 0,
+      "tracked": false,
+      "lastOpened": "3 days ago",
+      "entries": [
+        {
+          "name": "inbox.md",
+          "kind": "file",
+          "detail": "unsorted"
+        },
+        {
+          "name": "decisions.md",
+          "kind": "file",
+          "detail": "what was settled and when"
+        }
+      ],
+      "agents": []
+    }
+  ],
+  "editors": [
+    {
+      "id": "vscode",
+      "name": "Visual Studio Code",
+      "command": "code <path>",
+      "installed": null,
+      "detail": "Opens the folder as a workspace."
+    },
+    {
+      "id": "cursor",
+      "name": "Cursor",
+      "command": "cursor <path>",
+      "installed": null,
+      "detail": "Same workspace shape as VS Code."
+    },
+    {
+      "id": "zed",
+      "name": "Zed",
+      "command": "zed <path>",
+      "installed": null,
+      "detail": "Opens the folder in a new window."
+    },
+    {
+      "id": "finder",
+      "name": "Finder",
+      "command": "open <path>",
+      "installed": null,
+      "detail": "Reveals the folder rather than editing it."
+    }
+  ],
+  "templates": [
+    {
+      "id": "empty",
+      "name": "Empty folder",
+      "summary": "Nothing but the folder itself and a readme.",
+      "stack": [],
+      "creates": [
+        "README.md"
+      ]
+    },
+    {
+      "id": "rust-workspace",
+      "name": "Rust workspace",
+      "summary": "A cargo workspace with one crate and a test.",
+      "stack": [
+        "rust",
+        "cargo"
+      ],
+      "creates": [
+        "Cargo.toml",
+        "crates/core/src/lib.rs",
+        "README.md"
+      ]
+    },
+    {
+      "id": "next-client",
+      "name": "Next client",
+      "summary": "A static Next app in the shape this workbench uses.",
+      "stack": [
+        "typescript",
+        "next",
+        "react"
+      ],
+      "creates": [
+        "package.json",
+        "app/page.tsx",
+        "src/styles/tokens.css"
+      ]
+    },
+    {
+      "id": "agent-workspace",
+      "name": "Agent workspace",
+      "summary": "A folder an agent can be pointed at: instructions, skills, nothing else.",
+      "stack": [
+        "markdown"
+      ],
+      "creates": [
+        "AGENTS.md",
+        ".ai/README.md",
+        "README.md"
+      ]
+    }
+  ],
   "agents": [
     {
       "id": "chief",
@@ -4909,7 +5118,7 @@
     },
     "ahead": 0,
     "behind": 0,
-    "dirty": 6,
+    "dirty": 4,
     "recent": [
       {
         "hash": "e56bed2",
@@ -4955,15 +5164,15 @@
     ],
     "changes": [
       {
-        "path": "desktop/engine/src/state.rs",
+        "path": "crates/core/src/state.rs",
         "state": "modified"
       },
       {
-        "path": "desktop/src/views/AgentStudioView.tsx",
+        "path": "web/src/views/AgentStudioView.tsx",
         "state": "added"
       },
       {
-        "path": "desktop/src/styles/tokens.css",
+        "path": "web/src/styles/tokens.css",
         "state": "modified"
       },
       {

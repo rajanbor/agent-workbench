@@ -16,6 +16,8 @@ import { ModelsView } from "./views/ModelsView";
 import { UsageView } from "./views/UsageView";
 import { AgentView } from "./views/AgentView";
 import { AgentStudioView } from "./views/AgentStudioView";
+import { ProjectView } from "./views/ProjectView";
+import { NewProjectView } from "./views/NewProjectView";
 import { SettingsView } from "./views/SettingsView";
 
 import {
@@ -41,6 +43,8 @@ import {
   loadShell,
   modelTab,
   moveTab,
+  newProjectTab,
+  projectTab,
   openTab,
   pruneLayout,
   sandboxTab,
@@ -369,6 +373,32 @@ export default function App() {
             />
           );
         }
+        case "project":
+          return (
+            <ProjectView
+              snapshot={snapshot}
+              projectId={tab.target ?? snapshot.projects[0].id}
+              onOpenAgent={(id) => {
+                const agent = snapshot.agents.find((item) => item.id === id);
+                if (agent) open(agentTab(agent));
+              }}
+              onNewChat={openAgentChat}
+              onOpenTerminal={() => setTerminalOpen(true)}
+              onNewProject={() => open(newProjectTab())}
+              onAction={notify}
+            />
+          );
+        case "new-project":
+          return (
+            <NewProjectView
+              snapshot={snapshot}
+              onOpenProject={(id) => {
+                const project = snapshot.projects.find((item) => item.id === id);
+                if (project) open(projectTab(project));
+              }}
+              onAction={notify}
+            />
+          );
         case "canvas":
           return <CanvasView snapshot={snapshot} onAction={notify} />;
         case "sandboxes":
@@ -496,6 +526,7 @@ export default function App() {
           activity={activity}
           sidebarOpen={sidebarOpen}
           counts={{
+            projects: snapshot.projects.length,
             agents: snapshot.agents.length,
             sandboxes: snapshot.sandboxes.length,
             vcs: snapshot.versionControl.changes.length,
@@ -503,7 +534,9 @@ export default function App() {
           onPick={pickActivity}
           onSettings={() => open(settingsTab())}
           onShortcuts={() =>
-            notify("⌘K palette · ⌘B sidebar · ⌘J terminals · ⌘I workbench API · ⌘\\ split · ⌘W close")
+            notify(
+              "⌘K palette · ⌘B sidebar · ⌘J panel · ⌘I workbench API · ⌘\\ split · ⌘W close · ⌘1–⌘7 areas",
+            )
           }
         />
 

@@ -2571,3 +2571,262 @@
   color: var(--text-faint);
   font-size: var(--text-xs);
 }
+
+/* ==========================================================================
+   Projects: a folder as a surface, and the panel that makes a new one.
+   See .ai/specs/PROJECT_WORKSPACE.md.
+   ======================================================================== */
+
+.project-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 22px;
+  margin-bottom: 18px;
+}
+
+.project-head__identity {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.project-head__mark {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  place-items: center;
+}
+
+.project-head h1 {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.project-head__path {
+  margin-top: 2px;
+  color: var(--text-faint);
+  font-size: var(--text-xs);
+}
+
+.project-head__actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.menu--editor .menu__trigger {
+  border-color: var(--border);
+  background: var(--bg-surface);
+  color: var(--text);
+}
+
+.menu--editor .menu__panel {
+  width: 340px;
+}
+
+.project-facts {
+  display: grid;
+  gap: 1px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--border-subtle);
+}
+
+.project-fact {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 11px 13px;
+  background: var(--bg-surface);
+}
+
+.project-fact small {
+  color: var(--text-faint);
+  font-size: var(--text-xs);
+}
+
+.project-fact strong {
+  color: var(--text);
+  font-size: var(--text-md);
+  font-weight: 550;
+}
+
+.project-grid {
+  display: grid;
+  gap: 26px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  margin-top: 24px;
+}
+
+.project-agent {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.project-agent__main {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.project-agent__main strong {
+  font-size: var(--text-md);
+  font-weight: 550;
+}
+
+.project-agent__main small {
+  color: var(--text-faint);
+  font-size: var(--text-xs);
+}
+
+.project-agent__main p {
+  margin-top: 4px;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+}
+
+.project-agent__actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 7px;
+}
+
+/* A choice you click rather than a row you read: used by the new-project
+   panel and by anything else that offers a small set of known options. */
+
+.pick-row {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  margin-bottom: 8px;
+}
+
+.pick-row--wrap {
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+
+.pick-row--tight {
+  gap: 7px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  margin: 4px 0 8px;
+}
+
+.pick {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 13px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  text-align: left;
+  transition: border-color 140ms var(--ease);
+}
+
+.pick:hover {
+  border-color: var(--border-strong);
+}
+
+.pick.is-selected {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--text);
+}
+
+.pick > svg {
+  color: var(--text-muted);
+}
+
+.pick strong {
+  font-size: var(--text-md);
+  font-weight: 550;
+}
+
+.pick small {
+  color: var(--text-faint);
+  font-size: var(--text-xs);
+  line-height: 1.55;
+}
+
+.pick--small {
+  padding: 9px 11px;
+  gap: 2px;
+}
+
+.pick--small strong {
+  font-size: var(--text-sm);
+}
+
+.pick__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 3px;
+}
+
+.pick__tags em {
+  padding: 1px 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  color: var(--text-faint);
+  font-size: 10px;
+  font-style: normal;
+}
+
+.form .field--switch {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.form .field--switch > span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.form .field--switch strong {
+  color: var(--text);
+  font-size: var(--text-md);
+  font-weight: 500;
+}
+
+.form .field--switch small {
+  color: var(--text-faint);
+  font-size: var(--text-xs);
+}
+
+/* The project rows in the sidebar disclose their own first level. */
+
+.rail-tree {
+  padding: 2px 0 6px 30px;
+}
+
+.rail-tree p {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 2px 0;
+  color: var(--text-faint);
+  font-size: var(--text-xs);
+}

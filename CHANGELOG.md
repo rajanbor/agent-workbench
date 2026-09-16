@@ -2,6 +2,24 @@
 
 ## Unreleased
 
+- Make a project a first-class object in the engine and a tab in the window: a
+  folder with its path, branch, working tree, first level of files and the
+  agents pointed at it. Agents and projects are now checked against each other
+  in both directions.
+- Add "Open in editor": a menu of editors, each showing the exact command it
+  would run against this folder, and saying plainly that resolving and
+  launching an application belongs to the daemon. No editor claims to be
+  installed, because nothing has looked for it.
+- Add a new-project panel: from a template, a folder already on disk, or a
+  repository. It prints the resulting path and every file and command involved
+  before the button that would do any of it.
+- Correct the prototype working tree, which claimed six changed files and
+  listed four, and still named paths from the Swift layout. The tracked project
+  and the reported working tree are now asserted to agree.
+- Fix every filled button in the app: a later "lighter controls" rule had
+  overridden the primary fill, so `Create`, `Save` and their kind were drawing
+  white text on a transparent ground.
+
 - Make the bottom dock a panel: `Problems`, `Output` and `Terminal` tabs, the
   sessions listed down the side instead of in a strip, a prompt that sits at
   the end of the stream, and a panel that maximises and restores. `Problems`

@@ -38,6 +38,78 @@ mod tests {
     }
 
     #[test]
+    fn every_agent_works_in_a_project_the_workbench_knows() {
+        let s = snapshot();
+        for agent in &s.agents {
+            let project = s
+                .projects
+                .iter()
+                .find(|project| project.path == agent.project.path)
+                .unwrap_or_else(|| panic!("agent {} works in an unlisted project", agent.id));
+
+            assert_eq!(
+                project.name, agent.project.name,
+                "agent {} names its project differently from the project itself",
+                agent.id
+            );
+            assert!(
+                project.agents.contains(&agent.id),
+                "project {} does not list agent {}",
+                project.id,
+                agent.id
+            );
+        }
+
+        // A project claiming an agent that does not exist would send the person
+        // to an empty tab.
+        for project in &s.projects {
+            for id in &project.agents {
+                assert!(
+                    s.agents.iter().any(|agent| &agent.id == id),
+                    "project {} lists unknown agent {}",
+                    project.id,
+                    id
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn exactly_one_project_owns_the_working_tree_that_is_reported() {
+        let s = snapshot();
+        let tracked: Vec<_> = s.projects.iter().filter(|project| project.tracked).collect();
+        assert_eq!(
+            tracked.len(),
+            1,
+            "the engine reports one working tree, so one project may claim it"
+        );
+        assert_eq!(
+            tracked[0].dirty as usize,
+            s.version_control.changes.len(),
+            "the tracked project's dirty count must match the changes that are listed"
+        );
+        assert_eq!(tracked[0].branch, s.version_control.branch);
+    }
+
+    #[test]
+    fn no_editor_claims_to_be_installed_without_a_check() {
+        let s = snapshot();
+        assert!(!s.editors.is_empty(), "a folder must have somewhere to go");
+        for editor in &s.editors {
+            assert!(
+                editor.installed.is_none(),
+                "{} claims to be installed, but nothing has looked for it",
+                editor.id
+            );
+            assert!(
+                editor.command.contains("<path>"),
+                "{} does not say where the path goes",
+                editor.id
+            );
+        }
+    }
+
+    #[test]
     fn every_agent_points_at_a_known_model_and_sandbox() {
         let s = snapshot();
         for agent in &s.agents {
