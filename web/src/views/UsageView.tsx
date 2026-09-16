@@ -57,11 +57,14 @@ export function UsageView({
           {periods.map((item) => (
             <span key={item.id}>{item.label}</span>
           ))}
-          <span>Share of {longest.label.toLowerCase()}</span>
+          <span>Tokens, {longest.label.toLowerCase()}</span>
         </div>
         {longest.byModel.map((row) => {
           const model = snapshot.models.find((item) => item.id === row.modelId);
-          const share = longest.costUsd > 0 ? (row.costUsd / longest.costUsd) * 100 : 0;
+          // Share of tokens, not of cost: a model on a subscription meters
+          // nothing and would otherwise look idle.
+          const tokens = longest.tokensIn + longest.tokensOut;
+          const share = tokens > 0 ? ((row.tokensIn + row.tokensOut) / tokens) * 100 : 0;
           return (
             <div className="table__row is-static" key={row.modelId}>
               <span className="table__main">
@@ -72,7 +75,7 @@ export function UsageView({
                 />
                 <span>
                   <strong>{row.name}</strong>
-                  <small>{row.version}</small>
+                  <small>{model?.pricing ? row.version : "no metered cost"}</small>
                 </span>
               </span>
               {periods.map((item) => {
@@ -186,17 +189,20 @@ function LocalExecution({ snapshot }: { snapshot: DesktopSnapshot }) {
 
       <p className="muted-copy local-note">
         Today&rsquo;s {compactTokens(local.workloadTokensIn + local.workloadTokensOut)} tokens ran on
-        the API. Had they run on this {snapshot.computer.deviceKind}, against{" "}
-        {reference?.name ?? local.referenceModelId} at ${device.pricePerKwh.toFixed(2)}/kWh:
-        {local.realisedTokens === 0 && " nothing ran locally in this window."}
+        the API and were metered at {money(snapshot.usage.costUsd)} — part of them on a
+        subscription, which meters nothing. The comparison below asks a different question: what the
+        same workload would cost on this {snapshot.computer.deviceKind} against{" "}
+        {reference?.name ?? local.referenceModelId} at ${device.pricePerKwh.toFixed(2)}/kWh.
+        {local.realisedTokens === 0 && " Nothing ran locally in this window."}
       </p>
 
       <div className="metrics">
         <Card className="metric">
-          <p className="metric__label">Saved</p>
+          <p className="metric__label">Saved against the API</p>
           <p className="metric__value">{money(local.bestSavedUsd)}</p>
           <p className="metric__hint">
-            {percent(local.bestSavingsRatio, 1)} of the API price · {best?.name}
+            {percent(local.bestSavingsRatio, 1)} of what {reference?.name ?? "the reference"} would
+            charge · {best?.name}
           </p>
         </Card>
         <Card className="metric">
@@ -206,8 +212,12 @@ function LocalExecution({ snapshot }: { snapshot: DesktopSnapshot }) {
         </Card>
         <Card className="metric">
           <p className="metric__label">Battery</p>
-          <p className="metric__value">{local.bestBatteryPct.toFixed(1)}%</p>
-          <p className="metric__hint">of {device.batteryWh} Wh capacity</p>
+          <p className="metric__value">{local.bestBatteryPct.toFixed(0)}%</p>
+          <p className="metric__hint">
+            {local.bestBatteryPct > 100
+              ? `${(local.bestBatteryPct / 100).toFixed(1)} full charges of ${device.batteryWh} Wh`
+              : `of ${device.batteryWh} Wh capacity`}
+          </p>
         </Card>
         <Card className="metric">
           <p className="metric__label">Exploitation</p>
