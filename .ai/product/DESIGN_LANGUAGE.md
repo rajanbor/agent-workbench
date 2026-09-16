@@ -72,3 +72,20 @@ buttons beside the identity, not as a toolbar.
 
 **Live indicator.** A green dot and the word, at the right of a panel header,
 only when the panel is actually following live state.
+
+## Where a rule lives
+
+`tokens.css` holds colour, type, radius and the layer values. Everything else is
+split by surface so two branches rarely touch the same file:
+
+| File | Contents |
+| --- | --- |
+| `base.css` | Reset, type, and the primitives every surface reuses |
+| `chrome.css` | Top bar, rails, menus, terminal dock, status bar, overlays |
+| `chat.css` | Messages, provenance, start cards, composer |
+| `canvas.css` | Workflow graph and relational schema |
+| `panels.css` | Views: cards, tables, profile, studio, usage, sandboxes, settings |
+| `responsive.css` | Width rules, kept together |
+
+`app.css` is the import list and nothing else. A new rule goes in the file for
+its surface, not at the end of one long sheet.

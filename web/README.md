@@ -50,6 +50,8 @@ Shortcuts: `⌘K` palette · `⌘B` left rail · `⌘J` terminals · `⌘I` righ
 | `src/views/` | Chat, canvas, sandboxes, models, usage, agent, settings |
 | `src/lib/` | Engine bridge, identity, theme, shell types, highlighting |
 | `src/styles/tokens.css` | Colour, type and radius tokens for both themes |
+| `src/styles/app.css` | The import list; rules live in the files below |
+| `src/styles/{base,chrome,chat,canvas,panels,responsive}.css` | One file per surface, so parallel branches do not collide |
 
 ## Rules
 
