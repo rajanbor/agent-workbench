@@ -18,6 +18,22 @@ function apply(choice: ThemeChoice) {
   const root = document.documentElement;
   if (choice === "system") root.removeAttribute("data-theme");
   else root.setAttribute("data-theme", choice);
+  void syncWindow(choice);
+}
+
+/** Keep the native window appearance with the app theme.
+ *
+ *  The macOS window material follows the window's appearance, so a light app
+ *  theme in a dark-appearance window keeps a dark ground behind light text.
+ *  Setting the window theme makes the material follow the app instead. */
+async function syncWindow(choice: ThemeChoice) {
+  if (typeof window === "undefined" || !("__TAURI_INTERNALS__" in window)) return;
+  try {
+    const { getCurrentWindow } = await import("@tauri-apps/api/window");
+    await getCurrentWindow().setTheme(choice === "system" ? null : choice);
+  } catch {
+    /* the page still paints its own ground over the material */
+  }
 }
 
 export function resolveTheme(choice: ThemeChoice): "light" | "dark" {

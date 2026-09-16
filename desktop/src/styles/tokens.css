@@ -28,7 +28,7 @@
   --statusbar-height: 24px;
 
   --ease: cubic-bezier(0.32, 0.72, 0, 1);
-  --blur: saturate(180%) blur(22px);
+  --blur: saturate(150%) blur(40px);
 }
 
 /* ---------------------------------------------------------------- dark ---- */
@@ -46,9 +46,9 @@
   --bg-scrim: rgba(0, 0, 0, 0.5);
 
   /* Translucent layers: the native window shows the desktop through them. */
-  --layer-chrome: rgba(17, 18, 21, 0.72);
-  --layer-panel: rgba(20, 21, 24, 0.66);
-  --layer-float: rgba(26, 27, 31, 0.86);
+  --layer-chrome: rgba(17, 18, 21, 0.92);
+  --layer-panel: rgba(20, 21, 24, 0.88);
+  --layer-float: rgba(26, 27, 31, 0.96);
 
   --border: rgba(255, 255, 255, 0.075);
   --border-strong: rgba(255, 255, 255, 0.14);
@@ -117,9 +117,9 @@
   --bg-code: #f7f8fa;
   --bg-scrim: rgba(22, 25, 33, 0.22);
 
-  --layer-chrome: rgba(252, 252, 253, 0.74);
-  --layer-panel: rgba(255, 255, 255, 0.68);
-  --layer-float: rgba(255, 255, 255, 0.9);
+  --layer-chrome: rgba(252, 252, 253, 0.92);
+  --layer-panel: rgba(255, 255, 255, 0.88);
+  --layer-float: rgba(255, 255, 255, 0.97);
 
   --border: rgba(15, 20, 35, 0.085);
   --border-strong: rgba(15, 20, 35, 0.16);
@@ -247,24 +247,29 @@
   }
 }
 
-/* Native window: the vibrancy behind the web view provides the base colour,
-   so the page itself stays transparent and the panels sit on top of it. */
+/* Native window: the vibrancy is a hint behind the app's own ground, not the
+   ground itself — otherwise the system appearance would decide how the app
+   theme looks. The window appearance is synced in src/lib/theme.ts. */
 :root[data-runtime="tauri"] {
-  --bg: transparent;
+  --bg: rgba(11, 12, 14, 0.82);
   --bg-sidebar: transparent;
-  --layer-chrome: rgba(255, 255, 255, 0.04);
-  --layer-panel: rgba(255, 255, 255, 0.03);
+  --layer-chrome: rgba(23, 24, 28, 0.74);
+  --layer-panel: rgba(22, 23, 27, 0.66);
+  --layer-float: rgba(28, 29, 34, 0.92);
 }
 
-:root[data-runtime="tauri"][data-theme="light"],
-:root[data-runtime="tauri"]:not([data-theme="dark"]) {
-  --layer-chrome: rgba(255, 255, 255, 0.5);
-  --layer-panel: rgba(255, 255, 255, 0.38);
+:root[data-runtime="tauri"][data-theme="light"] {
+  --bg: rgba(247, 248, 250, 0.84);
+  --layer-chrome: rgba(255, 255, 255, 0.76);
+  --layer-panel: rgba(255, 255, 255, 0.68);
+  --layer-float: rgba(255, 255, 255, 0.95);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root[data-runtime="tauri"]:not([data-theme="light"]) {
-    --layer-chrome: rgba(255, 255, 255, 0.04);
-    --layer-panel: rgba(255, 255, 255, 0.03);
+@media (prefers-color-scheme: light) {
+  :root[data-runtime="tauri"]:not([data-theme="dark"]) {
+    --bg: rgba(247, 248, 250, 0.84);
+    --layer-chrome: rgba(255, 255, 255, 0.76);
+    --layer-panel: rgba(255, 255, 255, 0.68);
+    --layer-float: rgba(255, 255, 255, 0.95);
   }
 }

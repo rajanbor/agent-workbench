@@ -3,7 +3,8 @@ import { Icon } from "../components/Icon";
 import { AgentFace, ModelGlyph } from "../components/Glyph";
 import { Badge, Button, IconButton, StatusDot } from "../components/primitives";
 import { accentOf, compactTokens, toneOf } from "../lib/identity";
-import type { Agent, DesktopSnapshot, ModelCard } from "../lib/engine";
+import { AgentWorkspaceBar } from "../components/AgentWorkspaceBar";
+import type { Agent, ChatRef, DesktopSnapshot, ModelCard } from "../lib/engine";
 import type { ChatMessage } from "../lib/shell";
 
 const suggestions = [
@@ -17,6 +18,10 @@ export function ChatView({
   snapshot,
   agent,
   model,
+  chats,
+  activeChat,
+  onChat,
+  onNewChat,
   messages,
   busy,
   onSend,
@@ -26,6 +31,10 @@ export function ChatView({
   snapshot: DesktopSnapshot;
   agent: Agent | null;
   model: ModelCard;
+  chats: ChatRef[];
+  activeChat: string;
+  onChat: (id: string) => void;
+  onNewChat: () => void;
   messages: ChatMessage[];
   busy: boolean;
   onSend: (text: string) => void;
@@ -99,6 +108,18 @@ export function ChatView({
           </Button>
         </div>
       </header>
+
+      {agent && (
+        <AgentWorkspaceBar
+          snapshot={snapshot}
+          agent={agent}
+          chats={chats}
+          activeChat={activeChat}
+          onChat={onChat}
+          onNewChat={onNewChat}
+          onAction={onAction}
+        />
+      )}
 
       <div className="chat__scroll" ref={scroller}>
         <div className="chat__thread">

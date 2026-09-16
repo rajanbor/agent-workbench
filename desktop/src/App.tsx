@@ -27,23 +27,30 @@ import {
   type EngineSource,
 } from "./lib/engine";
 import { useTheme } from "./lib/theme";
+import type { ChatRef } from "./lib/engine";
 import type { ChatMessage, Selection, ViewId } from "./lib/shell";
 
-/** First message of an agent thread, so a chat opens with context, not a blank pane. */
+/** Threads are keyed by chat id. An agent's first chat opens with its last
+ *  message, so a chat starts with context instead of a blank pane. */
 function seedThreads(snapshot: DesktopSnapshot): Record<string, ChatMessage[]> {
   const threads: Record<string, ChatMessage[]> = { workbench: [] };
   for (const agent of snapshot.agents) {
-    threads[agent.id] = [
-      {
-        id: `${agent.id}-seed`,
-        role: "assistant",
-        text: agent.lastMessage,
-        modelId: agent.modelId,
-        tokens: agent.tokensOut,
-        costUsd: agent.costUsd,
-        sources: [`agent:${agent.id}`],
-      },
-    ];
+    agent.chats.forEach((chat, index) => {
+      threads[chat.id] =
+        index === 0
+          ? [
+              {
+                id: `${chat.id}-seed`,
+                role: "assistant",
+                text: agent.lastMessage,
+                modelId: agent.modelId,
+                tokens: agent.tokensOut,
+                costUsd: agent.costUsd,
+                sources: [`agent:${agent.id}`],
+              },
+            ]
+          : [];
+    });
   }
   return threads;
 }
@@ -65,6 +72,7 @@ export default function App() {
   const [threads, setThreads] = useState<Record<string, ChatMessage[]>>(() =>
     seedThreads(prototypeSnapshot),
   );
+  const [extraChats, setExtraChats] = useState<Record<string, ChatRef[]>>({});
   const [busy, setBusy] = useState(false);
   const [chatModelId, setChatModelId] = useState(prototypeSnapshot.inspector.modelId);
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -132,14 +140,35 @@ export default function App() {
   const chatModel =
     snapshot.models.find((model) => model.id === chatModelId) ?? snapshot.models[0];
   const activeAgent = useMemo(
-    () => snapshot.agents.find((agent) => agent.id === selection.chat) ?? null,
-    [selection.chat, snapshot.agents],
+    () => snapshot.agents.find((agent) => agent.id === selection.agent) ?? null,
+    [selection.agent, snapshot.agents],
   );
+  const agentChats = activeAgent
+    ? [...activeAgent.chats, ...(extraChats[activeAgent.id] ?? [])]
+    : [];
+
+  /** A second chat against the same agent: local until the daemon persists it. */
+  const newChat = useCallback(() => {
+    if (!activeAgent) return;
+    const existing = agentChats.length;
+    const chat: ChatRef = {
+      id: `${activeAgent.id}-chat-${existing + 1}`,
+      title: `Chat ${existing + 1}`,
+      updatedAt: "now",
+    };
+    setExtraChats((current) => ({
+      ...current,
+      [activeAgent.id]: [...(current[activeAgent.id] ?? []), chat],
+    }));
+    setThreads((current) => ({ ...current, [chat.id]: [] }));
+    setSelection((current) => ({ ...current, chat: chat.id }));
+    notify("Extra chats live in this session until the workbench daemon stores them.");
+  }, [activeAgent, agentChats.length, notify]);
 
   const send = useCallback(
     async (text: string) => {
       const thread = selection.chat;
-      const agent = snapshot.agents.find((item) => item.id === thread) ?? null;
+      const agent = snapshot.agents.find((item) => item.id === selection.agent) ?? null;
       const stamp = Date.now();
 
       setThreads((current) => ({
@@ -182,7 +211,7 @@ export default function App() {
       });
       setBusy(false);
     },
-    [selection.chat, snapshot],
+    [selection.agent, selection.chat, snapshot],
   );
 
   return (
@@ -213,6 +242,8 @@ export default function App() {
               setPanels((current) => ({ ...current, terminal: true }));
             }}
             onAction={notify}
+            theme={theme.choice}
+            onTheme={theme.setChoice}
           />
         )}
 
@@ -223,6 +254,10 @@ export default function App() {
                 snapshot={snapshot}
                 agent={activeAgent}
                 model={chatModel}
+                chats={agentChats}
+                activeChat={selection.chat}
+                onChat={(id) => setSelection((current) => ({ ...current, chat: id }))}
+                onNewChat={newChat}
                 messages={threads[selection.chat] ?? []}
                 busy={busy}
                 onSend={send}

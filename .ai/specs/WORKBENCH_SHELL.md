@@ -3,8 +3,10 @@
 Acceptance: the app opens on a chat backed by the in-app inspector; the left
 rail lists agents, sandboxes, terminals, workflows and models in collapsible
 sections and reflects live state; the right rail lists values, functions and
-modules with the inspector policy; the terminal dock opens, resizes and hides
-without losing its buffer; the canvas edits a workflow; the sandbox view draws
+modules with the inspector policy; the account menu is reachable from the bottom of the
+left rail; opening an agent shows its project, branch, working tree and chats,
+and can start another chat; the terminal dock opens, resizes and hides without
+losing its buffer; the canvas edits a workflow; the sandbox view draws
 the isolation boundary; the model catalogue shows each model's identity, pinned
 version and revisions, and version control is reachable from the top bar; usage
 reports tokens and cost per model, per agent and per day; light and dark themes

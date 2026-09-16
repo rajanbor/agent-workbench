@@ -7,9 +7,11 @@
    carries tokens and the state source in its tooltip, panel toggles and
    appearance. In the native window it is also the drag region and leaves room
    for the traffic lights.
-2. Left rail: collapsible sections — Workbench chat, Agents, Sandboxes,
-   Terminals, Workflows, Models — each row showing live state.
-3. Workspace: the active surface. Chat is the default; canvas, sandbox
+2. Left rail: the workbench chat pinned on top, then collapsible sections —
+   Agents, Sandboxes, Terminals, Workflows, Models — each row showing live
+   state, and the account menu pinned at the bottom.
+3. Workspace: the active surface. An open agent adds a workspace bar with its
+   project, branch, working tree and chats. Chat is the default; canvas, sandbox
    visualisation, model catalogue, usage, agent detail and settings share it.
 4. Terminal dock: bottom panel with one tab per sandbox terminal, resizable and
    dismissible without losing its buffer.

@@ -1,52 +1,10 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Icon } from "./Icon";
+import { Menu } from "./Menu";
 import { ModelGlyph } from "./Glyph";
 import { Badge, IconButton, KeyHint } from "./primitives";
 import { accentOf, compactTokens } from "../lib/identity";
 import type { DesktopSnapshot, ModelCard } from "../lib/engine";
 import type { ThemeChoice } from "../lib/theme";
-
-function Menu({
-  label,
-  children,
-  align = "left",
-  className = "",
-}: {
-  label: ReactNode;
-  children: (close: () => void) => ReactNode;
-  align?: "left" | "right";
-  className?: string;
-}) {
-  const [open, setOpen] = useState(false);
-  const holder = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    const onDown = (event: MouseEvent) => {
-      if (!holder.current?.contains(event.target as Node)) setOpen(false);
-    };
-    const onKey = (event: KeyboardEvent) => event.key === "Escape" && setOpen(false);
-    document.addEventListener("mousedown", onDown);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("mousedown", onDown);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [open]);
-
-  return (
-    <div className={`menu ${className}`} ref={holder}>
-      <button
-        className={`menu__trigger ${open ? "is-open" : ""}`}
-        onClick={() => setOpen((value) => !value)}
-      >
-        {label}
-        <Icon name="chevronDown" size={13} />
-      </button>
-      {open && <div className={`menu__panel menu__panel--${align}`}>{children(() => setOpen(false))}</div>}
-    </div>
-  );
-}
 
 export function TopBar({
   snapshot,
