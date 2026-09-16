@@ -65,6 +65,7 @@
         }
       ],
       "pricing": null,
+      "subscription": null,
       "summary": "Answers questions about this workbench from the engine snapshot. Rule based, not a language model: it cannot improvise, and it cannot read anything its policy does not grant.",
       "strengths": [
         "Explains agents, sandboxes, spend and policy",
@@ -83,8 +84,8 @@
       "localProfile": null
     },
     {
-      "id": "claude-sonnet",
-      "name": "Claude Sonnet",
+      "id": "claude-opus",
+      "name": "Claude Opus",
       "vendor": "Anthropic",
       "task": "Text · tools",
       "icon": "agent",
@@ -108,9 +109,10 @@
         }
       ],
       "pricing": {
-        "inputPerMtok": 3.0,
-        "outputPerMtok": 15.0
+        "inputPerMtok": 15.0,
+        "outputPerMtok": 75.0
       },
+      "subscription": null,
       "summary": "Hosted general model with tool use and a long context. In Open Cube it runs through the Claude Code tool inside the agent account, so the subscription and the credentials stay with that tool.",
       "strengths": [
         "Long-context reading of a whole workspace",
@@ -155,7 +157,11 @@
         }
       ],
       "pricing": null,
-      "summary": "Hosted coding agent driven by the Codex CLI. Cost is carried by the subscription rather than metered per token, so spend shows as zero here.",
+      "subscription": {
+        "plan": "Pro, per seat",
+        "monthlyUsd": 200.0
+      },
+      "summary": "Hosted coding agent driven by the Codex CLI. Paid for by the month rather than metered per token, so its cost is the plan spread over the window you are looking at.",
       "strengths": [
         "Repository-scale code changes",
         "Runs as its own CLI inside the sandbox"
@@ -185,14 +191,14 @@
       "downloads": "4.7 GB",
       "likes": null,
       "location": "local",
-      "ready": false,
+      "ready": true,
       "version": "q4_k_m",
       "digest": "sha256:6d1e08b7",
       "revisions": [
         {
           "version": "q4_k_m",
           "digest": "sha256:6d1e08b7",
-          "published": "not downloaded",
+          "published": "downloaded",
           "note": "4-bit build, 8 GB unified memory",
           "pinned": true
         },
@@ -205,6 +211,7 @@
         }
       ],
       "pricing": null,
+      "subscription": null,
       "summary": "Open-weight instruct model that runs on the machine. Good default for review and summarisation work that should never leave the device.",
       "strengths": [
         "Runs offline, no account",
@@ -256,6 +263,7 @@
         }
       ],
       "pricing": null,
+      "subscription": null,
       "summary": "Small open-weight model for fast local passes: classification, triage and short summaries where latency matters more than depth.",
       "strengths": [
         "Fast on modest hardware",
@@ -306,6 +314,7 @@
         }
       ],
       "pricing": null,
+      "subscription": null,
       "summary": "Open-weight instruct model with a permissive licence, often used as a local fallback when a hosted provider is unavailable.",
       "strengths": [
         "Permissive licence, no account",
@@ -336,7 +345,7 @@
       "name": "Chief",
       "role": "Orchestrator",
       "status": "running",
-      "modelId": "claude-sonnet",
+      "modelId": "claude-opus",
       "sandboxId": "product-dev",
       "machine": "MacBook Pro",
       "task": "Rebuild the workbench shell",
@@ -552,7 +561,7 @@
       "name": "Release Notes",
       "role": "Writing",
       "status": "approval",
-      "modelId": "claude-sonnet",
+      "modelId": "claude-opus",
       "sandboxId": "review",
       "machine": "MacBook Pro",
       "task": "Draft the alpha release note",
@@ -1201,18 +1210,24 @@
   },
   "usage": {
     "window": "today",
-    "tokensIn": 7600000,
-    "tokensOut": 1924000,
-    "costUsd": 17.52,
+    "tokensIn": 8860000,
+    "tokensOut": 2244000,
+    "costUsd": 94.3,
+    "meteredUsd": 87.6,
+    "subscriptionUsd": 6.67,
+    "electricityUsd": 0.03,
+    "energyWh": 104.21626984126983,
     "byModel": [
       {
-        "modelId": "claude-sonnet",
-        "name": "Claude Sonnet",
+        "modelId": "claude-opus",
+        "name": "Claude Opus",
         "version": "provider default",
         "calls": 312,
         "tokensIn": 2420000,
         "tokensOut": 684000,
-        "costUsd": 17.52
+        "costUsd": 0.0,
+        "costKind": "metered",
+        "energyWh": 0.0
       },
       {
         "modelId": "codex",
@@ -1221,7 +1236,9 @@
         "calls": 196,
         "tokensIn": 5180000,
         "tokensOut": 1240000,
-        "costUsd": 0.0
+        "costUsd": 0.0,
+        "costKind": "subscription",
+        "energyWh": 0.0
       },
       {
         "modelId": "inspector-local",
@@ -1230,14 +1247,27 @@
         "calls": 1240,
         "tokensIn": 0,
         "tokensOut": 0,
-        "costUsd": 0.0
+        "costUsd": 0.0,
+        "costKind": "none",
+        "energyWh": 0.0
+      },
+      {
+        "modelId": "qwen2.5-7b",
+        "name": "Qwen2.5 7B Instruct",
+        "version": "q4_k_m",
+        "calls": 88,
+        "tokensIn": 1260000,
+        "tokensOut": 320000,
+        "costUsd": 0.0,
+        "costKind": "electricity",
+        "energyWh": 0.0
       }
     ],
     "byAgent": [
       {
         "agentId": "chief",
         "name": "Chief",
-        "modelId": "claude-sonnet",
+        "modelId": "claude-opus",
         "runs": 3,
         "tokens": 2360000,
         "costUsd": 13.32
@@ -1261,7 +1291,7 @@
       {
         "agentId": "release",
         "name": "Release Notes",
-        "modelId": "claude-sonnet",
+        "modelId": "claude-opus",
         "runs": 3,
         "tokens": 744000,
         "costUsd": 4.2
@@ -1298,30 +1328,30 @@
       "basis": "estimate · declared coefficients, not measured",
       "window": "today",
       "pricePerKwh": 0.28,
-      "referenceModelId": "claude-sonnet",
-      "workloadTokensIn": 7600000,
-      "workloadTokensOut": 1924000,
-      "realisedTokens": 0,
+      "referenceModelId": "claude-opus",
+      "workloadTokensIn": 8860000,
+      "workloadTokensOut": 2244000,
+      "realisedTokens": 1580000,
       "bestModelId": "llama3.2-3b",
-      "bestSavedUsd": 51.59927111111111,
-      "bestSavingsRatio": 0.9988244504667269,
-      "bestEnergyWh": 216.88888888888889,
-      "bestBatteryPct": 299.57028852056476,
+      "bestSavedUsd": 301.12917979797976,
+      "bestSavingsRatio": 0.9997648731672635,
+      "bestEnergyWh": 252.92929292929293,
+      "bestBatteryPct": 349.349852112283,
       "rows": [
         {
           "modelId": "qwen2.5-7b",
           "name": "Qwen2.5 7B Instruct",
-          "tokensIn": 7600000,
-          "tokensOut": 1924000,
-          "seconds": 102642.85714285713,
-          "energyWh": 627.2619047619047,
-          "energyCostUsd": 0.17563333333333334,
-          "apiEquivalentUsd": 51.66,
-          "savedUsd": 51.484366666666666,
-          "savingsRatio": 0.9966002064782553,
-          "tokensPerWh": 15183.450370089202,
-          "batteryPct": 866.3838463562219,
-          "ready": false,
+          "tokensIn": 8860000,
+          "tokensOut": 2244000,
+          "seconds": 119696.42857142858,
+          "energyWh": 731.4781746031746,
+          "energyCostUsd": 0.2048138888888889,
+          "apiEquivalentUsd": 301.2,
+          "savedUsd": 300.9951861111111,
+          "savingsRatio": 0.9993200070090009,
+          "tokensPerWh": 15180.220525409248,
+          "batteryPct": 1010.3289704463738,
+          "ready": true,
           "utilisation": {
             "powerShare": 0.4888888888888889,
             "memoryShare": 0.1527777777777778,
@@ -1332,16 +1362,16 @@
         {
           "modelId": "llama3.2-3b",
           "name": "Llama 3.2 3B Instruct",
-          "tokensIn": 7600000,
-          "tokensOut": 1924000,
-          "seconds": 48800.0,
-          "energyWh": 216.88888888888889,
-          "energyCostUsd": 0.060728888888888895,
-          "apiEquivalentUsd": 51.66,
-          "savedUsd": 51.59927111111111,
-          "savingsRatio": 0.9988244504667269,
-          "tokensPerWh": 43911.88524590164,
-          "batteryPct": 299.57028852056476,
+          "tokensIn": 8860000,
+          "tokensOut": 2244000,
+          "seconds": 56909.09090909091,
+          "energyWh": 252.92929292929293,
+          "energyCostUsd": 0.07082020202020203,
+          "apiEquivalentUsd": 301.2,
+          "savedUsd": 301.12917979797976,
+          "savingsRatio": 0.9997648731672635,
+          "tokensPerWh": 43901.59744408946,
+          "batteryPct": 349.349852112283,
           "ready": false,
           "utilisation": {
             "powerShare": 0.35555555555555557,
@@ -1353,16 +1383,16 @@
         {
           "modelId": "mistral-7b",
           "name": "Mistral 7B Instruct",
-          "tokensIn": 7600000,
-          "tokensOut": 1924000,
-          "seconds": 110538.46153846153,
-          "energyWh": 644.8076923076923,
-          "energyCostUsd": 0.18054615384615386,
-          "apiEquivalentUsd": 51.66,
-          "savedUsd": 51.479453846153845,
-          "savingsRatio": 0.996505107358766,
-          "tokensPerWh": 14770.29525797793,
-          "batteryPct": 890.6183595410113,
+          "tokensIn": 8860000,
+          "tokensOut": 2244000,
+          "seconds": 128903.84615384616,
+          "energyWh": 751.9391025641027,
+          "energyCostUsd": 0.21054294871794876,
+          "apiEquivalentUsd": 301.2,
+          "savedUsd": 300.98945705128205,
+          "savingsRatio": 0.999300986226036,
+          "tokensPerWh": 14767.153300228041,
+          "batteryPct": 1038.58992066865,
           "ready": false,
           "utilisation": {
             "powerShare": 0.4666666666666667,
@@ -1377,19 +1407,25 @@
       {
         "id": "hour",
         "label": "Last hour",
-        "tokensIn": 844445,
-        "tokensOut": 213778,
-        "costUsd": 1.95,
-        "calls": 195,
+        "tokensIn": 984445,
+        "tokensOut": 249334,
+        "costUsd": 10.01,
+        "calls": 205,
+        "meteredUsd": 9.73,
+        "subscriptionUsd": 0.28,
+        "electricityUsd": 0.0,
+        "energyWh": 11.57968253968254,
         "byModel": [
           {
-            "modelId": "claude-sonnet",
-            "name": "Claude Sonnet",
+            "modelId": "claude-opus",
+            "name": "Claude Opus",
             "version": "provider default",
             "calls": 35,
             "tokensIn": 268889,
             "tokensOut": 76000,
-            "costUsd": 1.95
+            "costUsd": 9.73,
+            "costKind": "metered",
+            "energyWh": 0.0
           },
           {
             "modelId": "codex",
@@ -1398,7 +1434,9 @@
             "calls": 22,
             "tokensIn": 575556,
             "tokensOut": 137778,
-            "costUsd": 0.0
+            "costUsd": 0.28,
+            "costKind": "subscription",
+            "energyWh": 0.0
           },
           {
             "modelId": "inspector-local",
@@ -1407,26 +1445,45 @@
             "calls": 138,
             "tokensIn": 0,
             "tokensOut": 0,
-            "costUsd": 0.0
+            "costUsd": 0.0,
+            "costKind": "none",
+            "energyWh": 0.0
+          },
+          {
+            "modelId": "qwen2.5-7b",
+            "name": "Qwen2.5 7B Instruct",
+            "version": "q4_k_m",
+            "calls": 10,
+            "tokensIn": 140000,
+            "tokensOut": 35556,
+            "costUsd": 0.0,
+            "costKind": "electricity",
+            "energyWh": 11.57968253968254
           }
         ]
       },
       {
         "id": "today",
         "label": "Today",
-        "tokensIn": 7600000,
-        "tokensOut": 1924000,
-        "costUsd": 17.52,
-        "calls": 1748,
+        "tokensIn": 8860000,
+        "tokensOut": 2244000,
+        "costUsd": 94.3,
+        "calls": 1836,
+        "meteredUsd": 87.6,
+        "subscriptionUsd": 6.67,
+        "electricityUsd": 0.03,
+        "energyWh": 104.21626984126983,
         "byModel": [
           {
-            "modelId": "claude-sonnet",
-            "name": "Claude Sonnet",
+            "modelId": "claude-opus",
+            "name": "Claude Opus",
             "version": "provider default",
             "calls": 312,
             "tokensIn": 2420000,
             "tokensOut": 684000,
-            "costUsd": 17.52
+            "costUsd": 87.6,
+            "costKind": "metered",
+            "energyWh": 0.0
           },
           {
             "modelId": "codex",
@@ -1435,7 +1492,9 @@
             "calls": 196,
             "tokensIn": 5180000,
             "tokensOut": 1240000,
-            "costUsd": 0.0
+            "costUsd": 6.67,
+            "costKind": "subscription",
+            "energyWh": 0.0
           },
           {
             "modelId": "inspector-local",
@@ -1444,81 +1503,136 @@
             "calls": 1240,
             "tokensIn": 0,
             "tokensOut": 0,
-            "costUsd": 0.0
+            "costUsd": 0.0,
+            "costKind": "none",
+            "energyWh": 0.0
+          },
+          {
+            "modelId": "qwen2.5-7b",
+            "name": "Qwen2.5 7B Instruct",
+            "version": "q4_k_m",
+            "calls": 88,
+            "tokensIn": 1260000,
+            "tokensOut": 320000,
+            "costUsd": 0.03,
+            "costKind": "electricity",
+            "energyWh": 104.21626984126983
           }
         ]
       },
       {
         "id": "week",
         "label": "This week",
-        "tokensIn": 25794036,
-        "tokensOut": 6529964,
-        "costUsd": 59.46,
-        "calls": 5933,
+        "tokensIn": 25791664,
+        "tokensOut": 6532336,
+        "costUsd": 301.76,
+        "calls": 5345,
+        "meteredUsd": 255.01,
+        "subscriptionUsd": 46.67,
+        "electricityUsd": 0.08,
+        "energyWh": 303.37588045634925,
         "byModel": [
           {
-            "modelId": "claude-sonnet",
-            "name": "Claude Sonnet",
+            "modelId": "claude-opus",
+            "name": "Claude Opus",
             "version": "provider default",
-            "calls": 1059,
-            "tokensIn": 8213364,
-            "tokensOut": 2321463,
-            "costUsd": 59.46
+            "calls": 908,
+            "tokensIn": 7044676,
+            "tokensOut": 1991140,
+            "costUsd": 255.01,
+            "costKind": "metered",
+            "energyWh": 0.0
           },
           {
             "modelId": "codex",
             "name": "Codex",
             "version": "provider default",
-            "calls": 665,
-            "tokensIn": 17580672,
-            "tokensOut": 4208501,
-            "costUsd": 0.0
+            "calls": 571,
+            "tokensIn": 15079099,
+            "tokensOut": 3609669,
+            "costUsd": 46.67,
+            "costKind": "subscription",
+            "energyWh": 0.0
           },
           {
             "modelId": "inspector-local",
             "name": "Open Cube Inspector",
             "version": "v1",
-            "calls": 4209,
+            "calls": 3610,
             "tokensIn": 0,
             "tokensOut": 0,
-            "costUsd": 0.0
+            "costUsd": 0.0,
+            "costKind": "none",
+            "energyWh": 0.0
+          },
+          {
+            "modelId": "qwen2.5-7b",
+            "name": "Qwen2.5 7B Instruct",
+            "version": "q4_k_m",
+            "calls": 256,
+            "tokensIn": 3667889,
+            "tokensOut": 931527,
+            "costUsd": 0.08,
+            "costKind": "electricity",
+            "energyWh": 303.37588045634925
           }
         ]
       },
       {
         "id": "month",
         "label": "This month",
-        "tokensIn": 110914356,
-        "tokensOut": 28078845,
-        "costUsd": 255.69,
-        "calls": 25510,
+        "tokensIn": 110904157,
+        "tokensOut": 28089044,
+        "costUsd": 1296.89,
+        "calls": 22982,
+        "meteredUsd": 1096.52,
+        "subscriptionUsd": 200.0,
+        "electricityUsd": 0.37,
+        "energyWh": 1304.5167088293651,
         "byModel": [
           {
-            "modelId": "claude-sonnet",
-            "name": "Claude Sonnet",
+            "modelId": "claude-opus",
+            "name": "Claude Opus",
             "version": "provider default",
-            "calls": 4553,
-            "tokensIn": 35317466,
-            "tokensOut": 9982292,
-            "costUsd": 255.69
+            "calls": 3905,
+            "tokensIn": 30292106,
+            "tokensOut": 8561901,
+            "costUsd": 1096.52,
+            "costKind": "metered",
+            "energyWh": 0.0
           },
           {
             "modelId": "codex",
             "name": "Codex",
             "version": "provider default",
-            "calls": 2860,
-            "tokensIn": 75596890,
-            "tokensOut": 18096553,
-            "costUsd": 0.0
+            "calls": 2453,
+            "tokensIn": 64840128,
+            "tokensOut": 15521575,
+            "costUsd": 200.0,
+            "costKind": "subscription",
+            "energyWh": 0.0
           },
           {
             "modelId": "inspector-local",
             "name": "Open Cube Inspector",
             "version": "v1",
-            "calls": 18097,
+            "calls": 15522,
             "tokensIn": 0,
             "tokensOut": 0,
-            "costUsd": 0.0
+            "costUsd": 0.0,
+            "costKind": "none",
+            "energyWh": 0.0
+          },
+          {
+            "modelId": "qwen2.5-7b",
+            "name": "Qwen2.5 7B Instruct",
+            "version": "q4_k_m",
+            "calls": 1102,
+            "tokensIn": 15771923,
+            "tokensOut": 4005568,
+            "costUsd": 0.37,
+            "costKind": "electricity",
+            "energyWh": 1304.5167088293651
           }
         ]
       }
@@ -4709,56 +4823,56 @@
         {
           "modelId": "inspector-local",
           "name": "Open Cube Inspector",
-          "runs": 263,
-          "tokens": 48617018,
+          "runs": 238,
+          "tokens": 43861005,
           "costUsd": 0.0,
-          "share": 0.1807228915662651,
-          "daysActive": 55
+          "share": 0.16304347826086957,
+          "daysActive": 50
         },
         {
-          "modelId": "claude-sonnet",
-          "name": "Claude Sonnet",
-          "runs": 439,
-          "tokens": 81028363,
-          "costUsd": 1215.425445,
-          "share": 0.30120481927710846,
-          "daysActive": 92
+          "modelId": "claude-opus",
+          "name": "Claude Opus",
+          "runs": 396,
+          "tokens": 73101675,
+          "costUsd": 5482.625625,
+          "share": 0.27173913043478265,
+          "daysActive": 83
         },
         {
           "modelId": "codex",
           "name": "Codex",
-          "runs": 439,
-          "tokens": 81028363,
+          "runs": 396,
+          "tokens": 73101675,
           "costUsd": 0.0,
-          "share": 0.30120481927710846,
-          "daysActive": 92
+          "share": 0.27173913043478265,
+          "daysActive": 83
         },
         {
           "modelId": "qwen2.5-7b",
           "name": "Qwen2.5 7B Instruct",
-          "runs": 105,
-          "tokens": 19446807,
+          "runs": 238,
+          "tokens": 43861005,
           "costUsd": 0.0,
-          "share": 0.07228915662650603,
-          "daysActive": 22
+          "share": 0.16304347826086957,
+          "daysActive": 50
         },
         {
           "modelId": "llama3.2-3b",
           "name": "Llama 3.2 3B Instruct",
-          "runs": 105,
-          "tokens": 19446807,
+          "runs": 95,
+          "tokens": 17544402,
           "costUsd": 0.0,
-          "share": 0.07228915662650603,
-          "daysActive": 22
+          "share": 0.06521739130434782,
+          "daysActive": 20
         },
         {
           "modelId": "mistral-7b",
           "name": "Mistral 7B Instruct",
-          "runs": 105,
-          "tokens": 19446807,
+          "runs": 95,
+          "tokens": 17544402,
           "costUsd": 0.0,
-          "share": 0.07228915662650603,
-          "daysActive": 22
+          "share": 0.06521739130434782,
+          "daysActive": 20
         }
       ],
       "byKind": [

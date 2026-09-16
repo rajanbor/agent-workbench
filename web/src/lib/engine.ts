@@ -46,6 +46,14 @@ export interface Pricing {
   outputPerMtok: number;
 }
 
+export interface Subscription {
+  plan: string;
+  monthlyUsd: number;
+}
+
+/** Where a cost figure comes from. Three kinds add up only if each says so. */
+export type CostKind = "metered" | "subscription" | "electricity" | "none";
+
 export interface Reference {
   kind: string;
   label: string;
@@ -78,6 +86,7 @@ export interface ModelCard {
   digest: string;
   revisions: ModelRevision[];
   pricing: Pricing | null;
+  subscription: Subscription | null;
   summary: string;
   strengths: string[];
   requirements: string[];
@@ -285,6 +294,8 @@ export interface ModelUsage {
   tokensIn: number;
   tokensOut: number;
   costUsd: number;
+  costKind: CostKind;
+  energyWh: number;
 }
 
 export interface AgentUsage {
@@ -349,6 +360,10 @@ export interface UsagePeriod {
   tokensOut: number;
   costUsd: number;
   calls: number;
+  meteredUsd: number;
+  subscriptionUsd: number;
+  electricityUsd: number;
+  energyWh: number;
   byModel: ModelUsage[];
 }
 
@@ -400,6 +415,10 @@ export interface UsageSummary {
   tokensIn: number;
   tokensOut: number;
   costUsd: number;
+  meteredUsd: number;
+  subscriptionUsd: number;
+  electricityUsd: number;
+  energyWh: number;
   byModel: ModelUsage[];
   byAgent: AgentUsage[];
   daily: DailyUsage[];

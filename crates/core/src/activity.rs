@@ -200,47 +200,136 @@ pub fn calendar(models: &[ModelCard], weeks_back: i64, by_kind: Vec<ActivityKind
     }
 }
 
-/// The windows the cost chip offers. Each carries its own totals and rows, so
-/// picking one changes every number on the panel together.
-pub fn periods(by_model: &[ModelUsage], daily: &[DailyUsage]) -> Vec<UsagePeriod> {
-    let today_in: u64 = by_model.iter().map(|row| row.tokens_in).sum();
-    let today_out: u64 = by_model.iter().map(|row| row.tokens_out).sum();
+/// The windows the cost chip offers.
+///
+/// Three kinds of money live here and they are computed differently:
+/// metered rows scale with the tokens, a subscription is the monthly plan
+/// spread over the window, and a local model costs the electricity its run
+/// needs at the machine's declared price.
+pub fn periods(
+    by_model: &[ModelUsage],
+    daily: &[DailyUsage],
+    models: &[ModelCard],
+    device: &DeviceEnergy,
+) -> Vec<UsagePeriod> {
+    let today_tokens: u64 = by_model
+        .iter()
+        .map(|row| row.tokens_in + row.tokens_out)
+        .sum();
     let week_tokens: u64 = daily.iter().map(|day| day.tokens).sum();
-    let day_tokens = (today_in + today_out).max(1);
+    let day_tokens = today_tokens.max(1);
 
-    // Each window is a multiple of the day the prototype describes.
-    let factors = [
-        ("hour", "Last hour", 1.0 / 9.0),
-        ("today", "Today", 1.0),
-        ("week", "This week", week_tokens as f64 / day_tokens as f64),
-        ("month", "This month", 4.3 * week_tokens as f64 / day_tokens as f64),
+    // (id, label, how much of a day's work, how much of a month's calendar)
+    let windows = [
+        ("hour", "Last hour", 1.0 / 9.0, 1.0 / (30.0 * 24.0)),
+        ("today", "Today", 1.0, 1.0 / 30.0),
+        (
+            "week",
+            "This week",
+            week_tokens as f64 / day_tokens as f64,
+            7.0 / 30.0,
+        ),
+        (
+            "month",
+            "This month",
+            4.3 * week_tokens as f64 / day_tokens as f64,
+            1.0,
+        ),
     ];
 
-    factors
+    windows
         .iter()
-        .map(|(id, label, factor)| {
+        .map(|(id, label, work, month_share)| {
             let rows: Vec<ModelUsage> = by_model
                 .iter()
-                .map(|row| ModelUsage {
-                    model_id: row.model_id.clone(),
-                    name: row.name.clone(),
-                    version: row.version.clone(),
-                    calls: (row.calls as f64 * factor).round() as u32,
-                    tokens_in: (row.tokens_in as f64 * factor).round() as u64,
-                    tokens_out: (row.tokens_out as f64 * factor).round() as u64,
-                    cost_usd: (row.cost_usd * factor * 100.0).round() / 100.0,
+                .map(|row| {
+                    let model = models.iter().find(|model| model.id == row.model_id);
+                    let tokens_in = (row.tokens_in as f64 * work).round() as u64;
+                    let tokens_out = (row.tokens_out as f64 * work).round() as u64;
+
+                    let (cost_usd, kind, energy_wh) = match model {
+                        // Metered: the provider bills the tokens.
+                        Some(model) if model.pricing.is_some() => {
+                            let pricing = model.pricing.unwrap();
+                            let cost = tokens_in as f64 / 1_000_000.0 * pricing.input_per_mtok
+                                + tokens_out as f64 / 1_000_000.0 * pricing.output_per_mtok;
+                            (round_cents(cost), CostKind::Metered, 0.0)
+                        }
+                        // A plan: the same fee whether it ran or not, spread
+                        // over the window being shown.
+                        Some(model) if model.subscription.is_some() => {
+                            let plan = model.subscription.as_ref().unwrap();
+                            (
+                                round_cents(plan.monthly_usd * month_share),
+                                CostKind::Subscription,
+                                0.0,
+                            )
+                        }
+                        // On the device: electricity, from the same formula the
+                        // local comparison uses.
+                        Some(model) if model.local_profile.is_some() => {
+                            let profile = model.local_profile.as_ref().unwrap();
+                            let energy = energy_wh_for(profile, tokens_in, tokens_out);
+                            (
+                                round_cents(energy / 1000.0 * device.price_per_kwh),
+                                CostKind::Electricity,
+                                energy,
+                            )
+                        }
+                        _ => (0.0, CostKind::None, 0.0),
+                    };
+
+                    ModelUsage {
+                        model_id: row.model_id.clone(),
+                        name: row.name.clone(),
+                        version: row.version.clone(),
+                        calls: (row.calls as f64 * work).round() as u32,
+                        tokens_in,
+                        tokens_out,
+                        cost_usd,
+                        cost_kind: kind,
+                        energy_wh,
+                    }
                 })
                 .collect();
+
+            let sum = |kind: CostKind| -> f64 {
+                round_cents(
+                    rows.iter()
+                        .filter(|row| row.cost_kind == kind)
+                        .map(|row| row.cost_usd)
+                        .sum(),
+                )
+            };
 
             UsagePeriod {
                 id: (*id).into(),
                 label: (*label).into(),
                 tokens_in: rows.iter().map(|row| row.tokens_in).sum(),
                 tokens_out: rows.iter().map(|row| row.tokens_out).sum(),
-                cost_usd: rows.iter().map(|row| row.cost_usd).sum(),
+                cost_usd: round_cents(rows.iter().map(|row| row.cost_usd).sum()),
                 calls: rows.iter().map(|row| row.calls).sum(),
+                metered_usd: sum(CostKind::Metered),
+                subscription_usd: sum(CostKind::Subscription),
+                electricity_usd: sum(CostKind::Electricity),
+                energy_wh: rows.iter().map(|row| row.energy_wh).sum(),
                 by_model: rows,
             }
         })
         .collect()
+}
+
+/// Cents, so a column of costs adds up to what it displays.
+fn round_cents(value: f64) -> f64 {
+    (value * 100.0).round() / 100.0
+}
+
+/// Energy for a workload on one local model, shared with the economics module.
+pub fn energy_wh_for(profile: &LocalProfile, tokens_in: u64, tokens_out: u64) -> f64 {
+    if profile.throughput_tps <= 0.0 {
+        return 0.0;
+    }
+    let seconds = tokens_out as f64 / profile.throughput_tps
+        + tokens_in as f64 / (profile.throughput_tps * profile.prefill_factor.max(1.0));
+    profile.power_draw_w * seconds / 3600.0
 }

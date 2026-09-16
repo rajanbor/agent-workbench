@@ -77,6 +77,7 @@ pub struct ModelCard {
     pub digest: String,
     pub revisions: Vec<ModelRevision>,
     pub pricing: Option<Pricing>,
+    pub subscription: Option<Subscription>,
     /// Knowledge-base entry: what the model is for and what it needs.
     pub summary: String,
     pub strengths: Vec<String>,
@@ -134,6 +135,30 @@ pub struct ModelRevision {
 pub struct Pricing {
     pub input_per_mtok: f64,
     pub output_per_mtok: f64,
+}
+
+/// A plan paid by the month. It is money, it is simply not metered per token,
+/// so it is amortised over the window being shown.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Subscription {
+    pub plan: String,
+    pub monthly_usd: f64,
+}
+
+/// Where a figure in the cost column comes from. Adding three kinds together
+/// without saying so would be misleading, so every row carries its kind.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub enum CostKind {
+    /// Billed per token by the provider.
+    Metered,
+    /// A share of a plan paid by the month.
+    Subscription,
+    /// Electricity this machine spent running the model.
+    Electricity,
+    /// Nothing is paid for this work.
+    None,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -436,6 +461,10 @@ pub struct UsageSummary {
     pub tokens_in: u64,
     pub tokens_out: u64,
     pub cost_usd: f64,
+    pub metered_usd: f64,
+    pub subscription_usd: f64,
+    pub electricity_usd: f64,
+    pub energy_wh: f64,
     pub by_model: Vec<ModelUsage>,
     pub by_agent: Vec<AgentUsage>,
     pub daily: Vec<DailyUsage>,
@@ -454,6 +483,9 @@ pub struct ModelUsage {
     pub tokens_in: u64,
     pub tokens_out: u64,
     pub cost_usd: f64,
+    pub cost_kind: CostKind,
+    /// Energy this row spent, when it ran on the device.
+    pub energy_wh: f64,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -515,6 +547,11 @@ pub struct UsagePeriod {
     pub tokens_out: u64,
     pub cost_usd: f64,
     pub calls: u32,
+    /// The total split by where the money goes.
+    pub metered_usd: f64,
+    pub subscription_usd: f64,
+    pub electricity_usd: f64,
+    pub energy_wh: f64,
     pub by_model: Vec<ModelUsage>,
 }
 

@@ -241,6 +241,77 @@ mod tests {
     }
 
     #[test]
+    fn every_period_splits_its_cost_by_where_the_money_goes() {
+        let s = snapshot();
+        for period in &s.usage.periods {
+            let parts = period.metered_usd + period.subscription_usd + period.electricity_usd;
+            assert!(
+                (period.cost_usd - parts).abs() < 0.02,
+                "{}: {} != {}",
+                period.id,
+                period.cost_usd,
+                parts
+            );
+            for row in &period.by_model {
+                let model = s
+                    .models
+                    .iter()
+                    .find(|model| model.id == row.model_id)
+                    .expect("row points at a model");
+                match row.cost_kind {
+                    CostKind::Metered => assert!(model.pricing.is_some()),
+                    CostKind::Subscription => assert!(model.subscription.is_some()),
+                    CostKind::Electricity => {
+                        assert!(model.local_profile.is_some());
+                        assert!(row.energy_wh > 0.0 || row.tokens_out == 0);
+                    }
+                    CostKind::None => assert_eq!(row.cost_usd, 0.0),
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn a_subscription_costs_the_plan_over_a_month() {
+        let s = snapshot();
+        let month = s
+            .usage
+            .periods
+            .iter()
+            .find(|period| period.id == "month")
+            .unwrap();
+        let plan: f64 = s
+            .models
+            .iter()
+            .filter_map(|model| model.subscription.as_ref())
+            .map(|subscription| subscription.monthly_usd)
+            .sum();
+        assert!((month.subscription_usd - plan).abs() < 0.01, "a month is the plan");
+
+        let today = s
+            .usage
+            .periods
+            .iter()
+            .find(|period| period.id == "today")
+            .unwrap();
+        assert!((today.subscription_usd - plan / 30.0).abs() < 0.01, "a day is a thirtieth");
+    }
+
+    #[test]
+    fn a_local_model_costs_its_electricity() {
+        let s = snapshot();
+        let today = s.usage.periods.iter().find(|p| p.id == "today").unwrap();
+        let row = today
+            .by_model
+            .iter()
+            .find(|row| row.cost_kind == CostKind::Electricity)
+            .expect("a local model is in use");
+        let expected = row.energy_wh / 1000.0 * s.computer.energy.price_per_kwh;
+        assert!((row.cost_usd - expected).abs() < 0.01);
+        assert!(row.energy_wh > 0.0);
+    }
+
+    #[test]
     fn activity_kinds_are_counted_and_add_up() {
         let s = snapshot();
         let kinds = &s.usage.activity.by_kind;

@@ -1001,3 +1001,9 @@
   font-size: var(--text-md);
   font-variant-numeric: tabular-nums;
 }
+
+.usage-pop__split {
+  margin-top: 2px;
+  color: var(--text-faint);
+  font-size: 10px;
+}
