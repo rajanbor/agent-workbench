@@ -12,20 +12,29 @@ The window also carries the local comparison described in
 time, energy, battery and share of the machine, and what that saves against the
 reference API model.
 
-## Periods
+## Two surfaces, two jobs
 
-Spend is reported over a chosen window — last hour, today, this week, this
-month — and the cost chip in the top bar is where it is chosen. Picking a
-window changes the tiles, the per-model rows and the chip together; each
-window carries its own rows so the totals always match what is listed.
+The **cost chip** is a small usage view of its own. Picking a period changes
+the numbers inside it — cost, tokens, calls and the per-model rows — and it
+stays open. It never navigates.
+
+The **panel** is the whole picture, and there the periods are not a filter:
+last hour, today, this week and this month are all present, with a model table
+carrying a column per period and a total row. The chip's current choice is
+marked there, so the two surfaces agree without one driving the other.
+
+Each window carries its own rows, so a total always matches what is listed
+beneath it.
 
 ## Activity
 
 A year of days is shown as a calendar of whole week columns, each day drawn at
 one of five intensities by how much ran that day, with the month above the week
-where it starts. Under it, the same activity split per model — runs, active
-days, tokens, share and cost — the way a profile splits contributions between
-organisations. The series is generated deterministically from the date and says
+where it starts. Under it: the models the work ran on as chips, an activity overview naming
+where the work happened, and the split by kind of work — chat answers, agent
+runs, terminal commands, workflow steps — as a list and a four-axis chart.
+Then the same activity per model: runs, active days, tokens, share and cost.
+Every kind is counted from the objects that hold it, never estimated. The series is generated deterministically from the date and says
 so; recorded runs arrive with the event log (#15).
 
 ## Rules

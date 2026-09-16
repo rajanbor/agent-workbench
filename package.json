@@ -4,7 +4,7 @@
   "description": "One cross-platform agent workbench: Rust core, web client, Tauri window",
   "scripts": {
     "dev": "pnpm -F open-cube-web dev",
-    "build": "pnpm -F open-cube-web build",
+    "build": "node scripts/check-styles.mjs && pnpm -F open-cube-web build",
     "app": "cd crates/app && pnpm exec tauri dev",
     "app:build": "cd crates/app && pnpm exec tauri build",
     "test": "cargo test --offline --workspace",

@@ -225,10 +225,7 @@ export default function App() {
         onPalette={() => setPaletteOpen(true)}
         onUsage={() => select("usage")}
         period={period}
-        onPeriod={(id) => {
-          setPeriod(id);
-          select("usage");
-        }}
+        onPeriod={setPeriod}
         onAction={notify}
       />
 
@@ -285,7 +282,7 @@ export default function App() {
               />
             )}
             {view === "usage" && (
-              <UsageView snapshot={snapshot} period={period} onPeriod={setPeriod} />
+              <UsageView snapshot={snapshot} period={period} />
             )}
             {view === "agent" && (
               <AgentView

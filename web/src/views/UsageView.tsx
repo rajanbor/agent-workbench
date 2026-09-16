@@ -6,80 +6,62 @@ import type { DesktopSnapshot } from "../lib/engine";
 export function UsageView({
   snapshot,
   period,
-  onPeriod,
 }: {
   snapshot: DesktopSnapshot;
   period: string;
-  onPeriod: (id: string) => void;
 }) {
   const usage = snapshot.usage;
-  const active = usage.periods.find((item) => item.id === period) ?? usage.periods[1];
-  const byModel = active.byModel;
-  const total = active.tokensIn + active.tokensOut;
+  const periods = usage.periods;
   const peak = Math.max(...usage.daily.map((day) => day.costUsd), 0.01);
+  const longest = periods[periods.length - 1];
+
+  /** Cost of one model in one period, for the cell in the matrix below. */
+  const cell = (modelId: string, windowId: string) =>
+    periods
+      .find((item) => item.id === windowId)
+      ?.byModel.find((row) => row.modelId === modelId);
 
   return (
     <div className="stack stack--wide">
       <SectionTitle
         action={
-          <div className="filter-row">
-            {usage.periods.map((item) => (
-              <button
-                key={item.id}
-                className={`filter-row__item ${item.id === active.id ? "is-active" : ""}`}
-                onClick={() => onPeriod(item.id)}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
+          <Badge tone="neutral" icon="clock">
+            every period
+          </Badge>
         }
       >
         Usage and cost
       </SectionTitle>
 
+      {/* The panel does not filter: every window is here, side by side. The
+          chip's choice is only marked, so the two surfaces agree. */}
       <div className="metrics">
-        <Card className="metric">
-          <p className="metric__label">Cost</p>
-          <p className="metric__value">{money(active.costUsd)}</p>
-          <p className="metric__hint">
-            {active.label.toLowerCase()} · metered API calls only
-          </p>
-        </Card>
-        <Card className="metric">
-          <p className="metric__label">Tokens</p>
-          <p className="metric__value">{compactTokens(total)}</p>
-          <p className="metric__hint">
-            {compactTokens(active.tokensIn)} in · {compactTokens(active.tokensOut)} out
-          </p>
-        </Card>
-        <Card className="metric">
-          <p className="metric__label">Calls</p>
-          <p className="metric__value">{active.calls}</p>
-          <p className="metric__hint">
-            across {byModel.filter((model) => model.calls > 0).length} models
-          </p>
-        </Card>
-        <Card className="metric">
-          <p className="metric__label">Agents billed</p>
-          <p className="metric__value">{usage.byAgent.filter((agent) => agent.costUsd > 0).length}</p>
-          <p className="metric__hint">of {usage.byAgent.length} configured</p>
-        </Card>
+        {periods.map((item) => (
+          <Card
+            key={item.id}
+            className={`metric ${item.id === period ? "is-current" : ""}`}
+          >
+            <p className="metric__label">{item.label}</p>
+            <p className="metric__value">{money(item.costUsd)}</p>
+            <p className="metric__hint">
+              {compactTokens(item.tokensIn + item.tokensOut)} tokens · {item.calls} calls
+            </p>
+          </Card>
+        ))}
       </div>
 
-      <SectionTitle count={byModel.length}>By model</SectionTitle>
-      <Card className="table table--usage">
+      <SectionTitle count={longest.byModel.length}>By model, across periods</SectionTitle>
+      <Card className="table table--matrix">
         <div className="table__head">
           <span>Model</span>
-          <span>Version</span>
-          <span>Calls</span>
-          <span>Tokens</span>
-          <span>Cost</span>
-          <span>Share</span>
+          {periods.map((item) => (
+            <span key={item.id}>{item.label}</span>
+          ))}
+          <span>Share of {longest.label.toLowerCase()}</span>
         </div>
-        {byModel.map((row) => {
+        {longest.byModel.map((row) => {
           const model = snapshot.models.find((item) => item.id === row.modelId);
-          const share = active.costUsd > 0 ? (row.costUsd / active.costUsd) * 100 : 0;
+          const share = longest.costUsd > 0 ? (row.costUsd / longest.costUsd) * 100 : 0;
           return (
             <div className="table__row is-static" key={row.modelId}>
               <span className="table__main">
@@ -90,13 +72,23 @@ export function UsageView({
                 />
                 <span>
                   <strong>{row.name}</strong>
-                  <small>{model?.vendor}</small>
+                  <small>{row.version}</small>
                 </span>
               </span>
-              <span className="mono">{row.version}</span>
-              <span className="mono">{row.calls}</span>
-              <span className="mono">{compactTokens(row.tokensIn + row.tokensOut)}</span>
-              <span className="mono">{money(row.costUsd)}</span>
+              {periods.map((item) => {
+                const value = cell(row.modelId, item.id);
+                return (
+                  <span
+                    key={item.id}
+                    className={`mono ${item.id === period ? "is-current" : ""}`}
+                    title={`${compactTokens((value?.tokensIn ?? 0) + (value?.tokensOut ?? 0))} tokens · ${
+                      value?.calls ?? 0
+                    } calls`}
+                  >
+                    {money(value?.costUsd ?? 0)}
+                  </span>
+                );
+              })}
               <span className="share">
                 <i style={{ width: `${Math.max(share, 2)}%` }} />
                 <em className="mono">{share.toFixed(0)}%</em>
@@ -104,6 +96,17 @@ export function UsageView({
             </div>
           );
         })}
+        <div className="table__row is-static table__row--total">
+          <span className="table__main">
+            <strong>Total</strong>
+          </span>
+          {periods.map((item) => (
+            <span key={item.id} className="mono">
+              {money(item.costUsd)}
+            </span>
+          ))}
+          <span />
+        </div>
       </Card>
 
       <ActivityCalendarView snapshot={snapshot} />
@@ -326,6 +329,51 @@ function ActivityCalendarView({ snapshot }: { snapshot: DesktopSnapshot }) {
         <p className="formula">{activity.basis}</p>
       </Card>
 
+      {/* Which models the work ran on, then what the work was. */}
+      <div className="activity-chips">
+        {activity.byModel
+          .filter((row) => row.runs > 0)
+          .map((row) => {
+            const model = snapshot.models.find((item) => item.id === row.modelId);
+            return (
+              <span className="activity-chip" key={row.modelId}>
+                <ModelGlyph
+                  icon={model?.icon ?? "model"}
+                  accent={accentOf(model?.accent)}
+                  size={18}
+                />
+                {row.name}
+              </span>
+            );
+          })}
+      </div>
+
+      <Card className="pad overview">
+        <div className="overview__text">
+          <h3>Activity overview</h3>
+          <p className="muted-copy">
+            Worked across{" "}
+            <strong>
+              {snapshot.sandboxes.filter((sandbox) => sandbox.agents.length > 0).length} sandboxes
+            </strong>{" "}
+            with <strong>{snapshot.agents.length} agents</strong>, on{" "}
+            <strong>{snapshot.workflow.name}</strong> and{" "}
+            {snapshot.terminals.length} terminal panes.
+          </p>
+          <ul className="overview__list">
+            {activity.byKind.map((kind) => (
+              <li key={kind.name}>
+                <span>{kind.name}</span>
+                <em className="mono">
+                  {kind.count} · {percent(kind.share)}
+                </em>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <Quadrant kinds={activity.byKind} />
+      </Card>
+
       <SectionTitle count={activity.byModel.length}>Activity per model</SectionTitle>
       <div className="rows">
         {activity.byModel.map((row) => {
@@ -367,4 +415,55 @@ function monthLabels(weeks: DesktopSnapshot["usage"]["activity"]["weeks"]) {
     }
   });
   return labels;
+}
+
+/** The four kinds of work on two axes, the way a profile shows its split. */
+function Quadrant({ kinds }: { kinds: DesktopSnapshot["usage"]["activity"]["byKind"] }) {
+  // Room for the labels: the axes stop well short of the edge.
+  const size = 260;
+  const centre = size / 2;
+  const reach = centre - 56;
+  const max = Math.max(...kinds.map((kind) => kind.share), 0.01);
+
+  // up, right, down, left — in the order the engine lists them.
+  const axes: { dx: number; dy: number; anchor: "start" | "middle" | "end"; dyText: number }[] = [
+    { dx: 0, dy: -1, anchor: "middle", dyText: -12 },
+    { dx: 1, dy: 0, anchor: "start", dyText: 4 },
+    { dx: 0, dy: 1, anchor: "middle", dyText: 18 },
+    { dx: -1, dy: 0, anchor: "end", dyText: 4 },
+  ];
+
+  const points = kinds.map((kind, index) => {
+    const axis = axes[index % axes.length];
+    const length = (kind.share / max) * reach;
+    return { x: centre + axis.dx * length, y: centre + axis.dy * length };
+  });
+
+  return (
+    <svg className="quadrant" viewBox={`0 0 ${size} ${size}`} role="img" aria-label="Activity split">
+      <line x1={centre} y1={centre - reach} x2={centre} y2={centre + reach} />
+      <line x1={centre - reach} y1={centre} x2={centre + reach} y2={centre} />
+      <polygon points={points.map((point) => `${point.x},${point.y}`).join(" ")} />
+      {points.map((point, index) => (
+        <circle key={index} cx={point.x} cy={point.y} r={3.5} />
+      ))}
+      {kinds.map((kind, index) => {
+        const axis = axes[index % axes.length];
+        return (
+          <text
+            key={kind.name}
+            x={centre + axis.dx * (reach + 6)}
+            y={centre + axis.dy * (reach + 6) + axis.dyText}
+            textAnchor={axis.anchor}
+          >
+            <tspan className="quadrant__value">{percent(kind.share)}</tspan>
+            <tspan x={centre + axis.dx * (reach + 6)} dy="13">
+              {/* Short here; the full names are in the list beside the chart. */}
+              {kind.name.split(" ")[0]}
+            </tspan>
+          </text>
+        );
+      })}
+    </svg>
+  );
 }

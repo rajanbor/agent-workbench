@@ -883,20 +883,8 @@ fn mcp_server(id: &str, name: &str, transport: &str, status: &str, summary: &str
     }
 }
 
-fn usage() -> UsageSummary {
-    let by_agent: Vec<AgentUsage> = agents()
-        .iter()
-        .map(|agent| AgentUsage {
-            agent_id: agent.id.clone(),
-            name: agent.name.clone(),
-            model_id: agent.model_id.clone(),
-            runs: if agent.cost_usd > 0.0 { 3 } else { 0 },
-            tokens: agent.tokens_in + agent.tokens_out,
-            cost_usd: agent.cost_usd,
-        })
-        .collect();
-
-    let by_model = vec![
+fn usage_rows() -> Vec<ModelUsage> {
+    vec![
         ModelUsage {
             model_id: "claude-sonnet".into(),
             name: "Claude Sonnet".into(),
@@ -924,7 +912,23 @@ fn usage() -> UsageSummary {
             tokens_out: 0,
             cost_usd: 0.0,
         },
-    ];
+    ]
+}
+
+fn usage() -> UsageSummary {
+    let by_agent: Vec<AgentUsage> = agents()
+        .iter()
+        .map(|agent| AgentUsage {
+            agent_id: agent.id.clone(),
+            name: agent.name.clone(),
+            model_id: agent.model_id.clone(),
+            runs: if agent.cost_usd > 0.0 { 3 } else { 0 },
+            tokens: agent.tokens_in + agent.tokens_out,
+            cost_usd: agent.cost_usd,
+        })
+        .collect();
+
+    let by_model = usage_rows();
 
     let tokens_in = by_model.iter().map(|m| m.tokens_in).sum();
     let tokens_out = by_model.iter().map(|m| m.tokens_out).sum();
@@ -962,9 +966,30 @@ fn usage() -> UsageSummary {
         by_agent,
         local,
         periods,
-        activity: crate::activity::calendar(&models(), 52),
+        activity: crate::activity::calendar(&models(), 52, kinds()),
         daily,
     }
+}
+
+/// Counted from the objects that hold the work, not estimated.
+fn kinds() -> Vec<ActivityKind> {
+    let inspector_calls = usage_rows()
+        .iter()
+        .filter(|row| row.model_id == "inspector-local")
+        .map(|row| row.calls)
+        .sum();
+    let agent_runs = agents()
+        .iter()
+        .filter(|agent| agent.cost_usd > 0.0)
+        .count() as u32
+        * 3;
+    let terminal_commands = terminals()
+        .iter()
+        .flat_map(|terminal| terminal.lines.iter())
+        .filter(|line| line.stream == "input")
+        .count() as u32;
+    let workflow_steps = workflow().nodes.len() as u32;
+    crate::activity::kinds(inspector_calls, agent_runs, terminal_commands, workflow_steps)
 }
 
 fn daily(day: &str, tokens: u64, cost_usd: f64) -> DailyUsage {

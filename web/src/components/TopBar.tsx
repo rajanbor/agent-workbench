@@ -187,6 +187,8 @@ export function TopBar({
           )}
         </Menu>
 
+        {/* A small usage view: picking a period changes what is shown here,
+            and never navigates. The panel is a separate, explicit action. */}
         <Menu
           className="menu--usage"
           align="right"
@@ -196,45 +198,77 @@ export function TopBar({
               <Icon name="bolt" size={13} />
               <span className="mono">${(active?.costUsd ?? usage.costUsd).toFixed(2)}</span>
               <em>{active?.label ?? usage.window}</em>
+              <span className="visually-hidden">
+                from the {source === "engine" ? "engine" : "preview snapshot"}
+              </span>
             </>
           }
         >
           {(close) => (
-            <>
-              <p className="menu__label">Period</p>
-              {usage.periods.map((item) => (
-                <button
-                  key={item.id}
-                  className={`menu__item ${item.id === period ? "is-checked" : ""}`}
-                  onClick={() => {
-                    onPeriod(item.id);
-                    close();
-                  }}
-                >
-                  <Icon name="clock" size={14} />
-                  <span>
-                    <strong>{item.label}</strong>
-                    <small className="mono">
-                      {compactTokens(item.tokensIn + item.tokensOut)} tokens · {item.calls} calls
-                    </small>
-                  </span>
-                  <em className="mono">${item.costUsd.toFixed(2)}</em>
-                </button>
-              ))}
+            <div className="usage-pop">
+              <div className="usage-pop__periods">
+                {usage.periods.map((item) => (
+                  <button
+                    key={item.id}
+                    className={`filter-row__item ${item.id === period ? "is-active" : ""}`}
+                    onClick={() => onPeriod(item.id)}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="usage-pop__totals">
+                <span>
+                  <em>Cost</em>
+                  <strong className="mono">${(active?.costUsd ?? 0).toFixed(2)}</strong>
+                </span>
+                <span>
+                  <em>Tokens</em>
+                  <strong className="mono">
+                    {compactTokens((active?.tokensIn ?? 0) + (active?.tokensOut ?? 0))}
+                  </strong>
+                </span>
+                <span>
+                  <em>Calls</em>
+                  <strong className="mono">{active?.calls ?? 0}</strong>
+                </span>
+              </div>
+
+              <div className="usage-pop__rows">
+                {(active?.byModel ?? []).map((row) => {
+                  const model = snapshot.models.find((item) => item.id === row.modelId);
+                  const share =
+                    active && active.costUsd > 0 ? row.costUsd / active.costUsd : 0;
+                  return (
+                    <div className="usage-pop__row" key={row.modelId}>
+                      <ModelGlyph
+                        icon={model?.icon ?? "model"}
+                        accent={accentOf(model?.accent)}
+                        size={18}
+                      />
+                      <span className="usage-pop__name">{row.name}</span>
+                      <span className="usage-pop__bar">
+                        <i style={{ width: `${Math.max(share * 100, 2)}%` }} />
+                      </span>
+                      <span className="mono usage-pop__cost">${row.costUsd.toFixed(2)}</span>
+                    </div>
+                  );
+                })}
+              </div>
+
               <button
-                className="menu__item"
+                className="usage-pop__open"
                 onClick={() => {
                   onUsage();
                   close();
                 }}
               >
-                <Icon name="run" size={14} />
-                <span>Open the usage panel</span>
+                <Icon name="run" size={13} />
+                Open the usage panel
+                <em>every period, the calendar and the local comparison</em>
               </button>
-              <div className="menu__note">
-                State from the {source === "engine" ? "Rust engine" : "preview snapshot"}.
-              </div>
-            </>
+            </div>
           )}
         </Menu>
 

@@ -552,6 +552,15 @@ pub struct ModelActivity {
     pub days_active: u32,
 }
 
+/// A kind of work, for the overview beside the calendar.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ActivityKind {
+    pub name: String,
+    pub count: u32,
+    pub share: f64,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ActivityCalendar {
@@ -564,6 +573,8 @@ pub struct ActivityCalendar {
     pub total_tokens: u64,
     pub busiest_day: String,
     pub by_model: Vec<ModelActivity>,
+    /// What the work was, counted from the objects that hold it.
+    pub by_kind: Vec<ActivityKind>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
