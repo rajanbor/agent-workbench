@@ -29,7 +29,7 @@ top bar name which source is in use.
 Run it natively with `pnpm tauri dev`; the browser preview is for quick
 iteration and labels itself "preview snapshot".
 
-Related specs: `DOCKING_LAYOUT.md`, `AGENT_STUDIO.md`, `INSPECTOR_MODEL.md`, `TERMINAL_PANEL.md`, `CANVAS_WORKFLOW.md`,
+Related specs: `DOCKING_LAYOUT.md`, `PROJECT_WORKSPACE.md`, `AGENT_STUDIO.md`, `INSPECTOR_MODEL.md`, `TERMINAL_PANEL.md`, `CANVAS_WORKFLOW.md`,
 `MODEL_CATALOG.md`, `USAGE_ACCOUNTING.md`. Decisions:
 `.ai/adr/005-shell-navigation-and-theming.md`,
 `.ai/adr/006-engine-owned-state-and-in-app-inspector.md`.

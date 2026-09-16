@@ -11,6 +11,9 @@ pub fn snapshot() -> DesktopSnapshot {
         computer: computer(),
         providers: providers(),
         models: models(),
+        projects: projects(),
+        editors: editors(),
+        templates: templates(),
         agents: agents(),
         sandboxes: sandboxes(),
         sessions: sessions(),
@@ -363,6 +366,159 @@ fn models() -> Vec<ModelCard> {
         },
     ]
 }
+/// The folders this workbench works in. An agent's `ProjectRef` names one of
+/// these by path; the project is the thing a person opens, hands to an editor
+/// and starts a chat against.
+fn projects() -> Vec<ProjectEntry> {
+    vec![
+        ProjectEntry {
+            id: "open-cube".into(),
+            name: "Open Cube".into(),
+            path: "~/Projects/open-cube".into(),
+            branch: "main".into(),
+            summary: "The workbench itself: a Rust engine, one client, one system for every platform.".into(),
+            kind: "git".into(),
+            ahead: 0,
+            behind: 0,
+            dirty: 4,
+            tracked: true,
+            last_opened: "now".into(),
+            entries: vec![
+                project_file("crates", "dir", "engine, app, runtime, cli"),
+                project_file("web", "dir", "the client: Next, React, TypeScript"),
+                project_file(".ai", "dir", "product, architecture, specs, decisions"),
+                project_file("docs", "dir", "installation, security, release"),
+                project_file("scripts", "dir", "build, package, install"),
+                project_file("Cargo.toml", "file", "workspace manifest"),
+                project_file("package.json", "file", "root scripts for the client"),
+                project_file("README.md", "file", "what this is and how to run it"),
+            ],
+            agents: vec!["chief".into(), "backend".into(), "release".into()],
+        },
+        ProjectEntry {
+            id: "design-system".into(),
+            name: "Design system".into(),
+            path: "~/Projects/design-system".into(),
+            branch: "main".into(),
+            summary: "Tokens, components and the contrast rules the auditor checks against.".into(),
+            kind: "git".into(),
+            ahead: 1,
+            behind: 0,
+            dirty: 2,
+            tracked: false,
+            last_opened: "yesterday".into(),
+            entries: vec![
+                project_file("tokens", "dir", "colour, type, spacing"),
+                project_file("components", "dir", "the shared set"),
+                project_file("audits", "dir", "what the auditor wrote"),
+                project_file("README.md", "file", "how the tokens are meant to be used"),
+            ],
+            agents: vec!["auditor".into()],
+        },
+        ProjectEntry {
+            id: "notes".into(),
+            name: "Notes".into(),
+            path: "~/Documents/notes".into(),
+            branch: String::new(),
+            summary: "A plain folder, under no version control. Nothing here is committed.".into(),
+            kind: "folder".into(),
+            ahead: 0,
+            behind: 0,
+            dirty: 0,
+            tracked: false,
+            last_opened: "3 days ago".into(),
+            entries: vec![
+                project_file("inbox.md", "file", "unsorted"),
+                project_file("decisions.md", "file", "what was settled and when"),
+            ],
+            agents: vec![],
+        },
+    ]
+}
+
+fn project_file(name: &str, kind: &str, detail: &str) -> ProjectFile {
+    ProjectFile { name: name.into(), kind: kind.into(), detail: detail.into() }
+}
+
+/// Editors a folder can be handed to. `installed` is `None` for every one of
+/// them because nothing has looked: reading `/Applications` is the daemon's
+/// job, and claiming an editor is present without checking would be a lie.
+fn editors() -> Vec<EditorApp> {
+    vec![
+        EditorApp {
+            id: "vscode".into(),
+            name: "Visual Studio Code".into(),
+            command: "code <path>".into(),
+            installed: None,
+            detail: "Opens the folder as a workspace.".into(),
+        },
+        EditorApp {
+            id: "cursor".into(),
+            name: "Cursor".into(),
+            command: "cursor <path>".into(),
+            installed: None,
+            detail: "Same workspace shape as VS Code.".into(),
+        },
+        EditorApp {
+            id: "zed".into(),
+            name: "Zed".into(),
+            command: "zed <path>".into(),
+            installed: None,
+            detail: "Opens the folder in a new window.".into(),
+        },
+        EditorApp {
+            id: "finder".into(),
+            name: "Finder".into(),
+            command: "open <path>".into(),
+            installed: None,
+            detail: "Reveals the folder rather than editing it.".into(),
+        },
+    ]
+}
+
+/// Shapes a new project can start from. Each one names the files it would
+/// write before it writes any of them.
+fn templates() -> Vec<ProjectTemplate> {
+    vec![
+        ProjectTemplate {
+            id: "empty".into(),
+            name: "Empty folder".into(),
+            summary: "Nothing but the folder itself and a readme.".into(),
+            stack: vec![],
+            creates: vec!["README.md".into()],
+        },
+        ProjectTemplate {
+            id: "rust-workspace".into(),
+            name: "Rust workspace".into(),
+            summary: "A cargo workspace with one crate and a test.".into(),
+            stack: vec!["rust".into(), "cargo".into()],
+            creates: vec![
+                "Cargo.toml".into(),
+                "crates/core/src/lib.rs".into(),
+                "README.md".into(),
+            ],
+        },
+        ProjectTemplate {
+            id: "next-client".into(),
+            name: "Next client".into(),
+            summary: "A static Next app in the shape this workbench uses.".into(),
+            stack: vec!["typescript".into(), "next".into(), "react".into()],
+            creates: vec![
+                "package.json".into(),
+                "app/page.tsx".into(),
+                "src/styles/tokens.css".into(),
+            ],
+        },
+        ProjectTemplate {
+            id: "agent-workspace".into(),
+            name: "Agent workspace".into(),
+            summary: "A folder an agent can be pointed at: instructions, skills, nothing else.".into(),
+            stack: vec!["markdown".into()],
+            creates: vec!["AGENTS.md".into(), ".ai/README.md".into(), "README.md".into()],
+        },
+    ]
+}
+
 fn agents() -> Vec<Agent> {
     vec![
         Agent {
@@ -1054,7 +1210,9 @@ fn version_control() -> VersionControl {
         head: commit("e56bed2", "Build Open Cube workbench shell prototype", "Rajan Bor", "today"),
         ahead: 0,
         behind: 0,
-        dirty: 6,
+        // The count is the list: a number that disagrees with what is shown is
+        // a number nobody can trust.
+        dirty: 4,
         recent: vec![
             commit("e56bed2", "Build Open Cube workbench shell prototype", "Rajan Bor", "today"),
             commit("b1104bb", "Add canonical AI project system", "Rajan Bor", "2 days ago"),
@@ -1066,9 +1224,9 @@ fn version_control() -> VersionControl {
             branch("agent/ui-audit", false, 2, 0, "yesterday"),
         ],
         changes: vec![
-            change("desktop/engine/src/state.rs", "modified"),
-            change("desktop/src/views/AgentStudioView.tsx", "added"),
-            change("desktop/src/styles/tokens.css", "modified"),
+            change("crates/core/src/state.rs", "modified"),
+            change("web/src/views/AgentStudioView.tsx", "added"),
+            change("web/src/styles/tokens.css", "modified"),
             change(".ai/specs/AGENT_STUDIO.md", "added"),
         ],
     }

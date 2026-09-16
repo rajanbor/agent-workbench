@@ -10,6 +10,8 @@ import {
   canvasTab,
   chatTab,
   modelTab,
+  newProjectTab,
+  projectTab,
   sandboxTab,
   studioTab,
   usageTab,
@@ -53,11 +55,20 @@ export function Sidebar(props: Props) {
               onClick={() => props.onOpen(studioTab(null))}
             />
           )}
+          {props.activity === "projects" && (
+            <IconButton
+              icon="plus"
+              label="New project"
+              size={13}
+              onClick={() => props.onOpen(newProjectTab())}
+            />
+          )}
           <IconButton icon="close" label="Hide the sidebar" size={13} onClick={props.onClose} />
         </div>
       </header>
 
       <div className="sidebar__scroll">
+        {props.activity === "projects" && <ProjectArea {...props} />}
         {props.activity === "agents" && <AgentsArea {...props} />}
         {props.activity === "search" && <SearchArea {...props} />}
         {props.activity === "vcs" && <SourceControlArea {...props} />}
@@ -66,6 +77,67 @@ export function Sidebar(props: Props) {
         {props.activity === "workflows" && <WorkflowArea {...props} />}
       </div>
     </aside>
+  );
+}
+
+/* --------------------------------------------------------------- projects */
+
+function ProjectArea({ snapshot, focusedKey, onOpen }: Props) {
+  const create = newProjectTab();
+  return (
+    <>
+      <RailSection title="Projects" count={snapshot.projects.length}>
+        {snapshot.projects.map((project) => {
+          const tab = projectTab(project);
+          return (
+            <div key={project.id} className="rail-project">
+              <button
+                className={`rail-row ${focusedKey === tab.key ? "is-active" : ""}`}
+                onClick={() => onOpen(tab)}
+                title={project.summary}
+              >
+                <span className="rail-row__icon">
+                  <Icon name="folder" size={15} />
+                </span>
+                <span className="rail-row__main">
+                  <strong>{project.name}</strong>
+                  <small className="mono">{project.path}</small>
+                </span>
+                <span className="rail-row__tail">
+                  {project.dirty > 0 && <em>{project.dirty}</em>}
+                  <StatusDot tone={project.kind === "git" ? "green" : "neutral"} />
+                </span>
+              </button>
+
+              {/* The top of the tree, so a project is a place and not a name. */}
+              {focusedKey === tab.key && (
+                <div className="rail-tree">
+                  {project.entries.map((entry) => (
+                    <p key={entry.name} title={entry.detail}>
+                      <Icon name={entry.kind === "dir" ? "folder" : "logs"} size={12} />
+                      <span className="mono">{entry.name}</span>
+                    </p>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </RailSection>
+
+      <button
+        className={`rail-row ${focusedKey === create.key ? "is-active" : ""}`}
+        onClick={() => onOpen(create)}
+      >
+        <span className="rail-row__icon">
+          <Icon name="plus" size={15} />
+        </span>
+        <span className="rail-row__main">
+          <strong>New project</strong>
+          <small>from a template, a folder or a repository</small>
+        </span>
+      </button>
+    </>
   );
 }
 
@@ -179,6 +251,9 @@ function SearchArea({ snapshot, onOpen, chatsOf }: Props) {
     for (const agent of snapshot.agents) {
       add(agent.name, `${agent.role} · ${agent.task}`, "agent", agentTab(agent));
       for (const chat of chatsOf(agent.id)) add(chat.title, `chat · ${agent.name}`, "session", chatTab(chat, agent));
+    }
+    for (const project of snapshot.projects) {
+      add(project.name, `project · ${project.path}`, "folder", projectTab(project));
     }
     for (const sandbox of snapshot.sandboxes) {
       add(sandbox.name, `sandbox · ${sandbox.isolation}`, "sandbox", sandboxTab(sandbox));

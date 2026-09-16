@@ -11,12 +11,19 @@
  *  `.ai/specs/DOCKING_LAYOUT.md`. */
 
 import type { IconName } from "../components/Icon";
-import type { Agent, ChatRef, DesktopSnapshot, ModelCard, Sandbox } from "./engine";
+import type { Agent, ChatRef, DesktopSnapshot, ModelCard, ProjectEntry, Sandbox } from "./engine";
 import type { ViewId } from "./shell";
 
 /* ------------------------------------------------------------- activities */
 
-export type ActivityId = "agents" | "search" | "vcs" | "sandboxes" | "models" | "workflows";
+export type ActivityId =
+  | "projects"
+  | "agents"
+  | "search"
+  | "vcs"
+  | "sandboxes"
+  | "models"
+  | "workflows";
 
 export interface Activity {
   id: ActivityId;
@@ -27,12 +34,13 @@ export interface Activity {
 }
 
 export const activities: Activity[] = [
-  { id: "agents", title: "Agents", icon: "agent", hint: "Agents and their chats · ⌘1" },
-  { id: "search", title: "Search", icon: "search", hint: "Search this workspace · ⌘2" },
-  { id: "vcs", title: "Source control", icon: "git", hint: "Branch and working tree · ⌘3" },
-  { id: "sandboxes", title: "Sandboxes", icon: "sandbox", hint: "Isolation and terminals · ⌘4" },
-  { id: "models", title: "Models", icon: "model", hint: "Catalogue, usage and cost · ⌘5" },
-  { id: "workflows", title: "Workflows", icon: "canvas", hint: "Canvas and workflows · ⌘6" },
+  { id: "projects", title: "Projects", icon: "folder", hint: "Folders this workbench works in · ⌘1" },
+  { id: "agents", title: "Agents", icon: "agent", hint: "Agents and their chats · ⌘2" },
+  { id: "search", title: "Search", icon: "search", hint: "Search this workspace · ⌘3" },
+  { id: "vcs", title: "Source control", icon: "git", hint: "Branch and working tree · ⌘4" },
+  { id: "sandboxes", title: "Sandboxes", icon: "sandbox", hint: "Isolation and terminals · ⌘5" },
+  { id: "models", title: "Models", icon: "model", hint: "Catalogue, usage and cost · ⌘6" },
+  { id: "workflows", title: "Workflows", icon: "canvas", hint: "Canvas and workflows · ⌘7" },
 ];
 
 /* -------------------------------------------------------------------- tabs */
@@ -122,6 +130,27 @@ export function studioTab(agent: Agent | null): TabSpec {
         target: undefined,
         agentId: null,
       };
+}
+
+export function projectTab(project: ProjectEntry): TabSpec {
+  return {
+    key: `project:${project.id}`,
+    view: "project",
+    title: project.name,
+    icon: "folder",
+    hint: `${project.path}${project.branch ? ` · ${project.branch}` : ""}`,
+    target: project.id,
+  };
+}
+
+export function newProjectTab(): TabSpec {
+  return {
+    key: "project:new",
+    view: "new-project",
+    title: "New project",
+    icon: "plus",
+    hint: "Create a folder, or point the workbench at one",
+  };
 }
 
 export function sandboxTab(sandbox: Sandbox): TabSpec {
@@ -337,6 +366,8 @@ export function pruneLayout(layout: Layout, snapshot: DesktopSnapshot, chatIds: 
         return !tab.target || snapshot.sandboxes.some((sandbox) => sandbox.id === tab.target);
       case "models":
         return !tab.target || snapshot.models.some((model) => model.id === tab.target);
+      case "project":
+        return !tab.target || snapshot.projects.some((project) => project.id === tab.target);
       default:
         return true;
     }
