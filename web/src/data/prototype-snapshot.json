@@ -1369,6 +1369,3395 @@
           }
         }
       ]
+    },
+    "periods": [
+      {
+        "id": "hour",
+        "label": "Last hour",
+        "tokensIn": 4700,
+        "tokensOut": 1600,
+        "costUsd": 0.15000000000000002,
+        "calls": 5,
+        "byModel": [
+          {
+            "modelId": "claude-sonnet",
+            "name": "Claude Sonnet",
+            "version": "provider default",
+            "calls": 3,
+            "tokensIn": 1578,
+            "tokensOut": 489,
+            "costUsd": 0.05
+          },
+          {
+            "modelId": "codex",
+            "name": "Codex",
+            "version": "provider default",
+            "calls": 1,
+            "tokensIn": 3122,
+            "tokensOut": 1111,
+            "costUsd": 0.1
+          },
+          {
+            "modelId": "inspector-local",
+            "name": "Open Cube Inspector",
+            "version": "v1",
+            "calls": 1,
+            "tokensIn": 0,
+            "tokensOut": 0,
+            "costUsd": 0.0
+          }
+        ]
+      },
+      {
+        "id": "today",
+        "label": "Today",
+        "tokensIn": 42300,
+        "tokensOut": 14400,
+        "costUsd": 1.3699999999999999,
+        "calls": 41,
+        "byModel": [
+          {
+            "modelId": "claude-sonnet",
+            "name": "Claude Sonnet",
+            "version": "provider default",
+            "calls": 24,
+            "tokensIn": 14200,
+            "tokensOut": 4400,
+            "costUsd": 0.43
+          },
+          {
+            "modelId": "codex",
+            "name": "Codex",
+            "version": "provider default",
+            "calls": 11,
+            "tokensIn": 28100,
+            "tokensOut": 10000,
+            "costUsd": 0.94
+          },
+          {
+            "modelId": "inspector-local",
+            "name": "Open Cube Inspector",
+            "version": "v1",
+            "calls": 6,
+            "tokensIn": 0,
+            "tokensOut": 0,
+            "costUsd": 0.0
+          }
+        ]
+      },
+      {
+        "id": "week",
+        "label": "This week",
+        "tokensIn": 129586,
+        "tokensOut": 44114,
+        "costUsd": 4.2,
+        "calls": 126,
+        "byModel": [
+          {
+            "modelId": "claude-sonnet",
+            "name": "Claude Sonnet",
+            "version": "provider default",
+            "calls": 74,
+            "tokensIn": 43502,
+            "tokensOut": 13479,
+            "costUsd": 1.32
+          },
+          {
+            "modelId": "codex",
+            "name": "Codex",
+            "version": "provider default",
+            "calls": 34,
+            "tokensIn": 86084,
+            "tokensOut": 30635,
+            "costUsd": 2.88
+          },
+          {
+            "modelId": "inspector-local",
+            "name": "Open Cube Inspector",
+            "version": "v1",
+            "calls": 18,
+            "tokensIn": 0,
+            "tokensOut": 0,
+            "costUsd": 0.0
+          }
+        ]
+      },
+      {
+        "id": "month",
+        "label": "This month",
+        "tokensIn": 557219,
+        "tokensOut": 189691,
+        "costUsd": 18.04,
+        "calls": 540,
+        "byModel": [
+          {
+            "modelId": "claude-sonnet",
+            "name": "Claude Sonnet",
+            "version": "provider default",
+            "calls": 316,
+            "tokensIn": 187057,
+            "tokensOut": 57961,
+            "costUsd": 5.66
+          },
+          {
+            "modelId": "codex",
+            "name": "Codex",
+            "version": "provider default",
+            "calls": 145,
+            "tokensIn": 370162,
+            "tokensOut": 131730,
+            "costUsd": 12.38
+          },
+          {
+            "modelId": "inspector-local",
+            "name": "Open Cube Inspector",
+            "version": "v1",
+            "calls": 79,
+            "tokensIn": 0,
+            "tokensOut": 0,
+            "costUsd": 0.0
+          }
+        ]
+      }
+    ],
+    "activity": {
+      "basis": "prototype series · recorded runs arrive with the event log",
+      "from": "2025-09-22",
+      "to": "2026-09-16",
+      "weeks": [
+        {
+          "startDate": "2025-09-22",
+          "days": [
+            {
+              "date": "2025-09-22",
+              "weekday": 0,
+              "runs": 9,
+              "tokens": 60543,
+              "costUsd": 0.544887,
+              "level": 4
+            },
+            {
+              "date": "2025-09-23",
+              "weekday": 1,
+              "runs": 4,
+              "tokens": 29688,
+              "costUsd": 0.267192,
+              "level": 2
+            },
+            {
+              "date": "2025-09-24",
+              "weekday": 2,
+              "runs": 4,
+              "tokens": 14708,
+              "costUsd": 0.13237200000000002,
+              "level": 2
+            },
+            {
+              "date": "2025-09-25",
+              "weekday": 3,
+              "runs": 10,
+              "tokens": 28800,
+              "costUsd": 0.2592,
+              "level": 4
+            },
+            {
+              "date": "2025-09-26",
+              "weekday": 4,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2025-09-27",
+              "weekday": 5,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2025-09-28",
+              "weekday": 6,
+              "runs": 3,
+              "tokens": 20361,
+              "costUsd": 0.183249,
+              "level": 2
+            }
+          ]
+        },
+        {
+          "startDate": "2025-09-29",
+          "days": [
+            {
+              "date": "2025-09-29",
+              "weekday": 0,
+              "runs": 1,
+              "tokens": 6508,
+              "costUsd": 0.058572,
+              "level": 1
+            },
+            {
+              "date": "2025-09-30",
+              "weekday": 1,
+              "runs": 6,
+              "tokens": 34878,
+              "costUsd": 0.313902,
+              "level": 3
+            },
+            {
+              "date": "2025-10-01",
+              "weekday": 2,
+              "runs": 10,
+              "tokens": 70180,
+              "costUsd": 0.6316200000000001,
+              "level": 4
+            },
+            {
+              "date": "2025-10-02",
+              "weekday": 3,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2025-10-03",
+              "weekday": 4,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2025-10-04",
+              "weekday": 5,
+              "runs": 2,
+              "tokens": 13400,
+              "costUsd": 0.1206,
+              "level": 1
+            },
+            {
+              "date": "2025-10-05",
+              "weekday": 6,
+              "runs": 1,
+              "tokens": 2534,
+              "costUsd": 0.022806,
+              "level": 1
+            }
+          ]
+        },
+        {
+          "startDate": "2025-10-06",
+          "days": [
+            {
+              "date": "2025-10-06",
+              "weekday": 0,
+              "runs": 1,
+              "tokens": 7401,
+              "costUsd": 0.066609,
+              "level": 1
+            },
+            {
+              "date": "2025-10-07",
+              "weekday": 1,
+              "runs": 4,
+              "tokens": 11828,
+              "costUsd": 0.106452,
+              "level": 2
+            },
+            {
+              "date": "2025-10-08",
+              "weekday": 2,
+              "runs": 5,
+              "tokens": 26915,
+              "costUsd": 0.242235,
+              "level": 2
+            },
+            {
+              "date": "2025-10-09",
+              "weekday": 3,
+              "runs": 4,
+              "tokens": 27548,
+              "costUsd": 0.24793199999999999,
+              "level": 2
+            },
+            {
+              "date": "2025-10-10",
+              "weekday": 4,
+              "runs": 6,
+              "tokens": 42492,
+              "costUsd": 0.382428,
+              "level": 3
+            },
+            {
+              "date": "2025-10-11",
+              "weekday": 5,
+              "runs": 1,
+              "tokens": 4023,
+              "costUsd": 0.036206999999999996,
+              "level": 1
+            },
+            {
+              "date": "2025-10-12",
+              "weekday": 6,
+              "runs": 3,
+              "tokens": 12300,
+              "costUsd": 0.1107,
+              "level": 2
+            }
+          ]
+        },
+        {
+          "startDate": "2025-10-13",
+          "days": [
+            {
+              "date": "2025-10-13",
+              "weekday": 0,
+              "runs": 8,
+              "tokens": 56040,
+              "costUsd": 0.50436,
+              "level": 3
+            },
+            {
+              "date": "2025-10-14",
+              "weekday": 1,
+              "runs": 7,
+              "tokens": 26985,
+              "costUsd": 0.242865,
+              "level": 3
+            },
+            {
+              "date": "2025-10-15",
+              "weekday": 2,
+              "runs": 10,
+              "tokens": 53070,
+              "costUsd": 0.47763,
+              "level": 4
+            },
+            {
+              "date": "2025-10-16",
+              "weekday": 3,
+              "runs": 4,
+              "tokens": 24144,
+              "costUsd": 0.217296,
+              "level": 2
+            },
+            {
+              "date": "2025-10-17",
+              "weekday": 4,
+              "runs": 6,
+              "tokens": 45954,
+              "costUsd": 0.413586,
+              "level": 3
+            },
+            {
+              "date": "2025-10-18",
+              "weekday": 5,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2025-10-19",
+              "weekday": 6,
+              "runs": 2,
+              "tokens": 8846,
+              "costUsd": 0.07961399999999999,
+              "level": 1
+            }
+          ]
+        },
+        {
+          "startDate": "2025-10-20",
+          "days": [
+            {
+              "date": "2025-10-20",
+              "weekday": 0,
+              "runs": 6,
+              "tokens": 33468,
+              "costUsd": 0.301212,
+              "level": 3
+            },
+            {
+              "date": "2025-10-21",
+              "weekday": 1,
+              "runs": 9,
+              "tokens": 65637,
+              "costUsd": 0.590733,
+              "level": 4
+            },
+            {
+              "date": "2025-10-22",
+              "weekday": 2,
+              "runs": 6,
+              "tokens": 15216,
+              "costUsd": 0.136944,
+              "level": 3
+            },
+            {
+              "date": "2025-10-23",
+              "weekday": 3,
+              "runs": 3,
+              "tokens": 9936,
+              "costUsd": 0.089424,
+              "level": 2
+            },
+            {
+              "date": "2025-10-24",
+              "weekday": 4,
+              "runs": 7,
+              "tokens": 20622,
+              "costUsd": 0.185598,
+              "level": 3
+            },
+            {
+              "date": "2025-10-25",
+              "weekday": 5,
+              "runs": 3,
+              "tokens": 19125,
+              "costUsd": 0.172125,
+              "level": 2
+            },
+            {
+              "date": "2025-10-26",
+              "weekday": 6,
+              "runs": 3,
+              "tokens": 18270,
+              "costUsd": 0.16443000000000002,
+              "level": 2
+            }
+          ]
+        },
+        {
+          "startDate": "2025-10-27",
+          "days": [
+            {
+              "date": "2025-10-27",
+              "weekday": 0,
+              "runs": 10,
+              "tokens": 52230,
+              "costUsd": 0.47007,
+              "level": 4
+            },
+            {
+              "date": "2025-10-28",
+              "weekday": 1,
+              "runs": 7,
+              "tokens": 46032,
+              "costUsd": 0.414288,
+              "level": 3
+            },
+            {
+              "date": "2025-10-29",
+              "weekday": 2,
+              "runs": 7,
+              "tokens": 47796,
+              "costUsd": 0.430164,
+              "level": 3
+            },
+            {
+              "date": "2025-10-30",
+              "weekday": 3,
+              "runs": 10,
+              "tokens": 72280,
+              "costUsd": 0.65052,
+              "level": 4
+            },
+            {
+              "date": "2025-10-31",
+              "weekday": 4,
+              "runs": 5,
+              "tokens": 31400,
+              "costUsd": 0.28259999999999996,
+              "level": 2
+            },
+            {
+              "date": "2025-11-01",
+              "weekday": 5,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2025-11-02",
+              "weekday": 6,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            }
+          ]
+        },
+        {
+          "startDate": "2025-11-03",
+          "days": [
+            {
+              "date": "2025-11-03",
+              "weekday": 0,
+              "runs": 8,
+              "tokens": 46400,
+              "costUsd": 0.41759999999999997,
+              "level": 3
+            },
+            {
+              "date": "2025-11-04",
+              "weekday": 1,
+              "runs": 7,
+              "tokens": 45955,
+              "costUsd": 0.41359500000000005,
+              "level": 3
+            },
+            {
+              "date": "2025-11-05",
+              "weekday": 2,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2025-11-06",
+              "weekday": 3,
+              "runs": 5,
+              "tokens": 23265,
+              "costUsd": 0.20938500000000002,
+              "level": 2
+            },
+            {
+              "date": "2025-11-07",
+              "weekday": 4,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2025-11-08",
+              "weekday": 5,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2025-11-09",
+              "weekday": 6,
+              "runs": 2,
+              "tokens": 11154,
+              "costUsd": 0.100386,
+              "level": 1
+            }
+          ]
+        },
+        {
+          "startDate": "2025-11-10",
+          "days": [
+            {
+              "date": "2025-11-10",
+              "weekday": 0,
+              "runs": 10,
+              "tokens": 31390,
+              "costUsd": 0.28251000000000004,
+              "level": 4
+            },
+            {
+              "date": "2025-11-11",
+              "weekday": 1,
+              "runs": 6,
+              "tokens": 23922,
+              "costUsd": 0.215298,
+              "level": 3
+            },
+            {
+              "date": "2025-11-12",
+              "weekday": 2,
+              "runs": 7,
+              "tokens": 19026,
+              "costUsd": 0.171234,
+              "level": 3
+            },
+            {
+              "date": "2025-11-13",
+              "weekday": 3,
+              "runs": 1,
+              "tokens": 4855,
+              "costUsd": 0.043695,
+              "level": 1
+            },
+            {
+              "date": "2025-11-14",
+              "weekday": 4,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2025-11-15",
+              "weekday": 5,
+              "runs": 1,
+              "tokens": 5020,
+              "costUsd": 0.04518,
+              "level": 1
+            },
+            {
+              "date": "2025-11-16",
+              "weekday": 6,
+              "runs": 1,
+              "tokens": 6668,
+              "costUsd": 0.060012,
+              "level": 1
+            }
+          ]
+        },
+        {
+          "startDate": "2025-11-17",
+          "days": [
+            {
+              "date": "2025-11-17",
+              "weekday": 0,
+              "runs": 5,
+              "tokens": 37675,
+              "costUsd": 0.339075,
+              "level": 2
+            },
+            {
+              "date": "2025-11-18",
+              "weekday": 1,
+              "runs": 10,
+              "tokens": 79460,
+              "costUsd": 0.71514,
+              "level": 4
+            },
+            {
+              "date": "2025-11-19",
+              "weekday": 2,
+              "runs": 8,
+              "tokens": 55552,
+              "costUsd": 0.49996799999999997,
+              "level": 3
+            },
+            {
+              "date": "2025-11-20",
+              "weekday": 3,
+              "runs": 3,
+              "tokens": 12657,
+              "costUsd": 0.113913,
+              "level": 2
+            },
+            {
+              "date": "2025-11-21",
+              "weekday": 4,
+              "runs": 8,
+              "tokens": 43304,
+              "costUsd": 0.389736,
+              "level": 3
+            },
+            {
+              "date": "2025-11-22",
+              "weekday": 5,
+              "runs": 3,
+              "tokens": 14592,
+              "costUsd": 0.131328,
+              "level": 2
+            },
+            {
+              "date": "2025-11-23",
+              "weekday": 6,
+              "runs": 3,
+              "tokens": 19644,
+              "costUsd": 0.17679599999999998,
+              "level": 2
+            }
+          ]
+        },
+        {
+          "startDate": "2025-11-24",
+          "days": [
+            {
+              "date": "2025-11-24",
+              "weekday": 0,
+              "runs": 10,
+              "tokens": 75850,
+              "costUsd": 0.68265,
+              "level": 4
+            },
+            {
+              "date": "2025-11-25",
+              "weekday": 1,
+              "runs": 2,
+              "tokens": 8594,
+              "costUsd": 0.077346,
+              "level": 1
+            },
+            {
+              "date": "2025-11-26",
+              "weekday": 2,
+              "runs": 3,
+              "tokens": 7791,
+              "costUsd": 0.070119,
+              "level": 2
+            },
+            {
+              "date": "2025-11-27",
+              "weekday": 3,
+              "runs": 2,
+              "tokens": 7302,
+              "costUsd": 0.065718,
+              "level": 1
+            },
+            {
+              "date": "2025-11-28",
+              "weekday": 4,
+              "runs": 7,
+              "tokens": 54887,
+              "costUsd": 0.493983,
+              "level": 3
+            },
+            {
+              "date": "2025-11-29",
+              "weekday": 5,
+              "runs": 1,
+              "tokens": 5280,
+              "costUsd": 0.04752,
+              "level": 1
+            },
+            {
+              "date": "2025-11-30",
+              "weekday": 6,
+              "runs": 2,
+              "tokens": 7804,
+              "costUsd": 0.070236,
+              "level": 1
+            }
+          ]
+        },
+        {
+          "startDate": "2025-12-01",
+          "days": [
+            {
+              "date": "2025-12-01",
+              "weekday": 0,
+              "runs": 8,
+              "tokens": 28072,
+              "costUsd": 0.252648,
+              "level": 3
+            },
+            {
+              "date": "2025-12-02",
+              "weekday": 1,
+              "runs": 10,
+              "tokens": 74950,
+              "costUsd": 0.67455,
+              "level": 4
+            },
+            {
+              "date": "2025-12-03",
+              "weekday": 2,
+              "runs": 5,
+              "tokens": 34420,
+              "costUsd": 0.30978,
+              "level": 2
+            },
+            {
+              "date": "2025-12-04",
+              "weekday": 3,
+              "runs": 1,
+              "tokens": 5209,
+              "costUsd": 0.046881,
+              "level": 1
+            },
+            {
+              "date": "2025-12-05",
+              "weekday": 4,
+              "runs": 2,
+              "tokens": 5138,
+              "costUsd": 0.046242000000000005,
+              "level": 1
+            },
+            {
+              "date": "2025-12-06",
+              "weekday": 5,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2025-12-07",
+              "weekday": 6,
+              "runs": 3,
+              "tokens": 12105,
+              "costUsd": 0.108945,
+              "level": 2
+            }
+          ]
+        },
+        {
+          "startDate": "2025-12-08",
+          "days": [
+            {
+              "date": "2025-12-08",
+              "weekday": 0,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2025-12-09",
+              "weekday": 1,
+              "runs": 5,
+              "tokens": 23185,
+              "costUsd": 0.20866500000000002,
+              "level": 2
+            },
+            {
+              "date": "2025-12-10",
+              "weekday": 2,
+              "runs": 4,
+              "tokens": 24216,
+              "costUsd": 0.21794400000000003,
+              "level": 2
+            },
+            {
+              "date": "2025-12-11",
+              "weekday": 3,
+              "runs": 5,
+              "tokens": 18035,
+              "costUsd": 0.162315,
+              "level": 2
+            },
+            {
+              "date": "2025-12-12",
+              "weekday": 4,
+              "runs": 7,
+              "tokens": 42931,
+              "costUsd": 0.386379,
+              "level": 3
+            },
+            {
+              "date": "2025-12-13",
+              "weekday": 5,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2025-12-14",
+              "weekday": 6,
+              "runs": 3,
+              "tokens": 14178,
+              "costUsd": 0.127602,
+              "level": 2
+            }
+          ]
+        },
+        {
+          "startDate": "2025-12-15",
+          "days": [
+            {
+              "date": "2025-12-15",
+              "weekday": 0,
+              "runs": 2,
+              "tokens": 8948,
+              "costUsd": 0.08053199999999999,
+              "level": 1
+            },
+            {
+              "date": "2025-12-16",
+              "weekday": 1,
+              "runs": 6,
+              "tokens": 28476,
+              "costUsd": 0.256284,
+              "level": 3
+            },
+            {
+              "date": "2025-12-17",
+              "weekday": 2,
+              "runs": 6,
+              "tokens": 29838,
+              "costUsd": 0.268542,
+              "level": 3
+            },
+            {
+              "date": "2025-12-18",
+              "weekday": 3,
+              "runs": 10,
+              "tokens": 49220,
+              "costUsd": 0.44298,
+              "level": 4
+            },
+            {
+              "date": "2025-12-19",
+              "weekday": 4,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2025-12-20",
+              "weekday": 5,
+              "runs": 3,
+              "tokens": 10722,
+              "costUsd": 0.096498,
+              "level": 2
+            },
+            {
+              "date": "2025-12-21",
+              "weekday": 6,
+              "runs": 3,
+              "tokens": 21330,
+              "costUsd": 0.19196999999999997,
+              "level": 2
+            }
+          ]
+        },
+        {
+          "startDate": "2025-12-22",
+          "days": [
+            {
+              "date": "2025-12-22",
+              "weekday": 0,
+              "runs": 11,
+              "tokens": 62359,
+              "costUsd": 0.561231,
+              "level": 4
+            },
+            {
+              "date": "2025-12-23",
+              "weekday": 1,
+              "runs": 7,
+              "tokens": 32998,
+              "costUsd": 0.29698199999999997,
+              "level": 3
+            },
+            {
+              "date": "2025-12-24",
+              "weekday": 2,
+              "runs": 2,
+              "tokens": 11062,
+              "costUsd": 0.09955800000000001,
+              "level": 1
+            },
+            {
+              "date": "2025-12-25",
+              "weekday": 3,
+              "runs": 3,
+              "tokens": 14010,
+              "costUsd": 0.12609,
+              "level": 2
+            },
+            {
+              "date": "2025-12-26",
+              "weekday": 4,
+              "runs": 8,
+              "tokens": 57360,
+              "costUsd": 0.51624,
+              "level": 3
+            },
+            {
+              "date": "2025-12-27",
+              "weekday": 5,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2025-12-28",
+              "weekday": 6,
+              "runs": 3,
+              "tokens": 17952,
+              "costUsd": 0.161568,
+              "level": 2
+            }
+          ]
+        },
+        {
+          "startDate": "2025-12-29",
+          "days": [
+            {
+              "date": "2025-12-29",
+              "weekday": 0,
+              "runs": 8,
+              "tokens": 29520,
+              "costUsd": 0.26568,
+              "level": 3
+            },
+            {
+              "date": "2025-12-30",
+              "weekday": 1,
+              "runs": 5,
+              "tokens": 22690,
+              "costUsd": 0.20420999999999997,
+              "level": 2
+            },
+            {
+              "date": "2025-12-31",
+              "weekday": 2,
+              "runs": 8,
+              "tokens": 43352,
+              "costUsd": 0.390168,
+              "level": 3
+            },
+            {
+              "date": "2026-01-01",
+              "weekday": 3,
+              "runs": 7,
+              "tokens": 50694,
+              "costUsd": 0.45624600000000004,
+              "level": 3
+            },
+            {
+              "date": "2026-01-02",
+              "weekday": 4,
+              "runs": 4,
+              "tokens": 17016,
+              "costUsd": 0.153144,
+              "level": 2
+            },
+            {
+              "date": "2026-01-03",
+              "weekday": 5,
+              "runs": 3,
+              "tokens": 19383,
+              "costUsd": 0.17444700000000002,
+              "level": 2
+            },
+            {
+              "date": "2026-01-04",
+              "weekday": 6,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            }
+          ]
+        },
+        {
+          "startDate": "2026-01-05",
+          "days": [
+            {
+              "date": "2026-01-05",
+              "weekday": 0,
+              "runs": 4,
+              "tokens": 29104,
+              "costUsd": 0.261936,
+              "level": 2
+            },
+            {
+              "date": "2026-01-06",
+              "weekday": 1,
+              "runs": 2,
+              "tokens": 11110,
+              "costUsd": 0.09999,
+              "level": 1
+            },
+            {
+              "date": "2026-01-07",
+              "weekday": 2,
+              "runs": 5,
+              "tokens": 13105,
+              "costUsd": 0.11794500000000001,
+              "level": 2
+            },
+            {
+              "date": "2026-01-08",
+              "weekday": 3,
+              "runs": 3,
+              "tokens": 21765,
+              "costUsd": 0.195885,
+              "level": 2
+            },
+            {
+              "date": "2026-01-09",
+              "weekday": 4,
+              "runs": 6,
+              "tokens": 33540,
+              "costUsd": 0.30186,
+              "level": 3
+            },
+            {
+              "date": "2026-01-10",
+              "weekday": 5,
+              "runs": 3,
+              "tokens": 19974,
+              "costUsd": 0.17976599999999998,
+              "level": 2
+            },
+            {
+              "date": "2026-01-11",
+              "weekday": 6,
+              "runs": 1,
+              "tokens": 3309,
+              "costUsd": 0.029781,
+              "level": 1
+            }
+          ]
+        },
+        {
+          "startDate": "2026-01-12",
+          "days": [
+            {
+              "date": "2026-01-12",
+              "weekday": 0,
+              "runs": 7,
+              "tokens": 44345,
+              "costUsd": 0.39910500000000004,
+              "level": 3
+            },
+            {
+              "date": "2026-01-13",
+              "weekday": 1,
+              "runs": 5,
+              "tokens": 25815,
+              "costUsd": 0.232335,
+              "level": 2
+            },
+            {
+              "date": "2026-01-14",
+              "weekday": 2,
+              "runs": 7,
+              "tokens": 23765,
+              "costUsd": 0.21388500000000002,
+              "level": 3
+            },
+            {
+              "date": "2026-01-15",
+              "weekday": 3,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-01-16",
+              "weekday": 4,
+              "runs": 10,
+              "tokens": 73890,
+              "costUsd": 0.66501,
+              "level": 4
+            },
+            {
+              "date": "2026-01-17",
+              "weekday": 5,
+              "runs": 1,
+              "tokens": 2807,
+              "costUsd": 0.025263,
+              "level": 1
+            },
+            {
+              "date": "2026-01-18",
+              "weekday": 6,
+              "runs": 3,
+              "tokens": 14394,
+              "costUsd": 0.129546,
+              "level": 2
+            }
+          ]
+        },
+        {
+          "startDate": "2026-01-19",
+          "days": [
+            {
+              "date": "2026-01-19",
+              "weekday": 0,
+              "runs": 10,
+              "tokens": 24670,
+              "costUsd": 0.22203,
+              "level": 4
+            },
+            {
+              "date": "2026-01-20",
+              "weekday": 1,
+              "runs": 7,
+              "tokens": 25144,
+              "costUsd": 0.226296,
+              "level": 3
+            },
+            {
+              "date": "2026-01-21",
+              "weekday": 2,
+              "runs": 2,
+              "tokens": 14226,
+              "costUsd": 0.128034,
+              "level": 1
+            },
+            {
+              "date": "2026-01-22",
+              "weekday": 3,
+              "runs": 5,
+              "tokens": 33210,
+              "costUsd": 0.29889000000000004,
+              "level": 2
+            },
+            {
+              "date": "2026-01-23",
+              "weekday": 4,
+              "runs": 6,
+              "tokens": 47382,
+              "costUsd": 0.426438,
+              "level": 3
+            },
+            {
+              "date": "2026-01-24",
+              "weekday": 5,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-01-25",
+              "weekday": 6,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            }
+          ]
+        },
+        {
+          "startDate": "2026-01-26",
+          "days": [
+            {
+              "date": "2026-01-26",
+              "weekday": 0,
+              "runs": 6,
+              "tokens": 21336,
+              "costUsd": 0.192024,
+              "level": 3
+            },
+            {
+              "date": "2026-01-27",
+              "weekday": 1,
+              "runs": 4,
+              "tokens": 27356,
+              "costUsd": 0.24620399999999998,
+              "level": 2
+            },
+            {
+              "date": "2026-01-28",
+              "weekday": 2,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-01-29",
+              "weekday": 3,
+              "runs": 10,
+              "tokens": 27100,
+              "costUsd": 0.2439,
+              "level": 4
+            },
+            {
+              "date": "2026-01-30",
+              "weekday": 4,
+              "runs": 7,
+              "tokens": 44219,
+              "costUsd": 0.397971,
+              "level": 3
+            },
+            {
+              "date": "2026-01-31",
+              "weekday": 5,
+              "runs": 3,
+              "tokens": 20310,
+              "costUsd": 0.18279,
+              "level": 2
+            },
+            {
+              "date": "2026-02-01",
+              "weekday": 6,
+              "runs": 1,
+              "tokens": 3439,
+              "costUsd": 0.030951000000000003,
+              "level": 1
+            }
+          ]
+        },
+        {
+          "startDate": "2026-02-02",
+          "days": [
+            {
+              "date": "2026-02-02",
+              "weekday": 0,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-02-03",
+              "weekday": 1,
+              "runs": 5,
+              "tokens": 30335,
+              "costUsd": 0.273015,
+              "level": 2
+            },
+            {
+              "date": "2026-02-04",
+              "weekday": 2,
+              "runs": 2,
+              "tokens": 8512,
+              "costUsd": 0.07660800000000001,
+              "level": 1
+            },
+            {
+              "date": "2026-02-05",
+              "weekday": 3,
+              "runs": 5,
+              "tokens": 37960,
+              "costUsd": 0.34164,
+              "level": 2
+            },
+            {
+              "date": "2026-02-06",
+              "weekday": 4,
+              "runs": 3,
+              "tokens": 23496,
+              "costUsd": 0.21146399999999999,
+              "level": 2
+            },
+            {
+              "date": "2026-02-07",
+              "weekday": 5,
+              "runs": 1,
+              "tokens": 4568,
+              "costUsd": 0.041112,
+              "level": 1
+            },
+            {
+              "date": "2026-02-08",
+              "weekday": 6,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            }
+          ]
+        },
+        {
+          "startDate": "2026-02-09",
+          "days": [
+            {
+              "date": "2026-02-09",
+              "weekday": 0,
+              "runs": 1,
+              "tokens": 3402,
+              "costUsd": 0.030618,
+              "level": 1
+            },
+            {
+              "date": "2026-02-10",
+              "weekday": 1,
+              "runs": 8,
+              "tokens": 20104,
+              "costUsd": 0.180936,
+              "level": 3
+            },
+            {
+              "date": "2026-02-11",
+              "weekday": 2,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-02-12",
+              "weekday": 3,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-02-13",
+              "weekday": 4,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-02-14",
+              "weekday": 5,
+              "runs": 1,
+              "tokens": 7605,
+              "costUsd": 0.06844499999999999,
+              "level": 1
+            },
+            {
+              "date": "2026-02-15",
+              "weekday": 6,
+              "runs": 3,
+              "tokens": 12450,
+              "costUsd": 0.11205,
+              "level": 2
+            }
+          ]
+        },
+        {
+          "startDate": "2026-02-16",
+          "days": [
+            {
+              "date": "2026-02-16",
+              "weekday": 0,
+              "runs": 3,
+              "tokens": 22740,
+              "costUsd": 0.20466,
+              "level": 2
+            },
+            {
+              "date": "2026-02-17",
+              "weekday": 1,
+              "runs": 6,
+              "tokens": 20484,
+              "costUsd": 0.184356,
+              "level": 3
+            },
+            {
+              "date": "2026-02-18",
+              "weekday": 2,
+              "runs": 11,
+              "tokens": 50985,
+              "costUsd": 0.458865,
+              "level": 4
+            },
+            {
+              "date": "2026-02-19",
+              "weekday": 3,
+              "runs": 3,
+              "tokens": 18600,
+              "costUsd": 0.1674,
+              "level": 2
+            },
+            {
+              "date": "2026-02-20",
+              "weekday": 4,
+              "runs": 2,
+              "tokens": 6868,
+              "costUsd": 0.061812,
+              "level": 1
+            },
+            {
+              "date": "2026-02-21",
+              "weekday": 5,
+              "runs": 2,
+              "tokens": 7154,
+              "costUsd": 0.064386,
+              "level": 1
+            },
+            {
+              "date": "2026-02-22",
+              "weekday": 6,
+              "runs": 2,
+              "tokens": 8346,
+              "costUsd": 0.07511399999999999,
+              "level": 1
+            }
+          ]
+        },
+        {
+          "startDate": "2026-02-23",
+          "days": [
+            {
+              "date": "2026-02-23",
+              "weekday": 0,
+              "runs": 3,
+              "tokens": 20772,
+              "costUsd": 0.186948,
+              "level": 2
+            },
+            {
+              "date": "2026-02-24",
+              "weekday": 1,
+              "runs": 9,
+              "tokens": 33732,
+              "costUsd": 0.30358799999999997,
+              "level": 4
+            },
+            {
+              "date": "2026-02-25",
+              "weekday": 2,
+              "runs": 7,
+              "tokens": 30422,
+              "costUsd": 0.273798,
+              "level": 3
+            },
+            {
+              "date": "2026-02-26",
+              "weekday": 3,
+              "runs": 3,
+              "tokens": 19362,
+              "costUsd": 0.174258,
+              "level": 2
+            },
+            {
+              "date": "2026-02-27",
+              "weekday": 4,
+              "runs": 9,
+              "tokens": 23751,
+              "costUsd": 0.213759,
+              "level": 4
+            },
+            {
+              "date": "2026-02-28",
+              "weekday": 5,
+              "runs": 2,
+              "tokens": 15908,
+              "costUsd": 0.143172,
+              "level": 1
+            },
+            {
+              "date": "2026-03-01",
+              "weekday": 6,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            }
+          ]
+        },
+        {
+          "startDate": "2026-03-02",
+          "days": [
+            {
+              "date": "2026-03-02",
+              "weekday": 0,
+              "runs": 5,
+              "tokens": 33330,
+              "costUsd": 0.29996999999999996,
+              "level": 2
+            },
+            {
+              "date": "2026-03-03",
+              "weekday": 1,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-03-04",
+              "weekday": 2,
+              "runs": 7,
+              "tokens": 28553,
+              "costUsd": 0.256977,
+              "level": 3
+            },
+            {
+              "date": "2026-03-05",
+              "weekday": 3,
+              "runs": 2,
+              "tokens": 12438,
+              "costUsd": 0.111942,
+              "level": 1
+            },
+            {
+              "date": "2026-03-06",
+              "weekday": 4,
+              "runs": 10,
+              "tokens": 76900,
+              "costUsd": 0.6920999999999999,
+              "level": 4
+            },
+            {
+              "date": "2026-03-07",
+              "weekday": 5,
+              "runs": 3,
+              "tokens": 23589,
+              "costUsd": 0.212301,
+              "level": 2
+            },
+            {
+              "date": "2026-03-08",
+              "weekday": 6,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            }
+          ]
+        },
+        {
+          "startDate": "2026-03-09",
+          "days": [
+            {
+              "date": "2026-03-09",
+              "weekday": 0,
+              "runs": 4,
+              "tokens": 15404,
+              "costUsd": 0.13863599999999998,
+              "level": 2
+            },
+            {
+              "date": "2026-03-10",
+              "weekday": 1,
+              "runs": 6,
+              "tokens": 27042,
+              "costUsd": 0.243378,
+              "level": 3
+            },
+            {
+              "date": "2026-03-11",
+              "weekday": 2,
+              "runs": 4,
+              "tokens": 12752,
+              "costUsd": 0.114768,
+              "level": 2
+            },
+            {
+              "date": "2026-03-12",
+              "weekday": 3,
+              "runs": 5,
+              "tokens": 16005,
+              "costUsd": 0.14404499999999998,
+              "level": 2
+            },
+            {
+              "date": "2026-03-13",
+              "weekday": 4,
+              "runs": 6,
+              "tokens": 18168,
+              "costUsd": 0.163512,
+              "level": 3
+            },
+            {
+              "date": "2026-03-14",
+              "weekday": 5,
+              "runs": 1,
+              "tokens": 3077,
+              "costUsd": 0.027693,
+              "level": 1
+            },
+            {
+              "date": "2026-03-15",
+              "weekday": 6,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            }
+          ]
+        },
+        {
+          "startDate": "2026-03-16",
+          "days": [
+            {
+              "date": "2026-03-16",
+              "weekday": 0,
+              "runs": 3,
+              "tokens": 20055,
+              "costUsd": 0.180495,
+              "level": 2
+            },
+            {
+              "date": "2026-03-17",
+              "weekday": 1,
+              "runs": 5,
+              "tokens": 31310,
+              "costUsd": 0.28179,
+              "level": 2
+            },
+            {
+              "date": "2026-03-18",
+              "weekday": 2,
+              "runs": 8,
+              "tokens": 56696,
+              "costUsd": 0.510264,
+              "level": 3
+            },
+            {
+              "date": "2026-03-19",
+              "weekday": 3,
+              "runs": 10,
+              "tokens": 53020,
+              "costUsd": 0.47718,
+              "level": 4
+            },
+            {
+              "date": "2026-03-20",
+              "weekday": 4,
+              "runs": 6,
+              "tokens": 45696,
+              "costUsd": 0.411264,
+              "level": 3
+            },
+            {
+              "date": "2026-03-21",
+              "weekday": 5,
+              "runs": 2,
+              "tokens": 7878,
+              "costUsd": 0.07090199999999999,
+              "level": 1
+            },
+            {
+              "date": "2026-03-22",
+              "weekday": 6,
+              "runs": 3,
+              "tokens": 19152,
+              "costUsd": 0.172368,
+              "level": 2
+            }
+          ]
+        },
+        {
+          "startDate": "2026-03-23",
+          "days": [
+            {
+              "date": "2026-03-23",
+              "weekday": 0,
+              "runs": 4,
+              "tokens": 26108,
+              "costUsd": 0.234972,
+              "level": 2
+            },
+            {
+              "date": "2026-03-24",
+              "weekday": 1,
+              "runs": 11,
+              "tokens": 73942,
+              "costUsd": 0.6654779999999999,
+              "level": 4
+            },
+            {
+              "date": "2026-03-25",
+              "weekday": 2,
+              "runs": 6,
+              "tokens": 35142,
+              "costUsd": 0.316278,
+              "level": 3
+            },
+            {
+              "date": "2026-03-26",
+              "weekday": 3,
+              "runs": 5,
+              "tokens": 22535,
+              "costUsd": 0.202815,
+              "level": 2
+            },
+            {
+              "date": "2026-03-27",
+              "weekday": 4,
+              "runs": 5,
+              "tokens": 16480,
+              "costUsd": 0.14832,
+              "level": 2
+            },
+            {
+              "date": "2026-03-28",
+              "weekday": 5,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-03-29",
+              "weekday": 6,
+              "runs": 2,
+              "tokens": 8020,
+              "costUsd": 0.07218,
+              "level": 1
+            }
+          ]
+        },
+        {
+          "startDate": "2026-03-30",
+          "days": [
+            {
+              "date": "2026-03-30",
+              "weekday": 0,
+              "runs": 9,
+              "tokens": 49077,
+              "costUsd": 0.441693,
+              "level": 4
+            },
+            {
+              "date": "2026-03-31",
+              "weekday": 1,
+              "runs": 10,
+              "tokens": 62440,
+              "costUsd": 0.56196,
+              "level": 4
+            },
+            {
+              "date": "2026-04-01",
+              "weekday": 2,
+              "runs": 2,
+              "tokens": 10066,
+              "costUsd": 0.09059400000000001,
+              "level": 1
+            },
+            {
+              "date": "2026-04-02",
+              "weekday": 3,
+              "runs": 5,
+              "tokens": 37175,
+              "costUsd": 0.334575,
+              "level": 2
+            },
+            {
+              "date": "2026-04-03",
+              "weekday": 4,
+              "runs": 1,
+              "tokens": 4762,
+              "costUsd": 0.042858,
+              "level": 1
+            },
+            {
+              "date": "2026-04-04",
+              "weekday": 5,
+              "runs": 2,
+              "tokens": 14908,
+              "costUsd": 0.13417199999999999,
+              "level": 1
+            },
+            {
+              "date": "2026-04-05",
+              "weekday": 6,
+              "runs": 4,
+              "tokens": 30128,
+              "costUsd": 0.271152,
+              "level": 2
+            }
+          ]
+        },
+        {
+          "startDate": "2026-04-06",
+          "days": [
+            {
+              "date": "2026-04-06",
+              "weekday": 0,
+              "runs": 8,
+              "tokens": 58376,
+              "costUsd": 0.525384,
+              "level": 3
+            },
+            {
+              "date": "2026-04-07",
+              "weekday": 1,
+              "runs": 3,
+              "tokens": 18219,
+              "costUsd": 0.16397099999999998,
+              "level": 2
+            },
+            {
+              "date": "2026-04-08",
+              "weekday": 2,
+              "runs": 3,
+              "tokens": 21324,
+              "costUsd": 0.191916,
+              "level": 2
+            },
+            {
+              "date": "2026-04-09",
+              "weekday": 3,
+              "runs": 1,
+              "tokens": 5040,
+              "costUsd": 0.045360000000000004,
+              "level": 1
+            },
+            {
+              "date": "2026-04-10",
+              "weekday": 4,
+              "runs": 3,
+              "tokens": 13260,
+              "costUsd": 0.11933999999999999,
+              "level": 2
+            },
+            {
+              "date": "2026-04-11",
+              "weekday": 5,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-04-12",
+              "weekday": 6,
+              "runs": 2,
+              "tokens": 13444,
+              "costUsd": 0.12099599999999999,
+              "level": 1
+            }
+          ]
+        },
+        {
+          "startDate": "2026-04-13",
+          "days": [
+            {
+              "date": "2026-04-13",
+              "weekday": 0,
+              "runs": 3,
+              "tokens": 10089,
+              "costUsd": 0.090801,
+              "level": 2
+            },
+            {
+              "date": "2026-04-14",
+              "weekday": 1,
+              "runs": 10,
+              "tokens": 46830,
+              "costUsd": 0.42146999999999996,
+              "level": 4
+            },
+            {
+              "date": "2026-04-15",
+              "weekday": 2,
+              "runs": 3,
+              "tokens": 7968,
+              "costUsd": 0.071712,
+              "level": 2
+            },
+            {
+              "date": "2026-04-16",
+              "weekday": 3,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-04-17",
+              "weekday": 4,
+              "runs": 9,
+              "tokens": 61803,
+              "costUsd": 0.556227,
+              "level": 4
+            },
+            {
+              "date": "2026-04-18",
+              "weekday": 5,
+              "runs": 3,
+              "tokens": 7686,
+              "costUsd": 0.069174,
+              "level": 2
+            },
+            {
+              "date": "2026-04-19",
+              "weekday": 6,
+              "runs": 3,
+              "tokens": 23130,
+              "costUsd": 0.20817000000000002,
+              "level": 2
+            }
+          ]
+        },
+        {
+          "startDate": "2026-04-20",
+          "days": [
+            {
+              "date": "2026-04-20",
+              "weekday": 0,
+              "runs": 5,
+              "tokens": 28815,
+              "costUsd": 0.259335,
+              "level": 2
+            },
+            {
+              "date": "2026-04-21",
+              "weekday": 1,
+              "runs": 6,
+              "tokens": 29256,
+              "costUsd": 0.263304,
+              "level": 3
+            },
+            {
+              "date": "2026-04-22",
+              "weekday": 2,
+              "runs": 7,
+              "tokens": 26264,
+              "costUsd": 0.236376,
+              "level": 3
+            },
+            {
+              "date": "2026-04-23",
+              "weekday": 3,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-04-24",
+              "weekday": 4,
+              "runs": 3,
+              "tokens": 17655,
+              "costUsd": 0.158895,
+              "level": 2
+            },
+            {
+              "date": "2026-04-25",
+              "weekday": 5,
+              "runs": 2,
+              "tokens": 15110,
+              "costUsd": 0.13599,
+              "level": 1
+            },
+            {
+              "date": "2026-04-26",
+              "weekday": 6,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            }
+          ]
+        },
+        {
+          "startDate": "2026-04-27",
+          "days": [
+            {
+              "date": "2026-04-27",
+              "weekday": 0,
+              "runs": 3,
+              "tokens": 17607,
+              "costUsd": 0.15846300000000002,
+              "level": 2
+            },
+            {
+              "date": "2026-04-28",
+              "weekday": 1,
+              "runs": 2,
+              "tokens": 15200,
+              "costUsd": 0.1368,
+              "level": 1
+            },
+            {
+              "date": "2026-04-29",
+              "weekday": 2,
+              "runs": 7,
+              "tokens": 31346,
+              "costUsd": 0.282114,
+              "level": 3
+            },
+            {
+              "date": "2026-04-30",
+              "weekday": 3,
+              "runs": 2,
+              "tokens": 11022,
+              "costUsd": 0.09919800000000001,
+              "level": 1
+            },
+            {
+              "date": "2026-05-01",
+              "weekday": 4,
+              "runs": 3,
+              "tokens": 12822,
+              "costUsd": 0.115398,
+              "level": 2
+            },
+            {
+              "date": "2026-05-02",
+              "weekday": 5,
+              "runs": 2,
+              "tokens": 11846,
+              "costUsd": 0.106614,
+              "level": 1
+            },
+            {
+              "date": "2026-05-03",
+              "weekday": 6,
+              "runs": 1,
+              "tokens": 6529,
+              "costUsd": 0.058761,
+              "level": 1
+            }
+          ]
+        },
+        {
+          "startDate": "2026-05-04",
+          "days": [
+            {
+              "date": "2026-05-04",
+              "weekday": 0,
+              "runs": 8,
+              "tokens": 63840,
+              "costUsd": 0.57456,
+              "level": 3
+            },
+            {
+              "date": "2026-05-05",
+              "weekday": 1,
+              "runs": 2,
+              "tokens": 6224,
+              "costUsd": 0.056016,
+              "level": 1
+            },
+            {
+              "date": "2026-05-06",
+              "weekday": 2,
+              "runs": 9,
+              "tokens": 63045,
+              "costUsd": 0.567405,
+              "level": 4
+            },
+            {
+              "date": "2026-05-07",
+              "weekday": 3,
+              "runs": 9,
+              "tokens": 63567,
+              "costUsd": 0.572103,
+              "level": 4
+            },
+            {
+              "date": "2026-05-08",
+              "weekday": 4,
+              "runs": 9,
+              "tokens": 23913,
+              "costUsd": 0.215217,
+              "level": 4
+            },
+            {
+              "date": "2026-05-09",
+              "weekday": 5,
+              "runs": 1,
+              "tokens": 2940,
+              "costUsd": 0.026459999999999997,
+              "level": 1
+            },
+            {
+              "date": "2026-05-10",
+              "weekday": 6,
+              "runs": 2,
+              "tokens": 8824,
+              "costUsd": 0.079416,
+              "level": 1
+            }
+          ]
+        },
+        {
+          "startDate": "2026-05-11",
+          "days": [
+            {
+              "date": "2026-05-11",
+              "weekday": 0,
+              "runs": 4,
+              "tokens": 11436,
+              "costUsd": 0.102924,
+              "level": 2
+            },
+            {
+              "date": "2026-05-12",
+              "weekday": 1,
+              "runs": 7,
+              "tokens": 20510,
+              "costUsd": 0.18459,
+              "level": 3
+            },
+            {
+              "date": "2026-05-13",
+              "weekday": 2,
+              "runs": 4,
+              "tokens": 27564,
+              "costUsd": 0.24807600000000002,
+              "level": 2
+            },
+            {
+              "date": "2026-05-14",
+              "weekday": 3,
+              "runs": 6,
+              "tokens": 21672,
+              "costUsd": 0.195048,
+              "level": 3
+            },
+            {
+              "date": "2026-05-15",
+              "weekday": 4,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-05-16",
+              "weekday": 5,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-05-17",
+              "weekday": 6,
+              "runs": 1,
+              "tokens": 6508,
+              "costUsd": 0.058572,
+              "level": 1
+            }
+          ]
+        },
+        {
+          "startDate": "2026-05-18",
+          "days": [
+            {
+              "date": "2026-05-18",
+              "weekday": 0,
+              "runs": 2,
+              "tokens": 11544,
+              "costUsd": 0.103896,
+              "level": 1
+            },
+            {
+              "date": "2026-05-19",
+              "weekday": 1,
+              "runs": 8,
+              "tokens": 28136,
+              "costUsd": 0.253224,
+              "level": 3
+            },
+            {
+              "date": "2026-05-20",
+              "weekday": 2,
+              "runs": 8,
+              "tokens": 48696,
+              "costUsd": 0.43826400000000004,
+              "level": 3
+            },
+            {
+              "date": "2026-05-21",
+              "weekday": 3,
+              "runs": 5,
+              "tokens": 39105,
+              "costUsd": 0.351945,
+              "level": 2
+            },
+            {
+              "date": "2026-05-22",
+              "weekday": 4,
+              "runs": 5,
+              "tokens": 24160,
+              "costUsd": 0.21744000000000002,
+              "level": 2
+            },
+            {
+              "date": "2026-05-23",
+              "weekday": 5,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-05-24",
+              "weekday": 6,
+              "runs": 3,
+              "tokens": 14106,
+              "costUsd": 0.126954,
+              "level": 2
+            }
+          ]
+        },
+        {
+          "startDate": "2026-05-25",
+          "days": [
+            {
+              "date": "2026-05-25",
+              "weekday": 0,
+              "runs": 1,
+              "tokens": 6615,
+              "costUsd": 0.059535000000000005,
+              "level": 1
+            },
+            {
+              "date": "2026-05-26",
+              "weekday": 1,
+              "runs": 9,
+              "tokens": 71235,
+              "costUsd": 0.6411150000000001,
+              "level": 4
+            },
+            {
+              "date": "2026-05-27",
+              "weekday": 2,
+              "runs": 5,
+              "tokens": 25480,
+              "costUsd": 0.22932,
+              "level": 2
+            },
+            {
+              "date": "2026-05-28",
+              "weekday": 3,
+              "runs": 7,
+              "tokens": 19775,
+              "costUsd": 0.177975,
+              "level": 3
+            },
+            {
+              "date": "2026-05-29",
+              "weekday": 4,
+              "runs": 2,
+              "tokens": 7670,
+              "costUsd": 0.06903,
+              "level": 1
+            },
+            {
+              "date": "2026-05-30",
+              "weekday": 5,
+              "runs": 1,
+              "tokens": 5290,
+              "costUsd": 0.047610000000000006,
+              "level": 1
+            },
+            {
+              "date": "2026-05-31",
+              "weekday": 6,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            }
+          ]
+        },
+        {
+          "startDate": "2026-06-01",
+          "days": [
+            {
+              "date": "2026-06-01",
+              "weekday": 0,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-06-02",
+              "weekday": 1,
+              "runs": 7,
+              "tokens": 39298,
+              "costUsd": 0.353682,
+              "level": 3
+            },
+            {
+              "date": "2026-06-03",
+              "weekday": 2,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-06-04",
+              "weekday": 3,
+              "runs": 6,
+              "tokens": 28650,
+              "costUsd": 0.25784999999999997,
+              "level": 3
+            },
+            {
+              "date": "2026-06-05",
+              "weekday": 4,
+              "runs": 7,
+              "tokens": 35245,
+              "costUsd": 0.31720499999999996,
+              "level": 3
+            },
+            {
+              "date": "2026-06-06",
+              "weekday": 5,
+              "runs": 4,
+              "tokens": 30856,
+              "costUsd": 0.277704,
+              "level": 2
+            },
+            {
+              "date": "2026-06-07",
+              "weekday": 6,
+              "runs": 1,
+              "tokens": 5108,
+              "costUsd": 0.045972,
+              "level": 1
+            }
+          ]
+        },
+        {
+          "startDate": "2026-06-08",
+          "days": [
+            {
+              "date": "2026-06-08",
+              "weekday": 0,
+              "runs": 8,
+              "tokens": 27400,
+              "costUsd": 0.2466,
+              "level": 3
+            },
+            {
+              "date": "2026-06-09",
+              "weekday": 1,
+              "runs": 7,
+              "tokens": 54243,
+              "costUsd": 0.488187,
+              "level": 3
+            },
+            {
+              "date": "2026-06-10",
+              "weekday": 2,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-06-11",
+              "weekday": 3,
+              "runs": 5,
+              "tokens": 24025,
+              "costUsd": 0.216225,
+              "level": 2
+            },
+            {
+              "date": "2026-06-12",
+              "weekday": 4,
+              "runs": 9,
+              "tokens": 61137,
+              "costUsd": 0.550233,
+              "level": 4
+            },
+            {
+              "date": "2026-06-13",
+              "weekday": 5,
+              "runs": 4,
+              "tokens": 18880,
+              "costUsd": 0.16992000000000002,
+              "level": 2
+            },
+            {
+              "date": "2026-06-14",
+              "weekday": 6,
+              "runs": 3,
+              "tokens": 16773,
+              "costUsd": 0.150957,
+              "level": 2
+            }
+          ]
+        },
+        {
+          "startDate": "2026-06-15",
+          "days": [
+            {
+              "date": "2026-06-15",
+              "weekday": 0,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-06-16",
+              "weekday": 1,
+              "runs": 9,
+              "tokens": 69732,
+              "costUsd": 0.627588,
+              "level": 4
+            },
+            {
+              "date": "2026-06-17",
+              "weekday": 2,
+              "runs": 3,
+              "tokens": 14154,
+              "costUsd": 0.127386,
+              "level": 2
+            },
+            {
+              "date": "2026-06-18",
+              "weekday": 3,
+              "runs": 2,
+              "tokens": 11600,
+              "costUsd": 0.10439999999999999,
+              "level": 1
+            },
+            {
+              "date": "2026-06-19",
+              "weekday": 4,
+              "runs": 5,
+              "tokens": 25965,
+              "costUsd": 0.23368499999999998,
+              "level": 2
+            },
+            {
+              "date": "2026-06-20",
+              "weekday": 5,
+              "runs": 4,
+              "tokens": 29112,
+              "costUsd": 0.262008,
+              "level": 2
+            },
+            {
+              "date": "2026-06-21",
+              "weekday": 6,
+              "runs": 3,
+              "tokens": 12618,
+              "costUsd": 0.11356200000000001,
+              "level": 2
+            }
+          ]
+        },
+        {
+          "startDate": "2026-06-22",
+          "days": [
+            {
+              "date": "2026-06-22",
+              "weekday": 0,
+              "runs": 7,
+              "tokens": 53242,
+              "costUsd": 0.479178,
+              "level": 3
+            },
+            {
+              "date": "2026-06-23",
+              "weekday": 1,
+              "runs": 6,
+              "tokens": 40548,
+              "costUsd": 0.36493200000000003,
+              "level": 3
+            },
+            {
+              "date": "2026-06-24",
+              "weekday": 2,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-06-25",
+              "weekday": 3,
+              "runs": 6,
+              "tokens": 24438,
+              "costUsd": 0.21994200000000003,
+              "level": 3
+            },
+            {
+              "date": "2026-06-26",
+              "weekday": 4,
+              "runs": 5,
+              "tokens": 29600,
+              "costUsd": 0.2664,
+              "level": 2
+            },
+            {
+              "date": "2026-06-27",
+              "weekday": 5,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-06-28",
+              "weekday": 6,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            }
+          ]
+        },
+        {
+          "startDate": "2026-06-29",
+          "days": [
+            {
+              "date": "2026-06-29",
+              "weekday": 0,
+              "runs": 2,
+              "tokens": 12608,
+              "costUsd": 0.11347199999999999,
+              "level": 1
+            },
+            {
+              "date": "2026-06-30",
+              "weekday": 1,
+              "runs": 6,
+              "tokens": 18144,
+              "costUsd": 0.163296,
+              "level": 3
+            },
+            {
+              "date": "2026-07-01",
+              "weekday": 2,
+              "runs": 4,
+              "tokens": 14524,
+              "costUsd": 0.130716,
+              "level": 2
+            },
+            {
+              "date": "2026-07-02",
+              "weekday": 3,
+              "runs": 4,
+              "tokens": 17064,
+              "costUsd": 0.153576,
+              "level": 2
+            },
+            {
+              "date": "2026-07-03",
+              "weekday": 4,
+              "runs": 2,
+              "tokens": 13990,
+              "costUsd": 0.12591,
+              "level": 1
+            },
+            {
+              "date": "2026-07-04",
+              "weekday": 5,
+              "runs": 2,
+              "tokens": 10812,
+              "costUsd": 0.097308,
+              "level": 1
+            },
+            {
+              "date": "2026-07-05",
+              "weekday": 6,
+              "runs": 1,
+              "tokens": 2866,
+              "costUsd": 0.025794,
+              "level": 1
+            }
+          ]
+        },
+        {
+          "startDate": "2026-07-06",
+          "days": [
+            {
+              "date": "2026-07-06",
+              "weekday": 0,
+              "runs": 3,
+              "tokens": 16401,
+              "costUsd": 0.147609,
+              "level": 2
+            },
+            {
+              "date": "2026-07-07",
+              "weekday": 1,
+              "runs": 1,
+              "tokens": 5740,
+              "costUsd": 0.051660000000000005,
+              "level": 1
+            },
+            {
+              "date": "2026-07-08",
+              "weekday": 2,
+              "runs": 4,
+              "tokens": 26640,
+              "costUsd": 0.23976,
+              "level": 2
+            },
+            {
+              "date": "2026-07-09",
+              "weekday": 3,
+              "runs": 11,
+              "tokens": 51370,
+              "costUsd": 0.46233,
+              "level": 4
+            },
+            {
+              "date": "2026-07-10",
+              "weekday": 4,
+              "runs": 7,
+              "tokens": 38675,
+              "costUsd": 0.348075,
+              "level": 3
+            },
+            {
+              "date": "2026-07-11",
+              "weekday": 5,
+              "runs": 1,
+              "tokens": 6705,
+              "costUsd": 0.060345,
+              "level": 1
+            },
+            {
+              "date": "2026-07-12",
+              "weekday": 6,
+              "runs": 1,
+              "tokens": 5675,
+              "costUsd": 0.051075,
+              "level": 1
+            }
+          ]
+        },
+        {
+          "startDate": "2026-07-13",
+          "days": [
+            {
+              "date": "2026-07-13",
+              "weekday": 0,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-07-14",
+              "weekday": 1,
+              "runs": 4,
+              "tokens": 14640,
+              "costUsd": 0.13176,
+              "level": 2
+            },
+            {
+              "date": "2026-07-15",
+              "weekday": 2,
+              "runs": 2,
+              "tokens": 8638,
+              "costUsd": 0.077742,
+              "level": 1
+            },
+            {
+              "date": "2026-07-16",
+              "weekday": 3,
+              "runs": 8,
+              "tokens": 23904,
+              "costUsd": 0.21513600000000002,
+              "level": 3
+            },
+            {
+              "date": "2026-07-17",
+              "weekday": 4,
+              "runs": 1,
+              "tokens": 4714,
+              "costUsd": 0.042426000000000005,
+              "level": 1
+            },
+            {
+              "date": "2026-07-18",
+              "weekday": 5,
+              "runs": 2,
+              "tokens": 5534,
+              "costUsd": 0.049805999999999996,
+              "level": 1
+            },
+            {
+              "date": "2026-07-19",
+              "weekday": 6,
+              "runs": 3,
+              "tokens": 14604,
+              "costUsd": 0.131436,
+              "level": 2
+            }
+          ]
+        },
+        {
+          "startDate": "2026-07-20",
+          "days": [
+            {
+              "date": "2026-07-20",
+              "weekday": 0,
+              "runs": 1,
+              "tokens": 4599,
+              "costUsd": 0.041391,
+              "level": 1
+            },
+            {
+              "date": "2026-07-21",
+              "weekday": 1,
+              "runs": 5,
+              "tokens": 23160,
+              "costUsd": 0.20844000000000001,
+              "level": 2
+            },
+            {
+              "date": "2026-07-22",
+              "weekday": 2,
+              "runs": 4,
+              "tokens": 23244,
+              "costUsd": 0.209196,
+              "level": 2
+            },
+            {
+              "date": "2026-07-23",
+              "weekday": 3,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-07-24",
+              "weekday": 4,
+              "runs": 5,
+              "tokens": 23710,
+              "costUsd": 0.21339,
+              "level": 2
+            },
+            {
+              "date": "2026-07-25",
+              "weekday": 5,
+              "runs": 2,
+              "tokens": 7222,
+              "costUsd": 0.064998,
+              "level": 1
+            },
+            {
+              "date": "2026-07-26",
+              "weekday": 6,
+              "runs": 2,
+              "tokens": 13432,
+              "costUsd": 0.120888,
+              "level": 1
+            }
+          ]
+        },
+        {
+          "startDate": "2026-07-27",
+          "days": [
+            {
+              "date": "2026-07-27",
+              "weekday": 0,
+              "runs": 6,
+              "tokens": 36864,
+              "costUsd": 0.331776,
+              "level": 3
+            },
+            {
+              "date": "2026-07-28",
+              "weekday": 1,
+              "runs": 9,
+              "tokens": 23994,
+              "costUsd": 0.21594600000000003,
+              "level": 4
+            },
+            {
+              "date": "2026-07-29",
+              "weekday": 2,
+              "runs": 6,
+              "tokens": 17286,
+              "costUsd": 0.155574,
+              "level": 3
+            },
+            {
+              "date": "2026-07-30",
+              "weekday": 3,
+              "runs": 6,
+              "tokens": 38142,
+              "costUsd": 0.343278,
+              "level": 3
+            },
+            {
+              "date": "2026-07-31",
+              "weekday": 4,
+              "runs": 10,
+              "tokens": 43850,
+              "costUsd": 0.39465,
+              "level": 4
+            },
+            {
+              "date": "2026-08-01",
+              "weekday": 5,
+              "runs": 3,
+              "tokens": 20721,
+              "costUsd": 0.186489,
+              "level": 2
+            },
+            {
+              "date": "2026-08-02",
+              "weekday": 6,
+              "runs": 2,
+              "tokens": 8782,
+              "costUsd": 0.079038,
+              "level": 1
+            }
+          ]
+        },
+        {
+          "startDate": "2026-08-03",
+          "days": [
+            {
+              "date": "2026-08-03",
+              "weekday": 0,
+              "runs": 4,
+              "tokens": 25644,
+              "costUsd": 0.230796,
+              "level": 2
+            },
+            {
+              "date": "2026-08-04",
+              "weekday": 1,
+              "runs": 2,
+              "tokens": 7746,
+              "costUsd": 0.069714,
+              "level": 1
+            },
+            {
+              "date": "2026-08-05",
+              "weekday": 2,
+              "runs": 8,
+              "tokens": 45592,
+              "costUsd": 0.410328,
+              "level": 3
+            },
+            {
+              "date": "2026-08-06",
+              "weekday": 3,
+              "runs": 5,
+              "tokens": 32690,
+              "costUsd": 0.29420999999999997,
+              "level": 2
+            },
+            {
+              "date": "2026-08-07",
+              "weekday": 4,
+              "runs": 9,
+              "tokens": 54720,
+              "costUsd": 0.49248,
+              "level": 4
+            },
+            {
+              "date": "2026-08-08",
+              "weekday": 5,
+              "runs": 2,
+              "tokens": 8894,
+              "costUsd": 0.080046,
+              "level": 1
+            },
+            {
+              "date": "2026-08-09",
+              "weekday": 6,
+              "runs": 3,
+              "tokens": 23580,
+              "costUsd": 0.21222,
+              "level": 2
+            }
+          ]
+        },
+        {
+          "startDate": "2026-08-10",
+          "days": [
+            {
+              "date": "2026-08-10",
+              "weekday": 0,
+              "runs": 4,
+              "tokens": 19048,
+              "costUsd": 0.171432,
+              "level": 2
+            },
+            {
+              "date": "2026-08-11",
+              "weekday": 1,
+              "runs": 8,
+              "tokens": 33392,
+              "costUsd": 0.30052799999999996,
+              "level": 3
+            },
+            {
+              "date": "2026-08-12",
+              "weekday": 2,
+              "runs": 6,
+              "tokens": 24678,
+              "costUsd": 0.222102,
+              "level": 3
+            },
+            {
+              "date": "2026-08-13",
+              "weekday": 3,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-08-14",
+              "weekday": 4,
+              "runs": 3,
+              "tokens": 15507,
+              "costUsd": 0.139563,
+              "level": 2
+            },
+            {
+              "date": "2026-08-15",
+              "weekday": 5,
+              "runs": 3,
+              "tokens": 17343,
+              "costUsd": 0.156087,
+              "level": 2
+            },
+            {
+              "date": "2026-08-16",
+              "weekday": 6,
+              "runs": 3,
+              "tokens": 15471,
+              "costUsd": 0.139239,
+              "level": 2
+            }
+          ]
+        },
+        {
+          "startDate": "2026-08-17",
+          "days": [
+            {
+              "date": "2026-08-17",
+              "weekday": 0,
+              "runs": 6,
+              "tokens": 45150,
+              "costUsd": 0.40635000000000004,
+              "level": 3
+            },
+            {
+              "date": "2026-08-18",
+              "weekday": 1,
+              "runs": 4,
+              "tokens": 21988,
+              "costUsd": 0.197892,
+              "level": 2
+            },
+            {
+              "date": "2026-08-19",
+              "weekday": 2,
+              "runs": 7,
+              "tokens": 32074,
+              "costUsd": 0.288666,
+              "level": 3
+            },
+            {
+              "date": "2026-08-20",
+              "weekday": 3,
+              "runs": 8,
+              "tokens": 26384,
+              "costUsd": 0.237456,
+              "level": 3
+            },
+            {
+              "date": "2026-08-21",
+              "weekday": 4,
+              "runs": 2,
+              "tokens": 11530,
+              "costUsd": 0.10377,
+              "level": 1
+            },
+            {
+              "date": "2026-08-22",
+              "weekday": 5,
+              "runs": 2,
+              "tokens": 15762,
+              "costUsd": 0.141858,
+              "level": 1
+            },
+            {
+              "date": "2026-08-23",
+              "weekday": 6,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            }
+          ]
+        },
+        {
+          "startDate": "2026-08-24",
+          "days": [
+            {
+              "date": "2026-08-24",
+              "weekday": 0,
+              "runs": 7,
+              "tokens": 30345,
+              "costUsd": 0.273105,
+              "level": 3
+            },
+            {
+              "date": "2026-08-25",
+              "weekday": 1,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-08-26",
+              "weekday": 2,
+              "runs": 9,
+              "tokens": 36927,
+              "costUsd": 0.332343,
+              "level": 4
+            },
+            {
+              "date": "2026-08-27",
+              "weekday": 3,
+              "runs": 3,
+              "tokens": 11316,
+              "costUsd": 0.10184399999999999,
+              "level": 2
+            },
+            {
+              "date": "2026-08-28",
+              "weekday": 4,
+              "runs": 8,
+              "tokens": 55760,
+              "costUsd": 0.50184,
+              "level": 3
+            },
+            {
+              "date": "2026-08-29",
+              "weekday": 5,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-08-30",
+              "weekday": 6,
+              "runs": 2,
+              "tokens": 12442,
+              "costUsd": 0.111978,
+              "level": 1
+            }
+          ]
+        },
+        {
+          "startDate": "2026-08-31",
+          "days": [
+            {
+              "date": "2026-08-31",
+              "weekday": 0,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-09-01",
+              "weekday": 1,
+              "runs": 8,
+              "tokens": 53344,
+              "costUsd": 0.480096,
+              "level": 3
+            },
+            {
+              "date": "2026-09-02",
+              "weekday": 2,
+              "runs": 4,
+              "tokens": 20520,
+              "costUsd": 0.18468,
+              "level": 2
+            },
+            {
+              "date": "2026-09-03",
+              "weekday": 3,
+              "runs": 6,
+              "tokens": 14448,
+              "costUsd": 0.130032,
+              "level": 3
+            },
+            {
+              "date": "2026-09-04",
+              "weekday": 4,
+              "runs": 3,
+              "tokens": 20748,
+              "costUsd": 0.18673199999999998,
+              "level": 2
+            },
+            {
+              "date": "2026-09-05",
+              "weekday": 5,
+              "runs": 1,
+              "tokens": 3676,
+              "costUsd": 0.033084,
+              "level": 1
+            },
+            {
+              "date": "2026-09-06",
+              "weekday": 6,
+              "runs": 1,
+              "tokens": 3790,
+              "costUsd": 0.03411,
+              "level": 1
+            }
+          ]
+        },
+        {
+          "startDate": "2026-09-07",
+          "days": [
+            {
+              "date": "2026-09-07",
+              "weekday": 0,
+              "runs": 1,
+              "tokens": 7113,
+              "costUsd": 0.064017,
+              "level": 1
+            },
+            {
+              "date": "2026-09-08",
+              "weekday": 1,
+              "runs": 8,
+              "tokens": 22312,
+              "costUsd": 0.200808,
+              "level": 3
+            },
+            {
+              "date": "2026-09-09",
+              "weekday": 2,
+              "runs": 10,
+              "tokens": 44570,
+              "costUsd": 0.40113,
+              "level": 4
+            },
+            {
+              "date": "2026-09-10",
+              "weekday": 3,
+              "runs": 10,
+              "tokens": 31390,
+              "costUsd": 0.28251000000000004,
+              "level": 4
+            },
+            {
+              "date": "2026-09-11",
+              "weekday": 4,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-09-12",
+              "weekday": 5,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-09-13",
+              "weekday": 6,
+              "runs": 2,
+              "tokens": 6028,
+              "costUsd": 0.054252,
+              "level": 1
+            }
+          ]
+        },
+        {
+          "startDate": "2026-09-14",
+          "days": [
+            {
+              "date": "2026-09-14",
+              "weekday": 0,
+              "runs": 3,
+              "tokens": 21069,
+              "costUsd": 0.189621,
+              "level": 2
+            },
+            {
+              "date": "2026-09-15",
+              "weekday": 1,
+              "runs": 3,
+              "tokens": 19935,
+              "costUsd": 0.17941500000000002,
+              "level": 2
+            },
+            {
+              "date": "2026-09-16",
+              "weekday": 2,
+              "runs": 7,
+              "tokens": 18571,
+              "costUsd": 0.167139,
+              "level": 3
+            },
+            {
+              "date": "2026-09-17",
+              "weekday": 3,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-09-18",
+              "weekday": 4,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-09-19",
+              "weekday": 5,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            },
+            {
+              "date": "2026-09-20",
+              "weekday": 6,
+              "runs": 0,
+              "tokens": 0,
+              "costUsd": 0.0,
+              "level": 0
+            }
+          ]
+        }
+      ],
+      "maxRuns": 11,
+      "totalRuns": 1457,
+      "totalTokens": 7738164,
+      "busiestDay": "2026-07-09",
+      "byModel": [
+        {
+          "modelId": "inspector-local",
+          "name": "Open Cube Inspector",
+          "runs": 263,
+          "tokens": 1398463,
+          "costUsd": 0.0,
+          "share": 0.1807228915662651,
+          "daysActive": 55
+        },
+        {
+          "modelId": "claude-sonnet",
+          "name": "Claude Sonnet",
+          "runs": 439,
+          "tokens": 2330772,
+          "costUsd": 34.96158,
+          "share": 0.30120481927710846,
+          "daysActive": 92
+        },
+        {
+          "modelId": "codex",
+          "name": "Codex",
+          "runs": 439,
+          "tokens": 2330772,
+          "costUsd": 0.0,
+          "share": 0.30120481927710846,
+          "daysActive": 92
+        },
+        {
+          "modelId": "qwen2.5-7b",
+          "name": "Qwen2.5 7B Instruct",
+          "runs": 105,
+          "tokens": 559385,
+          "costUsd": 0.0,
+          "share": 0.07228915662650603,
+          "daysActive": 22
+        },
+        {
+          "modelId": "llama3.2-3b",
+          "name": "Llama 3.2 3B Instruct",
+          "runs": 105,
+          "tokens": 559385,
+          "costUsd": 0.0,
+          "share": 0.07228915662650603,
+          "daysActive": 22
+        },
+        {
+          "modelId": "mistral-7b",
+          "name": "Mistral 7B Instruct",
+          "runs": 105,
+          "tokens": 559385,
+          "costUsd": 0.0,
+          "share": 0.07228915662650603,
+          "daysActive": 22
+        }
+      ]
     }
   },
   "versionControl": {

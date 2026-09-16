@@ -6,6 +6,9 @@
   (`crates/core`, `crates/app`) with one client in `web/`, driven from root
   `pnpm` scripts, recorded in ADR 008. The Swift app stays until the Rust
   runtime replaces it.
+- Report spend over a chosen period — last hour, today, this week, this month —
+  picked from the cost chip, and add an activity calendar: a year of days at
+  five intensities with the same activity split per model.
 - Add local run economics: for every model that can run on the device, the
   workbench estimates the time, energy, battery share and machine exploitation
   of a workload, and what running it locally saves against a reference API
