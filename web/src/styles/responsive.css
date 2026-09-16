@@ -1,0 +1,96 @@
+/* Width rules, kept together so a layout change has one place to look.
+   Split out of app.css; see .ai/product/DESIGN_LANGUAGE.md. */
+
+/* ------------------------------------------------------------ responsive */
+
+@media (max-width: 1500px) {
+  .boundary__grid {
+    grid-template-columns: 210px minmax(0, 1fr) 210px;
+  }
+}
+
+@media (max-width: 1320px) {
+  .rail--right {
+    width: 264px;
+    flex-basis: 264px;
+  }
+}
+
+@media (max-width: 900px) {
+  .statusbar span:nth-child(2) {
+    display: none;
+  }
+}
+
+@media (max-width: 1180px) {
+  .split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .split__list {
+    padding-right: 0;
+  }
+
+  .split__detail {
+    margin-top: 24px;
+    padding-top: 22px;
+    padding-left: 0;
+    border-top: 1px solid var(--border-subtle);
+    border-left: 0;
+  }
+
+  .boundary__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .canvas__inspector {
+    display: none;
+  }
+}
+
+@media (max-width: 1040px) {
+  .rail--right {
+    display: none;
+  }
+}
+
+@media (max-width: 860px) {
+  .rail--left {
+    display: none;
+  }
+
+  .stack,
+  .split {
+    padding: 16px;
+  }
+
+  .bubble {
+    max-width: 90%;
+  }
+}
+
+@media (max-width: 1180px) {
+  .studio-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .studio-library {
+    position: static;
+    max-height: none;
+  }
+}
+
+@media (max-width: 860px) {
+  .profile {
+    padding: 18px 16px 28px;
+  }
+
+  .profile__head {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .profile__identity h1 {
+    font-size: 30px;
+  }
+}

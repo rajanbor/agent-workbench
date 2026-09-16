@@ -1,0 +1,509 @@
+/* Reset, type, and the primitives every surface reuses.
+   Split out of app.css; see .ai/product/DESIGN_LANGUAGE.md. */
+
+/* Open Cube workbench shell.
+   Layout: top bar / (left rail · workspace + terminal dock · right rail) / status bar.
+   Colour, type and radius come from src/styles/tokens.css only. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+::selection {
+  background: var(--accent-bg);
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 600;
+}
+
+p {
+  margin: 0;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.94em;
+  letter-spacing: -0.01em;
+}
+
+.muted-copy {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+
+.eyebrow {
+  margin-bottom: 6px;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.link,
+.inline-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent-text);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.link:hover,
+.inline-link:hover {
+  text-decoration: underline;
+}
+
+/* --------------------------------------------------------------- controls */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-size: var(--text-base);
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background 120ms var(--ease), border-color 120ms var(--ease), color 120ms var(--ease);
+}
+
+.btn--md {
+  padding: 6px 12px;
+}
+
+.btn--sm {
+  padding: 4px 9px;
+  font-size: var(--text-sm);
+}
+
+.btn:hover {
+  border-color: var(--border-strong);
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.btn--primary,
+.btn--primary:hover {
+  border-color: transparent;
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.btn--primary:hover {
+  background: var(--accent-hover);
+}
+
+.btn--ghost,
+.btn--quiet {
+  border-color: transparent;
+  background: transparent;
+}
+
+.icon-btn {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  place-items: center;
+  transition: background 120ms var(--ease), color 120ms var(--ease);
+}
+
+.icon-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.icon-btn.is-on {
+  background: var(--accent-bg);
+  color: var(--accent-text);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.badge--mono {
+  font-family: var(--font-mono);
+}
+
+.badge--accent {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--accent-text);
+}
+
+.badge--green {
+  border-color: var(--green-border);
+  background: var(--green-bg);
+  color: var(--green-text);
+}
+
+.badge--amber {
+  border-color: var(--amber-border);
+  background: var(--amber-bg);
+  color: var(--amber-text);
+}
+
+.badge--red {
+  border-color: var(--red-border);
+  background: var(--red-bg);
+  color: var(--red-text);
+}
+
+.badge--violet {
+  border-color: var(--violet-border);
+  background: var(--violet-bg);
+  color: var(--violet-text);
+}
+
+.badge--blue {
+  border-color: var(--blue-border);
+  background: var(--blue-bg);
+  color: var(--blue-text);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+.chip--accent {
+  border-color: var(--accent-border);
+  color: var(--accent-text);
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--text-faint);
+}
+
+.status-dot--green {
+  background: var(--green);
+}
+
+.status-dot--amber {
+  background: var(--amber);
+}
+
+.status-dot--red {
+  background: var(--red);
+}
+
+.status-dot--accent,
+.status-dot--blue {
+  background: var(--accent);
+}
+
+.status-dot--violet {
+  background: var(--violet-text);
+}
+
+.status-dot.is-pulsing {
+  animation: pulse 1.9s var(--ease) infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 var(--green-bg);
+  }
+  50% {
+    box-shadow: 0 0 0 4px var(--green-bg);
+  }
+}
+
+.kbd {
+  display: inline-grid;
+  min-width: 18px;
+  height: 18px;
+  align-items: center;
+  justify-items: center;
+  padding: 0 5px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--bg-surface-raised);
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+/* ------------------------------------------------- model and agent glyphs */
+
+.face {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 16%;
+  border-radius: 50%;
+  background: var(--text-faint);
+}
+
+.face i {
+  width: 13%;
+  height: 13%;
+  margin-top: -18%;
+  border-radius: 50%;
+  background: rgba(12, 14, 18, 0.82);
+}
+
+.face--accent {
+  background: var(--accent);
+}
+
+.face--green {
+  background: var(--green);
+}
+
+.face--amber {
+  background: var(--amber);
+}
+
+.face--red {
+  background: var(--red);
+}
+
+.face--violet {
+  background: #8b5cf6;
+}
+
+.face--blue {
+  background: #3b82f6;
+}
+
+.glyph {
+  display: inline-grid;
+  flex: 0 0 auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  place-items: center;
+}
+
+.glyph--accent {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--accent-text);
+}
+
+.glyph--green {
+  border-color: var(--green-border);
+  background: var(--green-bg);
+  color: var(--green-text);
+}
+
+.glyph--amber {
+  border-color: var(--amber-border);
+  background: var(--amber-bg);
+  color: var(--amber-text);
+}
+
+.glyph--red {
+  border-color: var(--red-border);
+  background: var(--red-bg);
+  color: var(--red-text);
+}
+
+.glyph--violet {
+  border-color: var(--violet-border);
+  background: var(--violet-bg);
+  color: var(--violet-text);
+}
+
+.glyph--blue {
+  border-color: var(--blue-border);
+  background: var(--blue-bg);
+  color: var(--blue-text);
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/* Lighter controls: hairlines, small type, colour only where it means something. */
+.btn {
+  border-color: var(--border);
+  background: transparent;
+  font-weight: 450;
+}
+
+.btn:hover {
+  border-color: var(--border-strong);
+  background: var(--bg-hover);
+}
+
+.btn--md {
+  padding: 5px 11px;
+}
+
+.badge {
+  padding: 1px 7px;
+  border-color: transparent;
+  background: var(--bg-hover);
+  font-size: 10.5px;
+}
+
+.badge--accent,
+.badge--green,
+.badge--amber,
+.badge--red,
+.badge--violet,
+.badge--blue {
+  border-color: transparent;
+}
+
+/* ===========================================================================
+   Native window.
+   The macOS vibrancy behind the web view is the background; the page is
+   transparent and the traffic lights sit over the top bar.
+   ======================================================================== */
+
+:root[data-runtime="tauri"] body {
+  background: transparent;
+}
+
+:root[data-runtime="tauri"] .topbar {
+  padding-left: 82px;
+}
+
+:root[data-runtime="tauri"] .workspace,
+:root[data-runtime="tauri"] .app {
+  background: transparent;
+}
+
+:root[data-runtime="tauri"] .card,
+:root[data-runtime="tauri"] .rows,
+:root[data-runtime="tauri"] .model-row,
+:root[data-runtime="tauri"] .bubble--assistant {
+  background: var(--layer-panel);
+  backdrop-filter: saturate(140%) blur(12px);
+  -webkit-backdrop-filter: saturate(140%) blur(12px);
+}
+
+:root[data-runtime="tauri"] .canvas__surface {
+  background-color: transparent;
+}
+
+/* ------------------------------------------------------------------ avatar */
+
+.avatar {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--bg-active);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  place-items: center;
+}
+
+/* The person's own avatar is ink, like the reference. */
+.avatar--accent {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.avatar--green {
+  background: var(--green);
+  color: #ffffff;
+}
+
+.avatar--violet {
+  background: #8b5cf6;
+  color: #ffffff;
+}
+
+.avatar--blue {
+  background: #3b82f6;
+  color: #ffffff;
+}
