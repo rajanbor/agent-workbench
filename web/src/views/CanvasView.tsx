@@ -16,6 +16,7 @@ const kinds: { id: string; label: string; icon: string }[] = [
 ];
 
 function load(workflow: Workflow): Workflow {
+  if (typeof window === "undefined") return workflow;
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
@@ -44,7 +45,10 @@ export function CanvasView({
   snapshot: DesktopSnapshot;
   onAction: (message: string) => void;
 }) {
-  const [workflow, setWorkflow] = useState<Workflow>(() => load(snapshot.workflow));
+  // Stored layout is adopted after mount so the first render matches the
+  // prerendered HTML.
+  const [workflow, setWorkflow] = useState<Workflow>(snapshot.workflow);
+  const [adopted, setAdopted] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
   const [linkFrom, setLinkFrom] = useState<string | null>(null);
   const [zoom, setZoom] = useState(1);
@@ -52,12 +56,18 @@ export function CanvasView({
   const surface = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    setWorkflow(load(snapshot.workflow));
+    setAdopted(true);
+  }, [snapshot.workflow]);
+
+  useEffect(() => {
+    if (!adopted) return;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(workflow));
     } catch {
       /* layout stays for this session only */
     }
-  }, [workflow]);
+  }, [adopted, workflow]);
 
   const node = useMemo(
     () => workflow.nodes.find((item) => item.id === selected) ?? null,

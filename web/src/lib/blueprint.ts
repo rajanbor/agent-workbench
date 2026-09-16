@@ -12,6 +12,7 @@ const STORAGE_KEY = "open-cube.blueprints";
 export type Drafts = Record<string, AgentBlueprint>;
 
 export function loadDrafts(): Drafts {
+  if (typeof window === "undefined") return {};
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     return stored ? (JSON.parse(stored) as Drafts) : {};
@@ -21,6 +22,7 @@ export function loadDrafts(): Drafts {
 }
 
 export function saveDrafts(drafts: Drafts) {
+  if (typeof window === "undefined") return;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(drafts));
   } catch {

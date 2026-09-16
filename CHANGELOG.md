@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Restructure the repository into one cross-platform system: a Rust workspace
+  (`crates/core`, `crates/app`) with one client in `web/`, driven from root
+  `pnpm` scripts, recorded in ADR 008. The Swift app stays until the Rust
+  runtime replaces it.
+- Move the client from Vite to Next.js with a static export, so the same
+  interface builds for every platform and ships without a server.
+
 - Rebuild the cross-platform desktop shell: chat-first main window, collapsible
   agent / sandbox / terminal / workflow / model rails, a workbench-API rail,
   a terminal dock, a command palette (`⌘K`) and a status bar that names its

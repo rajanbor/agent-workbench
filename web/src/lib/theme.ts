@@ -5,6 +5,7 @@ export type ThemeChoice = "light" | "dark" | "system";
 const STORAGE_KEY = "open-cube.theme";
 
 function readStored(): ThemeChoice {
+  if (typeof window === "undefined") return "system";
   try {
     const value = localStorage.getItem(STORAGE_KEY);
     if (value === "light" || value === "dark" || value === "system") return value;
@@ -38,14 +39,25 @@ async function syncWindow(choice: ThemeChoice) {
 
 export function resolveTheme(choice: ThemeChoice): "light" | "dark" {
   if (choice !== "system") return choice;
+  if (typeof window === "undefined") return "dark";
   return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
 }
 
 export function useTheme() {
-  const [choice, setChoice] = useState<ThemeChoice>(readStored);
-  const [resolved, setResolved] = useState<"light" | "dark">(() => resolveTheme(readStored()));
+  // The first client render must match the prerendered HTML, so the stored
+  // choice is adopted in an effect rather than read during render. The
+  // pre-paint script has already applied it to <html>, so nothing flashes.
+  const [choice, setChoice] = useState<ThemeChoice>("system");
+  const [adopted, setAdopted] = useState(false);
+  const [resolved, setResolved] = useState<"light" | "dark">("dark");
 
   useEffect(() => {
+    setChoice(readStored());
+    setAdopted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!adopted) return;
     apply(choice);
     setResolved(resolveTheme(choice));
     try {
@@ -53,7 +65,7 @@ export function useTheme() {
     } catch {
       /* ignore: the theme still applies for this session */
     }
-  }, [choice]);
+  }, [adopted, choice]);
 
   useEffect(() => {
     if (choice !== "system") return;
