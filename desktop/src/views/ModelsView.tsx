@@ -1,8 +1,31 @@
+import { useState } from "react";
 import { Icon } from "../components/Icon";
 import { ModelGlyph } from "../components/Glyph";
 import { Badge, Button, Card, SectionTitle } from "../components/primitives";
 import { accentOf } from "../lib/identity";
-import type { DesktopSnapshot } from "../lib/engine";
+import { openExternal } from "../lib/external";
+import type { DesktopSnapshot, ModelCard } from "../lib/engine";
+
+type Filter = "all" | "local" | "api" | "ready";
+
+const filters: { id: Filter; label: string }[] = [
+  { id: "all", label: "All" },
+  { id: "local", label: "Local" },
+  { id: "api", label: "API" },
+  { id: "ready", label: "Ready to use" },
+];
+
+function matches(model: ModelCard, filter: Filter) {
+  if (filter === "all") return true;
+  if (filter === "ready") return model.ready;
+  return model.location === filter;
+}
+
+function referenceIcon(kind: string) {
+  if (kind === "huggingface") return "model";
+  if (kind === "api") return "link";
+  return "code";
+}
 
 export function ModelsView({
   snapshot,
@@ -15,15 +38,38 @@ export function ModelsView({
   onSelect: (id: string) => void;
   onAction: (message: string) => void;
 }) {
+  const [filter, setFilter] = useState<Filter>("all");
   const model = snapshot.models.find((item) => item.id === modelId) ?? snapshot.models[0];
   const usage = snapshot.usage.byModel.find((item) => item.modelId === model.id);
+  const visible = snapshot.models.filter((item) => matches(item, filter));
+
+  const open = async (url: string, label: string) => {
+    try {
+      await openExternal(url);
+      onAction(`Opened ${label} in your browser.`);
+    } catch {
+      onAction("The system refused to open that link.");
+    }
+  };
 
   return (
     <div className="split split--models">
       <div className="split__list">
-        <SectionTitle count={snapshot.models.length}>Model catalogue</SectionTitle>
+        <SectionTitle count={visible.length}>Model library</SectionTitle>
+        <div className="filter-row">
+          {filters.map((item) => (
+            <button
+              key={item.id}
+              className={`filter-row__item ${filter === item.id ? "is-active" : ""}`}
+              onClick={() => setFilter(item.id)}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+
         <div className="model-list">
-          {snapshot.models.map((item) => (
+          {visible.map((item) => (
             <button
               key={item.id}
               className={`model-row ${item.id === model.id ? "is-active" : ""}`}
@@ -34,9 +80,7 @@ export function ModelsView({
                 <strong className="mono">
                   {item.vendor.toLowerCase().replace(/\s+/g, "-")}/{item.name}
                 </strong>
-                <small>
-                  {item.task} · {item.parameters} · {item.context} context · updated {item.updated}
-                </small>
+                <small>{item.summary}</small>
               </span>
               <span className="model-row__tail">
                 <Badge tone={item.location === "local" ? "violet" : "blue"}>{item.location}</Badge>
@@ -46,6 +90,7 @@ export function ModelsView({
               </span>
             </button>
           ))}
+          {visible.length === 0 && <p className="muted-copy">No model matches this filter.</p>}
         </div>
       </div>
 
@@ -59,8 +104,12 @@ export function ModelsView({
             </Badge>
           </div>
           <div className="detail-head__actions">
-            <Button size="sm" icon="tag" onClick={() => onAction("Version pinning needs the workbench daemon.")}>
-              Pin version
+            <Button
+              size="sm"
+              icon={referenceIcon(model.reference.kind)}
+              onClick={() => open(model.reference.url, model.reference.label)}
+            >
+              {model.reference.kind === "huggingface" ? "Hugging Face" : "Documentation"}
             </Button>
             <Button
               size="sm"
@@ -79,25 +128,47 @@ export function ModelsView({
         </header>
 
         <div className="detail-summary">
-          <p className="muted-copy">
-            {model.vendor} · {model.task} · {model.parameters} · {model.context} context
-          </p>
+          <p className="muted-copy">{model.summary}</p>
           <div className="detail-summary__chips">
-            <Badge tone="neutral" icon="history">
-              updated {model.updated}
+            <Badge tone="neutral">{model.vendor}</Badge>
+            <Badge tone="neutral">{model.task}</Badge>
+            <Badge tone="neutral">{model.parameters}</Badge>
+            <Badge tone="neutral">{model.context} context</Badge>
+            <Badge tone={model.pricing ? "amber" : "green"}>
+              {model.pricing
+                ? `$${model.pricing.inputPerMtok}/M in · $${model.pricing.outputPerMtok}/M out`
+                : "no metered cost"}
             </Badge>
-            {model.downloads && <Badge tone="neutral">{model.downloads}</Badge>}
-            {model.pricing ? (
-              <Badge tone="amber">
-                ${model.pricing.inputPerMtok}/M in · ${model.pricing.outputPerMtok}/M out
-              </Badge>
-            ) : (
-              <Badge tone="green">no metered cost</Badge>
-            )}
           </div>
         </div>
 
-        {/* Version control for models: pinned version, digest and history. */}
+        <div className="columns">
+          <div>
+            <SectionTitle>Good for</SectionTitle>
+            <Card className="pad list-card">
+              {model.strengths.map((item) => (
+                <p key={item}>
+                  <Icon name="check" size={13} /> {item}
+                </p>
+              ))}
+            </Card>
+          </div>
+          <div>
+            <SectionTitle>Requirements</SectionTitle>
+            <Card className="pad list-card">
+              {model.requirements.map((item) => (
+                <p key={item}>
+                  <Icon name="cpu" size={13} /> {item}
+                </p>
+              ))}
+              <div className="kv">
+                <span>Licence</span>
+                <strong>{model.license}</strong>
+              </div>
+            </Card>
+          </div>
+        </div>
+
         <SectionTitle count={model.revisions.length}>Versions</SectionTitle>
         <div className="rows">
           {model.revisions.map((revision) => (
@@ -123,9 +194,7 @@ export function ModelsView({
           </div>
           <div className="kv">
             <span>Tokens</span>
-            <strong className="mono">
-              {(usage?.tokensIn ?? 0) + (usage?.tokensOut ?? 0)}
-            </strong>
+            <strong className="mono">{(usage?.tokensIn ?? 0) + (usage?.tokensOut ?? 0)}</strong>
           </div>
           <div className="kv">
             <span>Cost</span>
@@ -136,6 +205,13 @@ export function ModelsView({
             <strong className="mono">{usage?.version ?? model.version}</strong>
           </div>
         </Card>
+
+        <p className="muted-copy reference-note">
+          <Icon name="external" size={13} /> {model.reference.label} —{" "}
+          <button className="link mono" onClick={() => open(model.reference.url, model.reference.label)}>
+            {model.reference.url}
+          </button>
+        </p>
       </div>
     </div>
   );
