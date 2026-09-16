@@ -978,3 +978,26 @@
   height: 1px;
   white-space: nowrap;
 }
+
+/* The popover carries the same weight as the panel it summarises. */
+.usage-pop__totals strong {
+  font-size: var(--text-xl);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.usage-pop__cost {
+  width: 62px;
+  font-size: var(--text-md);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+}
+
+.usage-pop__name {
+  font-size: var(--text-sm);
+}
+
+.menu--usage .menu__trigger .mono {
+  font-size: var(--text-md);
+  font-variant-numeric: tabular-nums;
+}

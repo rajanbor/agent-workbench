@@ -369,9 +369,9 @@ fn agents() -> Vec<Agent> {
             updated_at: "8 min".into(),
             accent: "green".into(),
             revision: "7b21e4a9".into(),
-            tokens_in: 9_400,
-            tokens_out: 3_000,
-            cost_usd: 0.31,
+            tokens_in: 1_840_000,
+            tokens_out: 520_000,
+            cost_usd: 13.32,
             permissions: vec![
                 permission("Files", "workspace", "scoped"),
                 permission("Network", "limited", "review"),
@@ -408,9 +408,9 @@ fn agents() -> Vec<Agent> {
             updated_at: "1 h".into(),
             accent: "violet".into(),
             revision: "c4e13d80".into(),
-            tokens_in: 28_100,
-            tokens_out: 10_000,
-            cost_usd: 0.94,
+            tokens_in: 3_960_000,
+            tokens_out: 940_000,
+            cost_usd: 0.0,
             permissions: vec![
                 permission("Files", "workspace", "scoped"),
                 permission("Network", "off", "off"),
@@ -484,9 +484,9 @@ fn agents() -> Vec<Agent> {
             updated_at: "2 d".into(),
             accent: "amber".into(),
             revision: "a05e2f77".into(),
-            tokens_in: 4_800,
-            tokens_out: 1_400,
-            cost_usd: 0.12,
+            tokens_in: 580_000,
+            tokens_out: 164_000,
+            cost_usd: 4.20,
             permissions: vec![
                 permission("Files", "docs", "scoped"),
                 permission("Network", "off", "off"),
@@ -889,25 +889,27 @@ fn usage_rows() -> Vec<ModelUsage> {
             model_id: "claude-sonnet".into(),
             name: "Claude Sonnet".into(),
             version: "provider default".into(),
-            calls: 24,
-            tokens_in: 14_200,
-            tokens_out: 4_400,
-            cost_usd: 0.43,
+            calls: 312,
+            tokens_in: 2_420_000,
+            tokens_out: 684_000,
+            // 2.42M in at $3/M plus 684k out at $15/M.
+            cost_usd: 17.52,
         },
         ModelUsage {
             model_id: "codex".into(),
             name: "Codex".into(),
             version: "provider default".into(),
-            calls: 11,
-            tokens_in: 28_100,
-            tokens_out: 10_000,
-            cost_usd: 0.94,
+            calls: 196,
+            tokens_in: 5_180_000,
+            tokens_out: 1_240_000,
+            // Carried by the subscription, so nothing is metered here.
+            cost_usd: 0.0,
         },
         ModelUsage {
             model_id: "inspector-local".into(),
             name: "Open Cube Inspector".into(),
             version: "v1".into(),
-            calls: 6,
+            calls: 1_240,
             tokens_in: 0,
             tokens_out: 0,
             cost_usd: 0.0,
@@ -948,11 +950,11 @@ fn usage() -> UsageSummary {
     );
 
     let daily = vec![
-        daily("Mon", 21_400, 0.52),
-        daily("Tue", 38_900, 0.88),
-        daily("Wed", 12_600, 0.29),
-        daily("Thu", 44_100, 1.12),
-        daily("Fri", 56_700, 1.37),
+        daily("Mon", 4_120_000, 6.84),
+        daily("Tue", 7_480_000, 12.910),
+        daily("Wed", 2_960_000, 4.470),
+        daily("Thu", 8_240_000, 14.360),
+        daily("Fri", 9_524_000, 17.520),
     ];
 
     let periods = crate::activity::periods(&by_model, &daily);

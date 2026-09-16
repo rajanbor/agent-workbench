@@ -114,8 +114,10 @@ pub fn calendar(models: &[ModelCard], weeks_back: i64, by_kind: Vec<ActivityKind
         } else {
             (spread / 9) as u32
         };
-        let tokens = runs as u64 * (2_400 + noise(day, 0x51ed) % 5_600);
-        let cost = tokens as f64 / 1_000_000.0 * 9.0;
+        // A run is a whole task, not a single message: tens to hundreds of
+        // thousands of tokens each.
+        let tokens = runs as u64 * (60_000 + noise(day, 0x51ed) % 240_000);
+        let cost = tokens as f64 / 1_000_000.0 * 5.4;
         raw.push((day, runs, tokens, cost));
     }
 

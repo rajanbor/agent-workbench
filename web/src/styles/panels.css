@@ -2518,3 +2518,45 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* ------------------------------------------- figures in the usage surfaces */
+
+/* The number is what a person came for: give it size, weight and columns that
+   line up. Labels stay where they were. */
+.table--matrix .table__row > span:not(.table__main):not(.share),
+.table--usage .table__row > span:not(.table__main):not(.share) {
+  font-size: var(--text-md);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.table--matrix .table__row .is-current {
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.table__row--total > span {
+  font-size: var(--text-lg) !important;
+  font-weight: 600;
+}
+
+.rows .row__meta,
+.activity-bar + .row__tail .row__meta {
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Activity per model: runs and share carry the row. */
+.row__tail .badge {
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.overview__list em {
+  font-size: var(--text-md);
+  font-variant-numeric: tabular-nums;
+}
+
+.metric__value {
+  font-variant-numeric: tabular-nums;
+}
