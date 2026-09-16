@@ -1,8 +1,21 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Icon } from "./Icon";
 import { KeyHint } from "./primitives";
-import type { DesktopSnapshot } from "../lib/engine";
-import type { Selection, ViewId } from "../lib/shell";
+import {
+  activities,
+  agentTab,
+  canvasTab,
+  chatTab,
+  modelTab,
+  sandboxTab,
+  settingsTab,
+  studioTab,
+  usageTab,
+  workbenchChatTab,
+  type ActivityId,
+  type TabSpec,
+} from "../lib/layout";
+import type { ChatRef, DesktopSnapshot } from "../lib/engine";
 
 interface Command {
   id: string;
@@ -15,57 +28,52 @@ interface Command {
 export function CommandPalette({
   open,
   snapshot,
+  chatsOf,
   onClose,
-  onSelect,
+  onOpen,
+  onActivity,
   onAction,
 }: {
   open: boolean;
   snapshot: DesktopSnapshot;
+  chatsOf: (agentId: string) => ChatRef[];
   onClose: () => void;
-  onSelect: (view: ViewId, selection?: Partial<Selection>) => void;
+  onOpen: (spec: TabSpec) => void;
+  onActivity: (id: ActivityId) => void;
   onAction: (message: string) => void;
 }) {
   const [query, setQuery] = useState("");
   const [cursor, setCursor] = useState(0);
   const input = useRef<HTMLInputElement>(null);
 
-  const commands = useMemo<Command[]>(
-    () => [
-      { id: "v:chat", label: "Workbench chat", hint: "Go to", icon: "cube", run: () => onSelect("chat", { chat: "workbench", agent: null }) },
-      { id: "v:canvas", label: "Canvas", hint: "Go to", icon: "canvas", run: () => onSelect("canvas") },
-      { id: "v:sandboxes", label: "Sandboxes", hint: "Go to", icon: "sandbox", run: () => onSelect("sandboxes") },
-      { id: "v:models", label: "Models", hint: "Go to", icon: "model", run: () => onSelect("models") },
-      { id: "v:usage", label: "Usage and cost", hint: "Go to", icon: "bolt", run: () => onSelect("usage") },
-      { id: "v:studio", label: "Agent studio", hint: "Go to", icon: "sliders", run: () => onSelect("studio") },
-      { id: "v:settings", label: "Settings", hint: "Go to", icon: "settings", run: () => onSelect("settings") },
-      ...snapshot.agents.map((agent) => ({
-        id: `a:${agent.id}`,
-        label: agent.name,
-        hint: `Agent · ${agent.status}`,
-        icon: "agent",
-        run: () => onSelect("chat", { chat: agent.id, agent: agent.id }),
+  const commands = useMemo<Command[]>(() => {
+    const tab = (spec: TabSpec, hint: string, icon?: string): Command => ({
+      id: spec.key,
+      label: spec.title,
+      hint,
+      icon: icon ?? (spec.icon as string),
+      run: () => onOpen(spec),
+    });
+
+    return [
+      tab(workbenchChatTab(), "Open"),
+      tab(canvasTab(snapshot.workflow.name), "Open"),
+      tab(usageTab(), "Open"),
+      tab(studioTab(null), "Open", "plus"),
+      tab(settingsTab(), "Open"),
+      ...snapshot.agents.flatMap((agent) => [
+        tab(agentTab(agent), `Agent · ${agent.status}`),
+        ...chatsOf(agent.id).map((chat) => tab(chatTab(chat, agent), `Chat · ${agent.name}`)),
+      ]),
+      ...snapshot.sandboxes.map((sandbox) => tab(sandboxTab(sandbox), `Sandbox · ${sandbox.state}`)),
+      ...snapshot.models.map((model) => tab(modelTab(model), `Model · ${model.version}`)),
+      ...activities.map((area) => ({
+        id: `area:${area.id}`,
+        label: area.title,
+        hint: "Sidebar",
+        icon: area.icon as string,
+        run: () => onActivity(area.id),
       })),
-      ...snapshot.sandboxes.map((sandbox) => ({
-        id: `s:${sandbox.id}`,
-        label: sandbox.name,
-        hint: `Sandbox · ${sandbox.state}`,
-        icon: "sandbox",
-        run: () => onSelect("sandboxes", { sandbox: sandbox.id }),
-      })),
-      ...snapshot.models.map((model) => ({
-        id: `m:${model.id}`,
-        label: model.name,
-        hint: `Model · ${model.version}`,
-        icon: model.icon,
-        run: () => onSelect("models", { model: model.id }),
-      })),
-      {
-        id: "x:new-agent",
-        label: "Design a new agent",
-        hint: "Action",
-        icon: "plus",
-        run: () => onSelect("studio", { agent: null }),
-      },
       {
         id: "x:run",
         label: "Run an agent",
@@ -73,9 +81,8 @@ export function CommandPalette({
         icon: "play",
         run: () => onAction("The desktop client cannot launch providers yet."),
       },
-    ],
-    [onAction, onSelect, snapshot],
-  );
+    ];
+  }, [chatsOf, onAction, onActivity, onOpen, snapshot]);
 
   const results = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -108,7 +115,7 @@ export function CommandPalette({
           <input
             ref={input}
             value={query}
-            placeholder="Search agents, sandboxes, models and views"
+            placeholder="Search agents, chats, sandboxes, models and views"
             onChange={(event) => {
               setQuery(event.target.value);
               setCursor(0);

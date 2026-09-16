@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { TopBar } from "./components/TopBar";
-import { LeftRail } from "./components/LeftRail";
+import { ActivityBar } from "./components/ActivityBar";
+import { Sidebar } from "./components/Sidebar";
+import { EditorGroups } from "./components/EditorGroups";
 import { RightRail } from "./components/RightRail";
 import { TerminalDock } from "./components/TerminalDock";
 import { StatusBar } from "./components/StatusBar";
@@ -26,7 +28,33 @@ import {
 } from "./lib/engine";
 import { useTheme } from "./lib/theme";
 import type { ChatRef } from "./lib/engine";
-import type { ChatMessage, Selection, ViewId } from "./lib/shell";
+import type { ChatMessage } from "./lib/shell";
+import {
+  activities,
+  activeTab,
+  agentTab,
+  chatTab,
+  closeGroup,
+  closeTab,
+  defaultLayout,
+  focusTab,
+  loadShell,
+  modelTab,
+  moveTab,
+  openTab,
+  pruneLayout,
+  sandboxTab,
+  saveShell,
+  settingsTab,
+  splitRight,
+  studioTab,
+  usageTab,
+  workbenchChatTab,
+  type ActivityId,
+  type Group,
+  type Layout,
+  type TabSpec,
+} from "./lib/layout";
 
 /** Threads are keyed by chat id. An agent's first chat opens with its last
  *  message, so a chat starts with context instead of a blank pane. */
@@ -57,21 +85,23 @@ export default function App() {
   const theme = useTheme();
   const [snapshot, setSnapshot] = useState<DesktopSnapshot>(prototypeSnapshot);
   const [source, setSource] = useState<EngineSource>("preview");
-  const [view, setView] = useState<ViewId>("chat");
-  const [selection, setSelection] = useState<Selection>({
-    chat: "workbench",
-    agent: null,
-    sandbox: prototypeSnapshot.sandboxes[0].id,
-    model: prototypeSnapshot.models[0].id,
-  });
-  const [panels, setPanels] = useState({ left: true, right: false, terminal: false });
+
+  const [layout, setLayout] = useState<Layout>(defaultLayout);
+  const [activity, setActivity] = useState<ActivityId>("agents");
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarWidth, setSidebarWidth] = useState(252);
+  const [restored, setRestored] = useState(false);
+
+  const [rightOpen, setRightOpen] = useState(false);
+  const [terminalOpen, setTerminalOpen] = useState(false);
   const [terminalHeight, setTerminalHeight] = useState(240);
   const [activeTerminal, setActiveTerminal] = useState(prototypeSnapshot.terminals[0].id);
+
   const [threads, setThreads] = useState<Record<string, ChatMessage[]>>(() =>
     seedThreads(prototypeSnapshot),
   );
   const [extraChats, setExtraChats] = useState<Record<string, ChatRef[]>>({});
-  const [busy, setBusy] = useState(false);
+  const [busyThreads, setBusyThreads] = useState<Record<string, boolean>>({});
   const [chatModelId, setChatModelId] = useState(prototypeSnapshot.inspector.modelId);
   const [period, setPeriod] = useState("today");
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -80,9 +110,9 @@ export default function App() {
   const notify = useCallback((message: string) => setToast(message), []);
 
   useEffect(() => {
-    // index.html sets this before first paint; repeat it here in case the IPC
-    // bridge lands after the head script ran. Native mode turns the page
-    // transparent and leaves room for the traffic lights.
+    // The head script sets this before first paint; repeat it here in case the
+    // IPC bridge lands after that ran. Native mode turns the page translucent
+    // and leaves room for the traffic lights.
     if (isTauri()) document.documentElement.dataset.runtime = "tauri";
   }, []);
 
@@ -95,86 +125,162 @@ export default function App() {
     });
   }, []);
 
-  useEffect(() => {
-    if (!toast) return;
-    const timer = window.setTimeout(() => setToast(""), 4600);
-    return () => window.clearTimeout(timer);
-  }, [toast]);
+  /* --------------------------------------------------------------- chats */
 
-  const togglePanel = useCallback((panel: "left" | "right" | "terminal") => {
-    setPanels((current) => ({ ...current, [panel]: !current[panel] }));
-  }, []);
+  const chatsOf = useCallback(
+    (agentId: string): ChatRef[] => {
+      const agent = snapshot.agents.find((item) => item.id === agentId);
+      return [...(agent?.chats ?? []), ...(extraChats[agentId] ?? [])];
+    },
+    [extraChats, snapshot.agents],
+  );
+
+  const chatIds = useMemo(() => {
+    const ids = new Set<string>(["workbench"]);
+    for (const agent of snapshot.agents) for (const chat of chatsOf(agent.id)) ids.add(chat.id);
+    return ids;
+  }, [chatsOf, snapshot.agents]);
+
+  /* -------------------------------------------------------------- layout */
+
+  // Restore after mount, so the first render matches the prerendered HTML, and
+  // only once the snapshot is in hand, so a tab cannot point at nothing.
+  useEffect(() => {
+    if (restored) return;
+    const stored = loadShell();
+    if (stored) {
+      setLayout(pruneLayout(stored.layout, snapshot, chatIds));
+      setActivity(stored.activity);
+      setSidebarOpen(stored.sidebar);
+      setSidebarWidth(stored.sidebarWidth);
+    }
+    setRestored(true);
+  }, [chatIds, restored, snapshot]);
+
+  useEffect(() => {
+    if (restored) saveShell({ layout, activity, sidebar: sidebarOpen, sidebarWidth });
+  }, [activity, layout, restored, sidebarOpen, sidebarWidth]);
+
+  const open = useCallback((spec: TabSpec) => setLayout((current) => openTab(current, spec)), []);
+
+  const openKeys = useMemo(() => {
+    const keys = new Set<string>();
+    for (const group of layout.groups) for (const tab of group.tabs) keys.add(tab.key);
+    return keys;
+  }, [layout]);
+
+  const focused = activeTab(layout);
+  const focusedKey = focused?.key ?? "";
+
+  const pickActivity = useCallback(
+    (id: ActivityId) => {
+      setActivity(id);
+      setSidebarOpen((visible) => (id === activity ? !visible : true));
+    },
+    [activity],
+  );
+
+  /* ---------------------------------------------------------- shortcuts */
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       const meta = event.metaKey || event.ctrlKey;
       if (!meta) return;
       const key = event.key.toLowerCase();
+
+      const index = Number(key);
+      if (index >= 1 && index <= activities.length) {
+        event.preventDefault();
+        pickActivity(activities[index - 1].id);
+        return;
+      }
+
       if (key === "k") {
         event.preventDefault();
-        setPaletteOpen((open) => !open);
+        setPaletteOpen((value) => !value);
       }
       if (key === "b") {
         event.preventDefault();
-        togglePanel("left");
+        setSidebarOpen((value) => !value);
       }
       if (key === "j") {
         event.preventDefault();
-        togglePanel("terminal");
+        setTerminalOpen((value) => !value);
       }
       if (key === "i") {
         event.preventDefault();
-        togglePanel("right");
+        setRightOpen((value) => !value);
+      }
+      if (key === "w") {
+        event.preventDefault();
+        setLayout((current) => {
+          const tab = activeTab(current);
+          return tab ? closeTab(current, current.activeGroupId, tab.key) : current;
+        });
+      }
+      if (key === "\\") {
+        event.preventDefault();
+        setLayout((current) => {
+          const tab = activeTab(current);
+          return tab ? splitRight(current, current.activeGroupId, tab.key) : current;
+        });
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [togglePanel]);
+  }, [pickActivity]);
 
-  const select = useCallback((next: ViewId, patch?: Partial<Selection>) => {
-    setView(next);
-    if (patch) setSelection((current) => ({ ...current, ...patch }));
-  }, []);
+  /* ------------------------------------------------------- sidebar width */
+
+  const shell = useRef<HTMLDivElement>(null);
+  const startSidebarDrag = (event: React.PointerEvent) => {
+    event.preventDefault();
+    const startX = event.clientX;
+    const startWidth = sidebarWidth;
+    const move = (moveEvent: PointerEvent) =>
+      setSidebarWidth(Math.min(Math.max(startWidth + (moveEvent.clientX - startX), 200), 440));
+    const up = () => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+  };
+
+  /* ---------------------------------------------------------------- work */
 
   const chatModel =
     snapshot.models.find((model) => model.id === chatModelId) ?? snapshot.models[0];
-  const activeAgent = useMemo(
-    () => snapshot.agents.find((agent) => agent.id === selection.agent) ?? null,
-    [selection.agent, snapshot.agents],
-  );
-  const agentChats = activeAgent
-    ? [...activeAgent.chats, ...(extraChats[activeAgent.id] ?? [])]
-    : [];
 
   /** A second chat against the same agent: local until the daemon persists it. */
-  const newChat = useCallback(() => {
-    if (!activeAgent) return;
-    const existing = agentChats.length;
-    const chat: ChatRef = {
-      id: `${activeAgent.id}-chat-${existing + 1}`,
-      title: `Chat ${existing + 1}`,
-      updatedAt: "now",
-    };
-    setExtraChats((current) => ({
-      ...current,
-      [activeAgent.id]: [...(current[activeAgent.id] ?? []), chat],
-    }));
-    setThreads((current) => ({ ...current, [chat.id]: [] }));
-    setSelection((current) => ({ ...current, chat: chat.id }));
-    notify("Extra chats live in this session until the workbench daemon stores them.");
-  }, [activeAgent, agentChats.length, notify]);
+  const newChat = useCallback(
+    (agentId: string) => {
+      const agent = snapshot.agents.find((item) => item.id === agentId);
+      if (!agent) return;
+      const existing = chatsOf(agentId).length;
+      const chat: ChatRef = {
+        id: `${agentId}-chat-${existing + 1}`,
+        title: `Chat ${existing + 1}`,
+        updatedAt: "now",
+      };
+      setExtraChats((current) => ({ ...current, [agentId]: [...(current[agentId] ?? []), chat] }));
+      setThreads((current) => ({ ...current, [chat.id]: [] }));
+      open(chatTab(chat, agent));
+      notify("Extra chats live in this session until the workbench daemon stores them.");
+    },
+    [chatsOf, notify, open, snapshot.agents],
+  );
 
   const send = useCallback(
-    async (text: string) => {
-      const thread = selection.chat;
-      const agent = snapshot.agents.find((item) => item.id === selection.agent) ?? null;
+    async (thread: string, agentId: string | null, text: string) => {
+      const agent = snapshot.agents.find((item) => item.id === agentId) ?? null;
       const stamp = Date.now();
 
       setThreads((current) => ({
         ...current,
         [thread]: [...(current[thread] ?? []), { id: `u${stamp}`, role: "user", text }],
       }));
-      setBusy(true);
+      setBusyThreads((current) => ({ ...current, [thread]: true }));
 
       const answer = await ask(text, snapshot);
 
@@ -208,10 +314,150 @@ export default function App() {
           ],
         };
       });
-      setBusy(false);
+      setBusyThreads((current) => ({ ...current, [thread]: false }));
     },
-    [selection.agent, selection.chat, snapshot],
+    [snapshot],
   );
+
+  const openAgentChat = useCallback(
+    (agentId: string) => {
+      const agent = snapshot.agents.find((item) => item.id === agentId);
+      if (!agent) return;
+      const chat = chatsOf(agentId)[0];
+      if (chat) open(chatTab(chat, agent));
+      else newChat(agentId);
+    },
+    [chatsOf, newChat, open, snapshot.agents],
+  );
+
+  /** One tab to one view. Every surface is reachable from more than one place,
+   *  so the mapping lives here rather than in each caller. */
+  const renderTab = useCallback(
+    (tab: TabSpec, group: Group) => {
+      switch (tab.view) {
+        case "chat": {
+          const thread = tab.target ?? "workbench";
+          const agent = snapshot.agents.find((item) => item.id === tab.agentId) ?? null;
+          return (
+            <ChatView
+              snapshot={snapshot}
+              agent={agent}
+              model={chatModel}
+              workspace={agent?.project.name ?? "Open Cube"}
+              source={source}
+              branch={agent?.project.branch ?? snapshot.versionControl.branch}
+              messages={threads[thread] ?? []}
+              busy={busyThreads[thread] ?? false}
+              onSend={(text) => send(thread, tab.agentId ?? null, text)}
+              onOpenAgent={(id) => {
+                const target = snapshot.agents.find((item) => item.id === id);
+                if (target) open(agentTab(target));
+              }}
+              onAction={notify}
+            />
+          );
+        }
+        case "canvas":
+          return <CanvasView snapshot={snapshot} onAction={notify} />;
+        case "sandboxes":
+          return (
+            <SandboxView
+              snapshot={snapshot}
+              sandboxId={tab.target ?? snapshot.sandboxes[0].id}
+              onSelect={(id) => {
+                const sandbox = snapshot.sandboxes.find((item) => item.id === id);
+                if (sandbox) open(sandboxTab(sandbox));
+              }}
+              onOpenAgent={(id) => {
+                const agent = snapshot.agents.find((item) => item.id === id);
+                if (agent) open(agentTab(agent));
+              }}
+              onAction={notify}
+            />
+          );
+        case "models":
+          return (
+            <ModelsView
+              snapshot={snapshot}
+              modelId={tab.target ?? snapshot.models[0].id}
+              onSelect={(id) => {
+                const model = snapshot.models.find((item) => item.id === id);
+                if (model) open(modelTab(model));
+              }}
+              onAction={notify}
+            />
+          );
+        case "usage":
+          return <UsageView snapshot={snapshot} period={period} />;
+        case "agent":
+          return (
+            <AgentView
+              snapshot={snapshot}
+              agentId={tab.target ?? snapshot.agents[0].id}
+              onChat={openAgentChat}
+              onSandbox={(id) => {
+                const sandbox = snapshot.sandboxes.find((item) => item.id === id);
+                if (sandbox) open(sandboxTab(sandbox));
+              }}
+              onModel={(id) => {
+                const model = snapshot.models.find((item) => item.id === id);
+                if (model) open(modelTab(model));
+              }}
+              onStudio={(id) => {
+                const agent = snapshot.agents.find((item) => item.id === id);
+                if (agent) open(studioTab(agent));
+              }}
+              onAction={notify}
+            />
+          );
+        case "studio":
+          return (
+            <AgentStudioView
+              snapshot={snapshot}
+              agentId={tab.target ?? null}
+              onSelectAgent={(id) => {
+                const agent = snapshot.agents.find((item) => item.id === id);
+                if (agent) open(studioTab(agent));
+              }}
+              onOpenChat={openAgentChat}
+              onAction={notify}
+            />
+          );
+        case "settings":
+          return (
+            <SettingsView
+              snapshot={snapshot}
+              source={source}
+              theme={theme.choice}
+              onTheme={theme.setChoice}
+              onAction={notify}
+            />
+          );
+        default:
+          return <div className="watermark">Nothing to show in {group.id}.</div>;
+      }
+    },
+    [
+      busyThreads,
+      chatModel,
+      notify,
+      open,
+      openAgentChat,
+      period,
+      send,
+      snapshot,
+      source,
+      theme.choice,
+      theme.setChoice,
+      threads,
+    ],
+  );
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = window.setTimeout(() => setToast(""), 4600);
+    return () => window.clearTimeout(timer);
+  }, [toast]);
 
   return (
     <div className="app">
@@ -220,119 +466,91 @@ export default function App() {
         source={source}
         chatModel={chatModel}
         onChatModel={setChatModelId}
-        panels={panels}
-        onTogglePanel={togglePanel}
+        panels={{ left: sidebarOpen, right: rightOpen, terminal: terminalOpen }}
+        onTogglePanel={(panel) => {
+          if (panel === "left") setSidebarOpen((value) => !value);
+          if (panel === "right") setRightOpen((value) => !value);
+          if (panel === "terminal") setTerminalOpen((value) => !value);
+        }}
         onPalette={() => setPaletteOpen(true)}
-        onUsage={() => select("usage")}
+        onUsage={() => open(usageTab())}
         period={period}
         onPeriod={setPeriod}
         onAction={notify}
       />
 
-      <div className="app__body">
-        {panels.left && (
-          <LeftRail
-            snapshot={snapshot}
-            view={view}
-            selection={selection}
-            onSelect={select}
-            onOpenTerminal={(id) => {
-              setActiveTerminal(id);
-              setPanels((current) => ({ ...current, terminal: true }));
-            }}
-            onAction={notify}
-            agentChats={agentChats}
-            onNewChat={newChat}
-          />
+      <div className="app__body" ref={shell}>
+        <ActivityBar
+          activity={activity}
+          sidebarOpen={sidebarOpen}
+          counts={{
+            agents: snapshot.agents.length,
+            sandboxes: snapshot.sandboxes.length,
+            vcs: snapshot.versionControl.changes.length,
+          }}
+          onPick={pickActivity}
+          onSettings={() => open(settingsTab())}
+          onShortcuts={() =>
+            notify("⌘K palette · ⌘B sidebar · ⌘J terminals · ⌘I workbench API · ⌘\\ split · ⌘W close")
+          }
+        />
+
+        {sidebarOpen && (
+          <div className="sidebar-slot" style={{ width: sidebarWidth }}>
+            <Sidebar
+              snapshot={snapshot}
+              activity={activity}
+              openKeys={openKeys}
+              focusedKey={focusedKey}
+              onOpen={open}
+              onOpenTerminal={(id) => {
+                setActiveTerminal(id);
+                setTerminalOpen(true);
+              }}
+              onAction={notify}
+              chatsOf={chatsOf}
+              onNewChat={newChat}
+              onClose={() => setSidebarOpen(false)}
+            />
+            <div
+              className="sidebar-slot__grip"
+              role="separator"
+              aria-label="Resize the sidebar"
+              onPointerDown={startSidebarDrag}
+            />
+          </div>
         )}
 
         <main className="workspace">
-          <div className="workspace__view">
-            {view === "chat" && (
-              <ChatView
-                snapshot={snapshot}
-                agent={activeAgent}
-                model={chatModel}
-                workspace={activeAgent?.project.name ?? "Open Cube"}
-                source={source}
-                branch={activeAgent?.project.branch ?? snapshot.versionControl.branch}
-                messages={threads[selection.chat] ?? []}
-                busy={busy}
-                onSend={send}
-                onOpenAgent={(id) => select("agent", { agent: id })}
-                onAction={notify}
-              />
-            )}
-            {view === "canvas" && <CanvasView snapshot={snapshot} onAction={notify} />}
-            {view === "sandboxes" && (
-              <SandboxView
-                snapshot={snapshot}
-                sandboxId={selection.sandbox}
-                onSelect={(id) => select("sandboxes", { sandbox: id })}
-                onOpenAgent={(id) => select("agent", { agent: id })}
-                onAction={notify}
-              />
-            )}
-            {view === "models" && (
-              <ModelsView
-                snapshot={snapshot}
-                modelId={selection.model}
-                onSelect={(id) => select("models", { model: id })}
-                onAction={notify}
-              />
-            )}
-            {view === "usage" && (
-              <UsageView snapshot={snapshot} period={period} />
-            )}
-            {view === "agent" && (
-              <AgentView
-                snapshot={snapshot}
-                agentId={selection.agent ?? snapshot.agents[0].id}
-                onChat={(id) => select("chat", { chat: id, agent: id })}
-                onSandbox={(id) => select("sandboxes", { sandbox: id })}
-                onModel={(id) => select("models", { model: id })}
-                onStudio={(id) => select("studio", { agent: id })}
-                onAction={notify}
-              />
-            )}
-            {view === "studio" && (
-              <AgentStudioView
-                snapshot={snapshot}
-                agentId={selection.agent}
-                onSelectAgent={(id) => select("studio", { agent: id })}
-                onOpenChat={(id) => {
-                  const target = snapshot.agents.find((item) => item.id === id);
-                  select("chat", { chat: target?.chats[0]?.id ?? id, agent: id });
-                }}
-                onAction={notify}
-              />
-            )}
-            {view === "settings" && (
-              <SettingsView
-                snapshot={snapshot}
-                source={source}
-                theme={theme.choice}
-                onTheme={theme.setChoice}
-                onAction={notify}
-              />
-            )}
-          </div>
+          <EditorGroups
+            layout={layout}
+            render={renderTab}
+            onFocusGroup={(groupId) =>
+              setLayout((current) => ({ ...current, activeGroupId: groupId }))
+            }
+            onFocusTab={(groupId, key) => setLayout((current) => focusTab(current, groupId, key))}
+            onCloseTab={(groupId, key) => setLayout((current) => closeTab(current, groupId, key))}
+            onSplit={(groupId, key) => setLayout((current) => splitRight(current, groupId, key))}
+            onCloseGroup={(groupId) => setLayout((current) => closeGroup(current, groupId))}
+            onMoveTab={(from, key, to) => setLayout((current) => moveTab(current, from, key, to))}
+            onEmptyAction={() => open(workbenchChatTab())}
+          />
 
-          {panels.terminal && (
+          {terminalOpen && (
             <TerminalDock
               snapshot={snapshot}
               activeId={activeTerminal}
               onActive={setActiveTerminal}
               height={terminalHeight}
               onHeight={setTerminalHeight}
-              onClose={() => togglePanel("terminal")}
+              onClose={() => setTerminalOpen(false)}
               onAction={notify}
             />
           )}
         </main>
 
-        {panels.right && (
-          <RightRail snapshot={snapshot} onClose={() => togglePanel("right")} onAction={notify} />
+        {rightOpen && (
+          <RightRail snapshot={snapshot} onClose={() => setRightOpen(false)} onAction={notify} />
         )}
       </div>
 
@@ -340,8 +558,10 @@ export default function App() {
         snapshot={snapshot}
         source={source}
         model={chatModel}
-        sandboxId={selection.sandbox}
-        onSelectUsage={() => select("usage")}
+        sandboxId={
+          focused?.view === "sandboxes" ? (focused.target ?? snapshot.sandboxes[0].id) : snapshot.sandboxes[0].id
+        }
+        onSelectUsage={() => open(usageTab())}
       />
 
       {toast && (
@@ -357,8 +577,10 @@ export default function App() {
       <CommandPalette
         open={paletteOpen}
         snapshot={snapshot}
+        chatsOf={chatsOf}
         onClose={() => setPaletteOpen(false)}
-        onSelect={select}
+        onOpen={open}
+        onActivity={pickActivity}
         onAction={notify}
       />
     </div>

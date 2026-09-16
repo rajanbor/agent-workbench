@@ -7,30 +7,41 @@
    is also the period picker, and the panel toggles. Appearance is not here: it
    lives in Settings, and the account menu links to it. In the native window it is also the drag region and leaves room
    for the traffic lights.
-2. Left rail: the workbench chat pinned on top, then collapsible sections —
-   Agents, Sandboxes, Terminals, Workflows, Models — each row showing live
-   state, and the account menu pinned at the bottom. The open agent lists its
-   chats under it, with a control to start another; chats never move into a tab
-   strip beside the chrome.
-3. Workspace: the active surface. An open agent adds a workspace bar with its
-   project, branch and working tree, and the agent studio designs the agent
-   itself. Chat is the default; canvas, sandbox
-   visualisation, model catalogue, usage, agent detail and settings share it.
-4. Terminal dock: bottom panel with one tab per sandbox terminal, resizable and
+2. Activity strip: one icon per area — Agents, Search, Source control,
+   Sandboxes, Models, Workflows — on the far left, with settings and the
+   account at its foot. The lit icon marks its edge; picking the lit one
+   collapses the sidebar and leaves the strip.
+3. Sidebar: opens to the right of the strip and shows one area at a time, in
+   collapsible sections, with live state on every row. Agents keeps the
+   workbench chat pinned above it, and the open agent lists its chats under
+   itself with a control to start another; chats never move into a tab strip
+   beside the chrome. The sidebar is resizable.
+4. Work area: tabs held in groups. Every surface — chat, canvas, sandbox,
+   model, usage, agent, agent studio, settings — opens as a tab with its own
+   icon, and any tab can be split to the right so two groups sit side by side,
+   each with its own strip and its own focus. A tab is dragged between groups;
+   an emptied group folds away, and the last one shows a watermark. Opening
+   something already open focuses it instead of repeating it.
+5. Terminal dock: bottom panel with one tab per sandbox terminal, resizable and
    dismissible without losing its buffer.
-5. Right rail: the workbench API — values, functions, modules and the inspector
+6. Right rail: the workbench API — values, functions, modules and the inspector
    policy, each in a collapsible section. Starts closed, like the dock.
-6. Status bar: branch, sandbox, running agents, state source and cost. Five
+7. Status bar: branch, sandbox, running agents, state source and cost. Five
    facts; the rest belongs to Usage.
 
-`⌘K` command palette · `⌘B` left rail · `⌘J` terminals · `⌘I` right rail.
+`⌘K` command palette · `⌘B` sidebar · `⌘J` terminals · `⌘I` right rail ·
+`⌘\` split the open tab · `⌘W` close it · `⌘1`–`⌘6` the areas of the strip.
+
+The arrangement — strip, sidebar, groups — is VS Code's, and deliberately so:
+everything here is an object worth reading next to another object, and that
+layout is the one a developer already knows how to drive.
 
 ## Required interactions
 
 - Open a chat with the in-app inspector or with any agent, and read on every
   answer which model, which version, how many tokens and what it cost.
 - Move between an agent, its sandbox, its model and its spend without losing
-  the selection.
+  the selection, and keep two of them open side by side.
 - Inspect a sandbox as a boundary drawing: machine, user account, mounts,
   network policy, processes and attached agents.
 - Edit a workflow on the canvas: drag, rename, link, delete, pan, zoom, reset.
@@ -52,7 +63,7 @@ paragraph.
 
 ## Disclosure
 
-Rail rows are one line; counts, timestamps and answer provenance appear on
+Sidebar rows are one line; counts, timestamps and answer provenance appear on
 hover; refusals and redactions are always visible. Nothing may shift layout when
 it appears. See `.ai/adr/007-quiet-shell-and-native-window.md`.
 

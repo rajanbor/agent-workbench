@@ -82,6 +82,7 @@ split by surface so two branches rarely touch the same file:
 | --- | --- |
 | `base.css` | Reset, type, and the primitives every surface reuses |
 | `chrome.css` | Top bar, rails, menus, terminal dock, status bar, overlays |
+| `shell.css` | Activity strip, sidebar and the work area's tab groups |
 | `chat.css` | Messages, provenance, start cards, composer |
 | `canvas.css` | Workflow graph and relational schema |
 | `panels.css` | Views: cards, tables, profile, studio, usage, sandboxes, settings |

@@ -10,6 +10,7 @@ export function Menu({
   placement = "below",
   className = "",
   title,
+  chevron = true,
 }: {
   label: ReactNode;
   children: (close: () => void) => ReactNode;
@@ -17,6 +18,8 @@ export function Menu({
   placement?: "below" | "above";
   className?: string;
   title?: string;
+  /** A trigger that is already a control of its own — an avatar — hides it. */
+  chevron?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const holder = useRef<HTMLDivElement>(null);
@@ -43,7 +46,7 @@ export function Menu({
         onClick={() => setOpen((value) => !value)}
       >
         {label}
-        <Icon name={placement === "above" ? "chevronUpDown" : "chevronDown"} size={13} />
+        {chevron && <Icon name={placement === "above" ? "chevronUpDown" : "chevronDown"} size={13} />}
       </button>
       {open && (
         <div className={`menu__panel menu__panel--${align} menu__panel--${placement}`}>

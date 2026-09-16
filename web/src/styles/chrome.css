@@ -25,12 +25,6 @@
   background: var(--bg);
 }
 
-.workspace__view {
-  min-height: 0;
-  flex: 1;
-  overflow: auto;
-}
-
 /* ----------------------------------------------------------------- topbar */
 
 .topbar {
@@ -247,10 +241,6 @@
   background: var(--layer-panel);
   backdrop-filter: var(--blur);
   -webkit-backdrop-filter: var(--blur);
-}
-
-.rail--left {
-  border-right: 1px solid var(--border-subtle);
 }
 
 .rail--right {
@@ -792,43 +782,6 @@
 
 .topbar[data-tauri-drag-region] {
   cursor: default;
-}
-
-/* ---------------------------------------------------------- account menu */
-
-.rail__account {
-  padding: 6px;
-  border-top: 1px solid var(--border-subtle);
-}
-
-.menu--account {
-  width: 100%;
-}
-
-.menu--account .menu__trigger {
-  display: flex;
-  width: 100%;
-  max-width: none;
-  gap: 9px;
-  padding: 6px 8px;
-  text-align: left;
-}
-
-.rail__account-name {
-  display: flex;
-  min-width: 0;
-  flex: 1;
-  flex-direction: column;
-}
-
-.rail__account-name strong {
-  font-size: var(--text-sm);
-  font-weight: 550;
-}
-
-.rail__account-name small {
-  color: var(--text-faint);
-  font-size: var(--text-xs);
 }
 
 .menu__panel--above {

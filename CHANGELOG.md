@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- Rearrange the window the way VS Code arranges one: an activity strip of areas
+  on the far left, a sidebar that shows whichever area is lit, and a work area
+  of tabs that can be split so two surfaces sit side by side. Tabs drag between
+  groups, opening something already open focuses it, and the arrangement —
+  groups, tabs, lit area, sidebar width — is restored on the next start.
+- Add search and source control to the sidebar: search reads the objects this
+  window already holds, and source control shows the branch, the working tree
+  and recent commits without going through the top menu.
+
 - Replace Claude Sonnet with Claude Opus in the catalogue, at its own price per
   million tokens.
 - Report three kinds of cost instead of one: metered per token, a subscription
