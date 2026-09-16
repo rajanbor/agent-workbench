@@ -437,6 +437,8 @@ pub struct UsageSummary {
     pub by_agent: Vec<AgentUsage>,
     pub daily: Vec<DailyUsage>,
     pub local: LocalEconomics,
+    pub periods: Vec<UsagePeriod>,
+    pub activity: ActivityCalendar,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -498,6 +500,67 @@ pub struct BranchRef {
 pub struct FileChange {
     pub path: String,
     pub state: String,
+}
+
+/// One window the cost chip can show, with its own rows.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct UsagePeriod {
+    pub id: String,
+    pub label: String,
+    pub tokens_in: u64,
+    pub tokens_out: u64,
+    pub cost_usd: f64,
+    pub calls: u32,
+    pub by_model: Vec<ModelUsage>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ActivityDay {
+    pub date: String,
+    /// 0 = Monday.
+    pub weekday: u8,
+    pub runs: u32,
+    pub tokens: u64,
+    pub cost_usd: f64,
+    /// 0-4, the intensity a calendar cell is drawn with.
+    pub level: u8,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ActivityWeek {
+    pub start_date: String,
+    pub days: Vec<ActivityDay>,
+}
+
+/// Activity attributed to one model, the way a profile splits contributions
+/// between organisations.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ModelActivity {
+    pub model_id: String,
+    pub name: String,
+    pub runs: u32,
+    pub tokens: u64,
+    pub cost_usd: f64,
+    pub share: f64,
+    pub days_active: u32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ActivityCalendar {
+    pub basis: String,
+    pub from: String,
+    pub to: String,
+    pub weeks: Vec<ActivityWeek>,
+    pub max_runs: u32,
+    pub total_runs: u32,
+    pub total_tokens: u64,
+    pub busiest_day: String,
+    pub by_model: Vec<ModelActivity>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

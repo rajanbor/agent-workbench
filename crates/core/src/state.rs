@@ -940,6 +940,16 @@ fn usage() -> UsageSummary {
         0,
     );
 
+    let daily = vec![
+        daily("Mon", 21_400, 0.52),
+        daily("Tue", 38_900, 0.88),
+        daily("Wed", 12_600, 0.29),
+        daily("Thu", 44_100, 1.12),
+        daily("Fri", 56_700, 1.37),
+    ];
+
+    let periods = crate::activity::periods(&by_model, &daily);
+
     UsageSummary {
         window: "today".into(),
         tokens_in,
@@ -948,13 +958,9 @@ fn usage() -> UsageSummary {
         by_model,
         by_agent,
         local,
-        daily: vec![
-            daily("Mon", 21_400, 0.52),
-            daily("Tue", 38_900, 0.88),
-            daily("Wed", 12_600, 0.29),
-            daily("Thu", 44_100, 1.12),
-            daily("Fri", 56_700, 1.37),
-        ],
+        periods,
+        activity: crate::activity::calendar(&models(), 52),
+        daily,
     }
 }
 
