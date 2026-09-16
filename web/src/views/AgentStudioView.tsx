@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Icon } from "../components/Icon";
 import { AgentFace } from "../components/Glyph";
 import { Badge, Button, Card, SectionTitle } from "../components/primitives";
+import { Switch } from "../components/Switch";
 import { accentOf, toneOf } from "../lib/identity";
 import { openExternal } from "../lib/external";
 import {
@@ -477,10 +478,7 @@ function LibraryCard({
       <header>
         <strong className={mono ? "mono" : ""}>{title}</strong>
         {badge}
-        <button className="library-card__toggle" onClick={onToggle}>
-          <Icon name={selected ? "check" : "plus"} size={13} />
-          {selected ? "Added" : "Add"}
-        </button>
+        <Switch checked={selected} label={`Toggle ${title}`} onChange={onToggle} />
       </header>
       <p className="library-card__summary">{summary}</p>
       <p className={`library-card__detail ${mono ? "mono" : ""}`}>{detail}</p>

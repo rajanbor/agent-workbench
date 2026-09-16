@@ -33,10 +33,12 @@ the window appearance is synced with the chosen theme, so the system appearance
 never decides how the app theme looks. The traffic lights sit over the top bar,
 which is also the drag region.
 
-Accent marks primary actions, selection and the active runtime. State colour is
-reserved for state: green for running, ready and live; amber for waiting,
-approval and limited permissions; red for failure; violet for planned. No
-component hardcodes a colour.
+The base is monochrome: `--accent` is ink — white on dark, black on light — and
+carries primary actions, selection, switches and focus. Hue appears only in
+status (green for running, ready and live; purple for threads; blue for tasks;
+amber for waiting and approval; red for failure) and in a model's own identity.
+No component hardcodes a colour. The full system is in
+`.ai/product/DESIGN_LANGUAGE.md`.
 
 ## Model and agent identity
 
